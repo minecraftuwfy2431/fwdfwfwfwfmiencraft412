@@ -1,68 +1,154 @@
+--//Variables
+local Settings = {
+Autogreener = {
+Method = "Bar based",
+Toggle = false,
+Delay = 0,
+Bar = "MeterUi Overhead",
+},
+Infstamina = false,
+Walkspeed = {
+Toggle = false,
+Speed = 40,
+},
+}
+local player = game.Players.LocalPlayer
+local methods = { "Classic", "Bar based" }
+local bars = { "MeterUi Overhead", "MeterUi Vertical Bar" }
+local vim = game:GetService("VirtualInputManager")
+local val = 40 - (math.round(player:GetNetworkPing() * 200))
+local trigger = player.Character.Head[Settings.Autogreener.Bar].Bar[val]
+local color = trigger.BackgroundColor3
+local ping = player.PlayerGui["ServerInfo.Ui"].TopBarFrame.Holder.ServerInfo.BackgroundBubble.FPS.Ping
+local plrPing =
+tonumber(string.sub(ping.Text, string.find(ping.Text, ">") + 1, string.find(ping.Text, ">") + #ping.Text - 42))
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
-local VirtualInput = game:GetService("VirtualInputManager")
-getgenv().config = {
-   dist = 44,
-   possible_speed = 3.5 or 1/0,
-   use_what = "Remote" :: "Remote" | "Keyboard"
+-- ping finder
+-- remotes
+
+local function autogreen()
+if Settings.Autogreener.Toggle == true then
+if Settings.Autogreener.Method == "Classic" then
+game:GetService("UserInputService").InputBegan:Connect(function(k, t)
+if not t and k.KeyCode == Enum.KeyCode.E then
+task.wait(Settings.Autogreener.Delay)
+vim:SendKeyEvent(false, "E", false, game)
+end
+end)
+elseif Settings.Autogreener.Method == "Bar based" then
+trigger.Changed:Connect(function()
+if trigger.BackgroundColor3 ~= color then
+vim:SendKeyEvent(false, "E", false, game)
+end
+end)
+end
+end
+end
+
+local function infstamina()
+if not Settings.Infstamina then
+return
+end
+player.Backpack.PlayerEvents.Sprinting:FireServer(false)
+end
+
+--// UI
+local repo = "https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+local Window = Library:CreateWindow({
+-- Set Center to true if you want the menu to appear in the center
+-- Set AutoShow to true if you want the menu to appear when it is created
+-- Position and Size are also valid options here
+-- but you do not need to define them unless you are changing them :)
+Title = "Asteria RH2",
+Center = true,
+AutoShow = true,
+TabPadding = 8,
+MenuFadeTime = 0.2,
+})
+
+local Tabs = {
+-- Creates a new tab titled Main
+Main = Window:AddTab("Main"),
+["UI Settings"] = Window:AddTab("UI Settings"),
 }
 
-setmetatable({
-   character = Players.LocalPlayer.Character,
-   find_ball = function(self)
-       for In, Ba in workspace.Balls:GetChildren() do
-           local checkLight = Ba:FindFirstChild("Highlight")
-           local isBasepart = Ba:IsA("BasePart")
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox("Main")
+LeftGroupBox:AddToggle("MyToggle", {
+Text = "Auto green toggle",
+Default = false, -- Default value (true / false)
+Tooltip = "", -- Information shown when you hover over the toggle
 
-           if isBasepart and checkLight then
-               if not self.character:FindFirstChild("Highlight", true) then return end
-               if (Ba.Position - self.character.HumanoidRootPart.Position).Magnitude <= getgenv().config.dist then
-                   ({
-                       ["Remote"] = function()
-                           local containers = {}
-                           for Index, Player in workspace.Alive:GetChildren() do
-                              local characterToPlayer = Players:GetPlayerFromCharacter(Player)
+Callback = function(Value)
+Settings.Autogreener.Toggle = Value
+autogreen()
+end,
+})
 
-                              containers[characterToPlayer.UserId] = characterToPlayer.Character.HumanoidRootPart.Position
-                           end
+LeftGroupBox:AddDropdown("MyDropdown", {
+Values = methods,
+Default = 2, -- number index of the value / string
+Multi = false, -- true / false, allows multiple choices to be selected
+Text = "Auto time method (bar based recommended)",
+Tooltip = "", -- Information shown when you hover over the dropdown
 
-                           ReplicatedStorage.Remotes.ParryAttempt:FireServer(
-                            getgenv().possible_speed,
-                            Players:GetPlayers()[math.random(1,#Players:GetPlayers())].Character.HumanoidRootPart.CFrame,
-                            containers,
-                            table.foreach(workspace.Balls:GetChildren(), function(index, val)
-                                local cool = {}
+Callback = function(Value)
+Settings.Autogreener.Method = Value
+end,
+})
 
-                                table.insert(cool, tonumber(val.Name)) -- dupes 1; client :: ?
-                                table.insert(cool, tonumber(val.Name)) -- dupes 2; server :: ?
-                               
-                                return cool
-                            end)
-                           )
-                       end,
+LeftGroupBox:AddSlider("MySlider", {
+Text = "Delay (only use with clasic mode)",
+Default = Settings.Autogreener.Delay,
+Min = 0,
+Max = 5,
+Rounding = 2,
+Compact = false,
 
-                       ["Keyboard"] = function()
-                           VirtualInput:SendKeyEvent(true, "F", false, game)
-                       end,
-                   })[getgenv().config.use_what]()
-                   
-               end
-           end
-       end
-   end,
+Callback = function(Value)
+Settings.Autogreener.Delay = Value
+end,
+})
 
-   machine_execute = function(self)
-       RunService.Heartbeat:Connect(function()
-           self.find_ball(self)
-       end)
-       Players.LocalPlayer.CharacterAdded:Connect(function(Character)
-           self.character = Character
-       end)
-   end
-}, {
-   __call = function(self)
-       self.machine_execute(self)
-   end
-})("one piece roblox game --- [ red devil ] : kiro DZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ LOL")
+local Number = Options.MySlider.Value
+Options.MySlider:OnChanged(function()
+autogreen()
+end)
+
+LeftGroupBox:AddToggle("MyToggle", {
+Text = "Inf stamina",
+Default = false, -- Default value (true / false)
+Tooltip = "", -- Information shown when you hover over the toggle
+
+Callback = function(Value)
+Settings.Infstamina = Value
+end,
+})
+
+--//Configs
+
+local MenuGroup = Tabs["UI Settings"]:AddLeftGroupbox("Menu")
+MenuGroup:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind", { Default = "End", NoUI = true, Text = "Menu keybind" })
+MenuGroup:AddButton("Unload", function()
+Library:Unload()
+end)
+MenuGroup:AddButton("Copy discord invite", function()
+setclipboard("https://discord.gg/t2cXFpkGBh")
+end)
+Library.ToggleKeybind = Options.MenuKeybind
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:BuildConfigSection(Tabs["UI Settings"])
+ThemeManager:SetFolder("Asteria/RH2")
+SaveManager:SetFolder("Asteria/RH2")
+ThemeManager:ApplyToTab(Tabs["UI Settings"])
+SaveManager:LoadAutoloadConfig()
+
+--//Loops
+
+game:GetService("RunService").Heartbeat:connect(function()
+infstamina()
+end)
