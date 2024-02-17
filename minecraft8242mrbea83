@@ -3,14 +3,15 @@ getgenv().fov_settings = {
     radius = 150, -- changeable
     points = 100, -- changeable
     drawings = {}, -- dont change
-    old_mouse = {}, -- dont change
-    showfov = false, -- new boolean value
-    fov_filled = false, -- new boolean value
-    fov_radius = 60, -- new number value
-    silent_aim = false, -- new boolean value
-    silent_aim_prediction = false, -- new boolean value
-    hitchance = 100, -- new number value
+    old_mouse = {} -- dont change
 }
+
+getgenv().silent_aim = false -- enable silent aim
+getgenv().silent_aim_prediction = false -- enable prediction for silent aim
+getgenv().showfov = true -- show FOV
+getgenv().fov_filled = true -- fill FOV circle
+getgenv().fov_radius = 100 -- FOV circle radius
+getgenv().hitchance = 80 -- chance of hitting in percentage
 
 local userinputservice = game:GetService('UserInputService')
 local players = game:GetService('Players')
@@ -32,12 +33,19 @@ do
         return obj 
     end
 
+    local fov_settings = {
+        points = 100, -- number of points in the circle
+        radius = 100, -- radius of the circle
+        drawings = {}, -- to store the circle drawings
+        old_mouse = {}, -- to store old mouse positions
+    }
+
     fov_settings.drawings[1] = draw('Circle', {
         Color = Color3.new(1, 1, 1), -- white color
         Radius = fov_settings.radius,
-        Filled = fov_settings.fov_filled, -- fill the circle
+        Filled = true, -- fill the circle
         Transparency = 1, -- full transparency
-        Visible = fov_settings.showfov, -- show or hide the circle
+        Visible = getgenv().showfov and true or false, -- show FOV based on boolean
     })
 
     -- Update circle position
@@ -54,7 +62,7 @@ end
 
 -- // Lock \\ -- 
 local function get_player_mouse()
-    local dist = fov_settings.radius
+    local dist = getgenv().fov_radius
     local player = nil 
     
     for i, v in pairs(players:GetPlayers()) do 
@@ -97,7 +105,7 @@ local function anti_detect()
 end
 
 local function get_ping()
-    local new_ping = (anti_detect() and prediction * 16) or prediction
+    local new_ping = (anti_detect() and getgenv().prediction * 16) or getgenv().prediction
     return new_ping
 end
 
@@ -114,14 +122,17 @@ local function get_prediction()
         local velocity_pred = (root.Position + (root.Velocity * get_ping()))
         local movedirection_pred = (root.Position + (humanoid.MoveDirection * get_ping()))
         
-        return (fov_settings.silent_aim and fov_settings.silent_aim_prediction and movedirection_pred) or velocity_pred
+        return (anti_detect() and movedirection_pred) or velocity_pred
     end
 end
 
 local index; index = hookmetamethod(game, '__index', function(self, key)
     if (self:IsA('Mouse') and key == 'Hit') then 
         local target = get_player_mouse()
-        return (target and CFrame.new(get_prediction())) or index(self, key)
+        local hit_chance = math.random(1, 100)
+        if hit_chance <= getgenv().hitchance then -- check hit chance
+            return (target and CFrame.new(get_prediction())) or index(self, key)
+        end
     end
    
     return index(self, key) 
