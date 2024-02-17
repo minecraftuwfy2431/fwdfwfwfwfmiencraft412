@@ -33,19 +33,14 @@ do
         return obj 
     end
 
-    local fov_settings = {
-        points = 100, -- number of points in the circle
-        radius = 100, -- radius of the circle
-        drawings = {}, -- to store the circle drawings
-        old_mouse = {}, -- to store old mouse positions
-    }
+    local fov_settings = getgenv().fov_settings
 
     fov_settings.drawings[1] = draw('Circle', {
         Color = Color3.new(1, 1, 1), -- white color
         Radius = fov_settings.radius,
-        Filled = true, -- fill the circle
+        Filled = getgenv().fov_filled, -- fill the circle based on boolean
         Transparency = 1, -- full transparency
-        Visible = getgenv().showfov and true or false, -- show FOV based on boolean
+        Visible = getgenv().showfov, -- show FOV based on boolean
     })
 
     -- Update circle position
@@ -122,7 +117,7 @@ local function get_prediction()
         local velocity_pred = (root.Position + (root.Velocity * get_ping()))
         local movedirection_pred = (root.Position + (humanoid.MoveDirection * get_ping()))
         
-        return (anti_detect() and movedirection_pred) or velocity_pred
+        return (getgenv().silent_aim_prediction and movedirection_pred) or velocity_pred
     end
 end
 
@@ -131,7 +126,7 @@ local index; index = hookmetamethod(game, '__index', function(self, key)
         local target = get_player_mouse()
         local hit_chance = math.random(1, 100)
         if hit_chance <= getgenv().hitchance then -- check hit chance
-            return (target and CFrame.new(get_prediction())) or index(self, key)
+            return (getgenv().silent_aim and target and CFrame.new(get_prediction())) or index(self, key)
         end
     end
    
