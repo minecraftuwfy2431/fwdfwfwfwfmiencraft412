@@ -6,13 +6,6 @@ getgenv().fov_settings = {
     old_mouse = {} -- dont change
 }
 
-getgenv().silent_aim = false -- enable silent aim
-getgenv().silent_aim_prediction = false -- enable prediction for silent aim
-getgenv().showfov = false -- show FOV
-getgenv().fov_filled = false -- fill FOV circle
-getgenv().fov_radius = 100 -- FOV circle radius
-getgenv().hitchance = 100 -- chance of hitting in percentage
-
 local userinputservice = game:GetService('UserInputService')
 local players = game:GetService('Players')
 local workspace = game:GetService('Workspace')
@@ -33,23 +26,40 @@ do
         return obj 
     end
 
-    local fov_settings = getgenv().fov_settings
-
-    fov_settings.drawings[1] = draw('Circle', {
-        Color = Color3.new(1, 1, 1), -- white color
-        Radius = fov_settings.radius,
-        Filled = getgenv().fov_filled, -- fill the circle based on boolean
-        Transparency = 1, -- full transparency
-        Visible = getgenv().showfov, -- show FOV based on boolean
-    })
-
-    -- Update circle position
+    for i = 1, fov_settings.points do 
+        fov_settings.drawings[i] = draw('Line', {Color = Color3.fromRGB(255, 255, 255), Visible = true, Thickness = 2})
+    end
+    
+    -- Old Position
+    task.spawn(function()
+        while (task.wait(1/30)) do 
+            local mouse_pos = userinputservice:GetMouseLocation()
+            
+            for index, drawing in pairs(fov_settings.drawings) do 
+                local angle = tau * index / fov_settings.points
+                local x_offset = fov_settings.radius * math.cos(angle)
+                local y_offset = fov_settings.radius * math.sin(angle)
+                local point_pos = Vector2.new(mouse_pos.X + x_offset, mouse_pos.Y + y_offset)
+                
+                fov_settings.old_mouse[index] = point_pos
+            end
+        end
+    end)
+    
+    -- New Position
     task.spawn(function()
         while (task.wait()) do 
             local mouse_pos = userinputservice:GetMouseLocation()
             
-            for _, drawing in pairs(fov_settings.drawings) do 
-                drawing.Position = mouse_pos
+            for index, drawing in pairs(fov_settings.drawings) do 
+                local angle = tau * index / fov_settings.points
+                local x_offset = fov_settings.radius * math.cos(angle)
+                local y_offset = fov_settings.radius * math.sin(angle)
+                local point_pos = Vector2.new(mouse_pos.X + x_offset, mouse_pos.Y + y_offset)
+                
+                drawing.From = fov_settings.old_mouse[index] or mouse_pos
+                drawing.To = point_pos + Vector2.new(1.5, 0)
+                drawing.Color = Color3.fromHSV((tick() % 1 - (index / fov_settings.points)) % 1, 0.5, 1) -- liam
             end
         end
     end)
@@ -57,7 +67,7 @@ end
 
 -- // Lock \\ -- 
 local function get_player_mouse()
-    local dist = getgenv().fov_radius
+    local dist = fov_settings.radius
     local player = nil 
     
     for i, v in pairs(players:GetPlayers()) do 
@@ -100,7 +110,7 @@ local function anti_detect()
 end
 
 local function get_ping()
-    local new_ping = (anti_detect() and getgenv().prediction * 16) or getgenv().prediction
+    local new_ping = (anti_detect() and prediction * 16) or prediction
     return new_ping
 end
 
@@ -117,17 +127,14 @@ local function get_prediction()
         local velocity_pred = (root.Position + (root.Velocity * get_ping()))
         local movedirection_pred = (root.Position + (humanoid.MoveDirection * get_ping()))
         
-        return (getgenv().silent_aim_prediction and movedirection_pred) or velocity_pred
+        return (anti_detect() and movedirection_pred) or velocity_pred
     end
 end
 
 local index; index = hookmetamethod(game, '__index', function(self, key)
     if (self:IsA('Mouse') and key == 'Hit') then 
         local target = get_player_mouse()
-        local hit_chance = math.random(1, 100)
-        if hit_chance <= getgenv().hitchance then -- check hit chance
-            return (getgenv().silent_aim and target and CFrame.new(get_prediction())) or index(self, key)
-        end
+        return (target and CFrame.new(get_prediction())) or index(self, key)
     end
    
     return index(self, key) 
