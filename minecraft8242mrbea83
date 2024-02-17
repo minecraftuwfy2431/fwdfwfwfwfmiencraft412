@@ -8,10 +8,10 @@ getgenv().fov_settings = {
 
 getgenv().silent_aim = false -- enable silent aim
 getgenv().silent_aim_prediction = false -- enable prediction for silent aim
-getgenv().showfov = true -- show FOV
-getgenv().fov_filled = true -- fill FOV circle
+getgenv().showfov = false -- show FOV
+getgenv().fov_filled = false -- fill FOV circle
 getgenv().fov_radius = 100 -- FOV circle radius
-getgenv().hitchance = 80 -- chance of hitting in percentage
+getgenv().hitchance = 100 -- chance of hitting in percentage
 
 local userinputservice = game:GetService('UserInputService')
 local players = game:GetService('Players')
