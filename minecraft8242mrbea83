@@ -1,3 +1,4 @@
+getgenv().silentAim = false
 getgenv().prediction = 0.135 -- changeable
 getgenv().fov_settings = {
     radius = 150, -- changeable
