@@ -57,12 +57,13 @@ end
 local function PredictPosition(target)
     if Environment.Settings.PredictionEnabled then
         local velocity = target.Character and target.Character:FindFirstChildOfClass("Humanoid") and target.Character:FindFirstChildOfClass("Humanoid").RootPart and target.Character:FindFirstChildOfClass("Humanoid").RootPart.Velocity or Vector3.new(0, 0, 0)
-        local predictedPosition = target.Character[Environment.Settings.LockPart].Position + velocity * Environment.Settings.PredictionAmount
+        local predictedPosition = target.Character and target.Character:FindFirstChild(Environment.Settings.LockPart) and (target.Character[Environment.Settings.LockPart].Position + velocity * Environment.Settings.PredictionAmount) or nil
         return predictedPosition
     else
-        return target.Character and target.Character[Environment.Settings.LockPart].Position or nil
+        return target.Character and target.Character:FindFirstChild(Environment.Settings.LockPart) and target.Character[Environment.Settings.LockPart].Position or nil
     end
 end
+
 
 local function CancelLock()
     Environment.Locked = nil
