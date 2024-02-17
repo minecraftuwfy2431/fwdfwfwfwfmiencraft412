@@ -55,8 +55,13 @@ local function ConvertVector(Vector)
 end
 
 local function PredictPosition(target)
-    local velocity = target.Character and target.Character:FindFirstChildOfClass("Humanoid") and target.Character:FindFirstChildOfClass("Humanoid").RootPart and target.Character:FindFirstChildOfClass("Humanoid").RootPart.Velocity or Vector3.new(0, 0, 0)
-    return target.Character[Environment.Settings.LockPart].Position + velocity * Environment.Settings.PredictionAmount
+    if Environment.Settings.PredictionEnabled then
+        local velocity = target.Character and target.Character:FindFirstChildOfClass("Humanoid") and target.Character:FindFirstChildOfClass("Humanoid").RootPart and target.Character:FindFirstChildOfClass("Humanoid").RootPart.Velocity or Vector3.new(0, 0, 0)
+        local predictedPosition = target.Character[Environment.Settings.LockPart].Position + velocity * Environment.Settings.PredictionAmount
+        return predictedPosition
+    else
+        return target.Character and target.Character[Environment.Settings.LockPart].Position or nil
+    end
 end
 
 local function CancelLock()
@@ -79,7 +84,7 @@ local function GetClosestPlayer()
                 if Environment.Settings.AliveCheck and v.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then continue end
                 if Environment.Settings.WallCheck and #(Camera:GetPartsObscuringTarget({v.Character[Environment.Settings.LockPart].Position}, v.Character:GetDescendants())) > 0 then continue end
 
-                local predictedPosition = Environment.Settings.PredictionEnabled and PredictPosition(v) or v.Character[Environment.Settings.LockPart].Position
+                local predictedPosition = PredictPosition(v)
                 local Vector, OnScreen = Camera:WorldToViewportPoint(predictedPosition); Vector = ConvertVector(Vector)
                 local Distance = (UserInputService:GetMouseLocation() - Vector).Magnitude
 
@@ -138,7 +143,7 @@ local function Load()
     ServiceConnections.InputBeganConnection = UserInputService.InputBegan:Connect(function(Input)
         if not Typing then
             pcall(function()
-                if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode == Enum.KeyCode[#Environment.Settings.TriggerKey == 1 and stringupper(Environment.Settings.TriggerKey) or Environment.Settings.TriggerKey] or Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
+                if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode == Enum.KeyCode[#Environment.Settings.TriggerKey == 1 and string.upper(Environment.Settings.TriggerKey) or Environment.Settings.TriggerKey] or Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
                     if Environment.Settings.Toggle then
                         Running = not Running
 
@@ -157,7 +162,7 @@ local function Load()
         if not Typing then
             if not Environment.Settings.Toggle then
                 pcall(function()
-                    if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode == Enum.KeyCode[#Environment.Settings.TriggerKey == 1 and stringupper(Environment.Settings.TriggerKey) or Environment.Settings.TriggerKey] or Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
+                    if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode == Enum.KeyCode[#Environment.Settings.TriggerKey == 1 and string.upper(Environment.Settings.TriggerKey) or Environment.Settings.TriggerKey] or Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
                         Running = false; CancelLock()
                     end
                 end)
