@@ -1529,20 +1529,73 @@ do
 			FillDirection = Enum.FillDirection.Horizontal,
 			SortOrder = Enum.SortOrder.LayoutOrder
 		})
-		local DragButton = Library:Create('TextButton', {
-			Parent = Outline,
-			Size = UDim2.new(1, 0, 0, 21),
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			BorderColor3 = Color3.new(0, 0, 0),
-			Text = "soulhub | " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
-			TextColor3 = "Accent",
-			AutoButtonColor = false,
-			FontFace = Library.Font,
-			TextSize = Library.FontSize,
-			TextStrokeTransparency = 0
+
+		local startTime = os.time()
+
+		local Container = Library:Create('Frame', {
+		    Parent = Outline,
+		    Size = UDim2.new(1, 0, 0, 21),
+		    BackgroundColor3 = Color3.new(1, 1, 1),
+		    BackgroundTransparency = 1,
+		    BorderSizePixel = 0
 		})
+		
+		local SoulhubLabel = Library:Create('TextLabel', {
+		    Parent = Container,
+		    Position = UDim2.new(0, 0, 0, 0),
+		    Size = UDim2.new(0, 60, 1, 0),
+		    BackgroundColor3 = Color3.new(1, 1, 1),
+		    BackgroundTransparency = 1,
+		    BorderSizePixel = 0,
+		    Text = "soulhub",
+		    TextColor3 = Color3.new(0, 1, 0),
+		    FontFace = Library.Font,
+		    TextSize = Library.FontSize,
+		    TextXAlignment = Enum.TextXAlignment.Left,
+		    TextStrokeTransparency = 0
+		})
+		
+		local GameNameLabel = Library:Create('TextLabel', {
+		    Parent = Container,
+		    Position = UDim2.new(0, 65, 0, 0),
+		    Size = UDim2.new(0, 150, 1, 0),
+		    BackgroundColor3 = Color3.new(1, 1, 1),
+		    BackgroundTransparency = 1,
+		    BorderSizePixel = 0,
+		    Text = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+		    TextColor3 = Color3.new(0.5, 0, 0.5),
+		    FontFace = Library.Font,
+		    TextSize = Library.FontSize,
+		    TextXAlignment = Enum.TextXAlignment.Left,
+		    TextStrokeTransparency = 0
+		})
+		
+		local TimerLabel = Library:Create('TextLabel', {
+		    Parent = Container,
+		    Position = UDim2.new(0, 220, 0, 0),
+		    Size = UDim2.new(0, 100, 1, 0),
+		    BackgroundColor3 = Color3.new(1, 1, 1),
+		    BackgroundTransparency = 1,
+		    BorderSizePixel = 0,
+		    Text = "00:00:00",
+		    TextColor3 = Color3.new(1, 1, 0),
+		    FontFace = Library.Font,
+		    TextSize = Library.FontSize,
+		    TextXAlignment = Enum.TextXAlignment.Left,
+		    TextStrokeTransparency = 0
+		})
+		
+		task.spawn(function()
+		    while task.wait(1) do
+		        local elapsedTime = os.time() - startTime
+		        local hours = math.floor(elapsedTime / 3600)
+		        local minutes = math.floor((elapsedTime % 3600) / 60)
+		        local seconds = elapsedTime % 60
+		
+		        TimerLabel.Text = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+		    end
+		end)
+
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
 			BackgroundTransparency = 1,
