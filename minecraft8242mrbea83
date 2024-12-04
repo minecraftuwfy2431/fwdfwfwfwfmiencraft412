@@ -730,224 +730,190 @@ function Library:LoadConfigTab(Window)
 			end
 		end
 		PresetThemes:Dropdown({
-				    Name = "Presets",
-				    Flag = "UI/Presets",
-				    Options = {
-				        "Tokyo Night",
-				        "Quartz",
-				        "BBot",
-				        "Fatality",
-				        "Jester",
-				        "Mint",
-				        "Ubuntu",
-				        "Abyss",
-				        "Neverlose",
-				        "Aimware",
-				        "Youtube",
-				        "Gamesense",
-				        "Onetap",
-				        "Entropy",
-				        "Interwebz",
-				        "Dracula",
-				        "Spotify",
-				        "Sublime",
-				        "Vape",
-				        "Neko",
-				        "Corn",
-				        "Minecraft",
-				        "Cyberpunk",
-				        "Retro",
-				        "Galaxy",
-				        "Obsidian"
-				    },
-				    State = "Tokyo Night",
-				    Callback = function(v)
-				        local themes = {
-				            Quartz = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#232330",
-				                Accent = "#426E87",
-				                BackgroundColor = "#1D1B26",
-				                OutlineColor = "#27232F"
-				            },
-				            BBot = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#1E1E1E",
-				                Accent = "#7E48A3",
-				                BackgroundColor = "#232323",
-				                OutlineColor = "#141414"
-				            },
-				            Fatality = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#1E1842",
-				                Accent = "#C50754",
-				                BackgroundColor = "#191335",
-				                OutlineColor = "#3C355D"
-				            },
-				            Jester = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#242424",
-				                Accent = "#DB4467",
-				                BackgroundColor = "#1C1C1C",
-				                OutlineColor = "#373737"
-				            },
-				            Mint = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#242424",
-				                Accent = "#3DB488",
-				                BackgroundColor = "#1C1C1C",
-				                OutlineColor = "#373737"
-				            },
-				            ['Tokyo Night'] = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#191925",
-				                Accent = "#6759B3",
-				                BackgroundColor = "#16161F",
-				                OutlineColor = "#323232"
-				            },
-				            Ubuntu = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#3E3E3E",
-				                Accent = "#E2581E",
-				                BackgroundColor = "#323232",
-				                OutlineColor = "#191919"
-				            },
-				            Abyss = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#2D2D2D",
-				                Accent = "#8C87B4",
-				                BackgroundColor = "#141414",
-				                OutlineColor = "#0A0A0A"
-				            },
-				            Neverlose = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#000F1E",
-				                Accent = "#00B4F0",
-				                BackgroundColor = "#050514",
-				                OutlineColor = "#000005"
-				            },
-				            Aimware = {
-				                FontColor = "#E8E8E8",
-				                MainColor = "#2B2B2B",
-				                Accent = "#C82828",
-				                BackgroundColor = "#191919",
-				                OutlineColor = "#000005"
-				            },
-				            Youtube = {
-				                FontColor = "#F1F1F1",
-				                MainColor = "#232323",
-				                Accent = "#FF0000",
-				                BackgroundColor = "#0F0F0F",
-				                OutlineColor = "#000000"
-				            },
-				            Gamesense = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#171717",
-				                Accent = "#A7D94D",
-				                BackgroundColor = "#0C0C0C",
-				                OutlineColor = "#000000"
-				            },
-				            Onetap = {
-				                FontColor = "#D6D9E0",
-				                MainColor = "#2C3037",
-				                Accent = "#DDA85D",
-				                BackgroundColor = "#1F2125",
-				                OutlineColor = "#000000"
-				            },
-				            Entropy = {
-				                FontColor = "#DCDCDC",
-				                MainColor = "#3D3A43",
-				                Accent = "#81BBE9",
-				                BackgroundColor = "#302F37",
-				                OutlineColor = "#0A0A0A"
-				            },
-				            Interwebz = {
-				                FontColor = "#FCFCFC",
-				                MainColor = "#291F38",
-				                Accent = "#C9654B",
-				                BackgroundColor = "#1F162B",
-				                OutlineColor = "#1A1A1A"
-				            },
-				            Dracula = {
-				                FontColor = "#B4B4B8",
-				                MainColor = "#2A2C38",
-				                Accent = "#9A81B3",
-				                BackgroundColor = "#252730",
-				                OutlineColor = "#202126"
-				            },
-				            Spotify = {
-				                FontColor = "#D0D0D0",
-				                MainColor = "#181818",
-				                Accent = "#1ED760",
-				                BackgroundColor = "#121212",
-				                OutlineColor = "#0A0A0A"
-				            },
-				            Sublime = {
-				                FontColor = "#E8FFFF",
-				                MainColor = "#32332D",
-				                Accent = "#FF9800",
-				                BackgroundColor = "#282923",
-				                OutlineColor = "#000000"
-				            },
-				            Vape = {
-				                FontColor = "#DCDCDC",
-				                MainColor = "#1F1F1F",
-				                Accent = "#26866A",
-				                BackgroundColor = "#1A1A1A",
-				                OutlineColor = "#0A0A0A"
-				            },
-				            Neko = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#171717",
-				                Accent = "#D21F6A",
-				                BackgroundColor = "#131313",
-				                OutlineColor = "#000000"
-				            },
-				            Corn = {
-				                FontColor = "#DCDCDC",
-				                MainColor = "#252525",
-				                Accent = "#FF9000",
-				                BackgroundColor = "#191919",
-				                OutlineColor = "#000000"
-				            },
-				            Minecraft = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#333333",
-				                Accent = "#27CE40",
-				                BackgroundColor = "#262626",
-				                OutlineColor = "#000000"
-				            },
-				            Cyberpunk = {
-				                FontColor = "#F8F8F2",
-				                MainColor = "#2E3440",
-				                Accent = "#8FBCBB",
-				                BackgroundColor = "#1F2330",
-				                OutlineColor = "#4C566A"
-				            },
-				            Retro = {
-				                FontColor = "#FFD700",
-				                MainColor = "#282C34",
-				                Accent = "#FF4500",
-				                BackgroundColor = "#1A1B1F",
-				                OutlineColor = "#1C1C1C"
-				            },
-				            Galaxy = {
-				                FontColor = "#FFFFFF",
-				                MainColor = "#1A1A2E",
-				                Accent = "#6A0572",
-				                BackgroundColor = "#16213E",
-				                OutlineColor = "#0F3460"
-				            },
-				            Obsidian = {
-				                FontColor = "#E0E0E0",
-				                MainColor = "#2C2C2C",
-				                Accent = "#5C5C5C",
-				                BackgroundColor = "#1E1E1E",
-				                OutlineColor = "#141414"
-				            }
-				        }
-				    end
-				})
+			Name = "Presets",
+			Flag = "UI/Presets",
+			Options = {
+				"Tokyo Night",
+				"Quartz",
+				"BBot",
+				"Fatality",
+				"Jester",
+				"Mint",
+				"Ubuntu",
+				"Abyss",
+				"Neverlose",
+				"Aimware",
+				"Youtube",
+				"Gamesense",
+				"Onetap",
+				"Entropy",
+				"Interwebz",
+				"Dracula",
+				"Spotify",
+				"Sublime",
+				"Vape",
+				"Neko",
+				"Corn",
+				"Minecraft"
+			},
+			State = "Tokyo Night",
+			Callback = function(v)
+				local themes = {
+					Quartz = {
+						FontColor = "#FFFFFF",
+						MainColor = "#232330",
+						Accent = "#426E87",
+						BackgroundColor = "#1D1B26",
+						OutlineColor = "#27232F"
+					},
+					BBot = {
+						FontColor = "#FFFFFF",
+						MainColor = "#1E1E1E",
+						Accent = "#7E48A3",
+						BackgroundColor = "#232323",
+						OutlineColor = "#141414"
+					},
+					Fatality = {
+						FontColor = "#FFFFFF",
+						MainColor = "#1E1842",
+						Accent = "#C50754",
+						BackgroundColor = "#191335",
+						OutlineColor = "#3C355D"
+					},
+					Jester = {
+						FontColor = "#FFFFFF",
+						MainColor = "#242424",
+						Accent = "#DB4467",
+						BackgroundColor = "#1C1C1C",
+						OutlineColor = "#373737"
+					},
+					Mint = {
+						FontColor = "#FFFFFF",
+						MainColor = "#242424",
+						Accent = "#3DB488",
+						BackgroundColor = "#1C1C1C",
+						OutlineColor = "#373737"
+					},
+					['Tokyo Night'] = {
+						FontColor = "#FFFFFF",
+						MainColor = "#191925",
+						Accent = "#6759B3",
+						BackgroundColor = "#16161F",
+						OutlineColor = "#323232"
+					},
+					Ubuntu = {
+						FontColor = "#FFFFFF",
+						MainColor = "#3E3E3E",
+						Accent = "#E2581E",
+						BackgroundColor = "#323232",
+						OutlineColor = "#191919"
+					},
+					Abyss = {
+						FontColor = "#FFFFFF",
+						MainColor = "#2D2D2D",
+						Accent = "#8C87B4",
+						BackgroundColor = "#141414",
+						OutlineColor = "#0A0A0A"
+					},
+					Neverlose = {
+						FontColor = "#FFFFFF",
+						MainColor = "#000F1E",
+						Accent = "#00B4F0",
+						BackgroundColor = "#050514",
+						OutlineColor = "#000005"
+					},
+					Aimware = {
+						FontColor = "#E8E8E8",
+						MainColor = "#2B2B2B",
+						Accent = "#C82828",
+						BackgroundColor = "#191919",
+						OutlineColor = "#000005"
+					},
+					Youtube = {
+						FontColor = "#F1F1F1",
+						MainColor = "#232323",
+						Accent = "#FF0000",
+						BackgroundColor = "#0F0F0F",
+						OutlineColor = "#000000"
+					},
+					Gamesense = {
+						FontColor = "#FFFFFF",
+						MainColor = "#171717",
+						Accent = "#A7D94D",
+						BackgroundColor = "#0C0C0C",
+						OutlineColor = "#000000"
+					},
+					Onetap = {
+						FontColor = "#D6D9E0",
+						MainColor = "#2C3037",
+						Accent = "#DDA85D",
+						BackgroundColor = "#1F2125",
+						OutlineColor = "#000000"
+					},
+					Entropy = {
+						FontColor = "#DCDCDC",
+						MainColor = "#3D3A43",
+						Accent = "#81BBE9",
+						BackgroundColor = "#302F37",
+						OutlineColor = "#0A0A0A"
+					},
+					Interwebz = {
+						FontColor = "#FCFCFC",
+						MainColor = "#291F38",
+						Accent = "#C9654B",
+						BackgroundColor = "#1F162B",
+						OutlineColor = "#1A1A1A"
+					},
+					Dracula = {
+						FontColor = "#B4B4B8",
+						MainColor = "#2A2C38",
+						Accent = "#9A81B3",
+						BackgroundColor = "#252730",
+						OutlineColor = "#202126"
+					},
+					Spotify = {
+						FontColor = "#D0D0D0",
+						MainColor = "#181818",
+						Accent = "#1ED760",
+						BackgroundColor = "#121212",
+						OutlineColor = "#0A0A0A"
+					},
+					Sublime = {
+						FontColor = "#E8FFFF",
+						MainColor = "#32332D",
+						Accent = "#FF9800",
+						BackgroundColor = "#282923",
+						OutlineColor = "#000000"
+					},
+					Vape = {
+						FontColor = "#DCDCDC",
+						MainColor = "#1F1F1F",
+						Accent = "#26866A",
+						BackgroundColor = "#1A1A1A",
+						OutlineColor = "#0A0A0A"
+					},
+					Neko = {
+						FontColor = "#FFFFFF",
+						MainColor = "#171717",
+						Accent = "#D21F6A",
+						BackgroundColor = "#131313",
+						OutlineColor = "#000000"
+					},
+					Corn = {
+						FontColor = "#DCDCDC",
+						MainColor = "#252525",
+						Accent = "#FF9000",
+						BackgroundColor = "#191919",
+						OutlineColor = "#000000"
+					},
+					Minecraft = {
+						FontColor = "#FFFFFF",
+						MainColor = "#333333",
+						Accent = "#27CE40",
+						BackgroundColor = "#262626",
+						OutlineColor = "#000000"
+					}
+				}
 
 				local selectedTheme = themes[v]
 				if selectedTheme then
