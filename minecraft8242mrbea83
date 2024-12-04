@@ -1,6 +1,6 @@
 local Library = {
 	Open = true;
-	Accent = Color3.fromHex("FF0000");
+	Accent = Color3.fromHex("6759b3");
 	DarkerAccent = nil;
 	FontColor = Color3.fromHex("ffffff");
 	OutlineColor = Color3.fromHex("323232");	
@@ -733,7 +733,6 @@ function Library:LoadConfigTab(Window)
 			Name = "Presets",
 			Flag = "UI/Presets",
 			Options = {
-				"Soul Preset", 
 				"Tokyo Night",
 				"Quartz",
 				"BBot",
@@ -757,7 +756,7 @@ function Library:LoadConfigTab(Window)
 				"Corn",
 				"Minecraft"
 			},
-			State = "Soul Preset",
+			State = "Tokyo Night",
 			Callback = function(v)
 				local themes = {
 					Quartz = {
@@ -795,15 +794,7 @@ function Library:LoadConfigTab(Window)
 						BackgroundColor = "#1C1C1C",
 						OutlineColor = "#373737"
 					},
-					Soul Preset = { 
-					    FontColor = Color3.fromHex("FFFFFF"),
-					    MainColor = Color3.fromHex("191925"),
-					    Accent = Color3.fromHex("FF0000"),
-					    BackgroundColor = Color3.fromHex("16161F"),
-					    OutlineColor = Color3.fromHex("323232")
-					},
-
-					Tokyo Night = {
+					['Tokyo Night'] = {
 						FontColor = "#FFFFFF",
 						MainColor = "#191925",
 						Accent = "#6759B3",
