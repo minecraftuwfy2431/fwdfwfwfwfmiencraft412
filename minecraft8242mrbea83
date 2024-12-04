@@ -801,7 +801,7 @@ function Library:LoadConfigTab(Window)
 					    Accent = Color3.fromHex("FF0000"),
 					    BackgroundColor = Color3.fromHex("16161F"),
 					    OutlineColor = Color3.fromHex("323232")
-					}
+					},
 
 					Tokyo Night = {
 						FontColor = "#FFFFFF",
