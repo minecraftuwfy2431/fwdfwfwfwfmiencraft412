@@ -730,311 +730,224 @@ function Library:LoadConfigTab(Window)
 			end
 		end
 		PresetThemes:Dropdown({
-			Name = "Presets",
-			Flag = "UI/Presets",
-			Options = {
-			    "Tokyo Night",
-			    "Quartz",
-			    "BBot",
-			    "Fatality",
-			    "Jester",
-			    "Mint",
-			    "Ubuntu",
-			    "Abyss",
-			    "Neverlose",
-			    "Aimware",
-			    "Youtube",
-			    "Gamesense",
-			    "Onetap",
-			    "Entropy",
-			    "Interwebz",
-			    "Dracula",
-			    "Spotify",
-			    "Sublime",
-			    "Vape",
-			    "Neko",
-			    "Corn",
-			    "Minecraft",
-			    "Cyberpunk",
-			    "RetroWave",
-			    "Solarized",
-			    "Monokai",
-			    "Oceanic",
-			    "Galactic",
-			    "Midnight",
-			    "Forest",
-			    "Sunset",
-			    "CherryBlossom",
-			    "Neon",
-			    "Arctic",
-			    "Tropical",
-			    "Ember",
-			    "Spectrum"
-			},
-
-			State = "Tokyo Night",
-			Callback = function(v)
-				local themes = {
-				Quartz = {
-					FontColor = "#FFFFFF",
-					MainColor = "#232330",
-					Accent = "#426E87",
-					BackgroundColor = "#1D1B26",
-					OutlineColor = "#27232F"
-				},
-				BBot = {
-					FontColor = "#FFFFFF",
-					MainColor = "#1E1E1E",
-					Accent = "#7E48A3",
-					BackgroundColor = "#232323",
-					OutlineColor = "#141414"
-				},
-				Fatality = {
-					FontColor = "#FFFFFF",
-					MainColor = "#1E1842",
-					Accent = "#C50754",
-					BackgroundColor = "#191335",
-					OutlineColor = "#3C355D"
-				},
-				Jester = {
-					FontColor = "#FFFFFF",
-					MainColor = "#242424",
-					Accent = "#DB4467",
-					BackgroundColor = "#1C1C1C",
-					OutlineColor = "#373737"
-				},
-				Mint = {
-					FontColor = "#FFFFFF",
-					MainColor = "#242424",
-					Accent = "#3DB488",
-					BackgroundColor = "#1C1C1C",
-					OutlineColor = "#373737"
-				},
-				['Tokyo Night'] = {
-					FontColor = "#FFFFFF",
-					MainColor = "#191925",
-					Accent = "#6759B3",
-					BackgroundColor = "#16161F",
-					OutlineColor = "#323232"
-				},
-				Ubuntu = {
-					FontColor = "#FFFFFF",
-					MainColor = "#3E3E3E",
-					Accent = "#E2581E",
-					BackgroundColor = "#323232",
-					OutlineColor = "#191919"
-				},
-				Abyss = {
-					FontColor = "#FFFFFF",
-					MainColor = "#2D2D2D",
-					Accent = "#8C87B4",
-					BackgroundColor = "#141414",
-					OutlineColor = "#0A0A0A"
-				},
-				Neverlose = {
-					FontColor = "#FFFFFF",
-					MainColor = "#000F1E",
-					Accent = "#00B4F0",
-					BackgroundColor = "#050514",
-					OutlineColor = "#000005"
-				},
-				Aimware = {
-					FontColor = "#E8E8E8",
-					MainColor = "#2B2B2B",
-					Accent = "#C82828",
-					BackgroundColor = "#191919",
-					OutlineColor = "#000005"
-				},
-				Youtube = {
-					FontColor = "#F1F1F1",
-					MainColor = "#232323",
-					Accent = "#FF0000",
-					BackgroundColor = "#0F0F0F",
-					OutlineColor = "#000000"
-				},
-				Gamesense = {
-					FontColor = "#FFFFFF",
-					MainColor = "#171717",
-					Accent = "#A7D94D",
-					BackgroundColor = "#0C0C0C",
-					OutlineColor = "#000000"
-				},
-				Onetap = {
-					FontColor = "#D6D9E0",
-					MainColor = "#2C3037",
-					Accent = "#DDA85D",
-					BackgroundColor = "#1F2125",
-					OutlineColor = "#000000"
-				},
-				Entropy = {
-					FontColor = "#DCDCDC",
-					MainColor = "#3D3A43",
-					Accent = "#81BBE9",
-					BackgroundColor = "#302F37",
-					OutlineColor = "#0A0A0A"
-				},
-				Interwebz = {
-					FontColor = "#FCFCFC",
-					MainColor = "#291F38",
-					Accent = "#C9654B",
-					BackgroundColor = "#1F162B",
-					OutlineColor = "#1A1A1A"
-				},
-				Dracula = {
-					FontColor = "#B4B4B8",
-					MainColor = "#2A2C38",
-					Accent = "#9A81B3",
-					BackgroundColor = "#252730",
-					OutlineColor = "#202126"
-				},
-				Spotify = {
-					FontColor = "#D0D0D0",
-					MainColor = "#181818",
-					Accent = "#1ED760",
-					BackgroundColor = "#121212",
-					OutlineColor = "#0A0A0A"
-				},
-				Sublime = {
-					FontColor = "#E8FFFF",
-					MainColor = "#32332D",
-					Accent = "#FF9800",
-					BackgroundColor = "#282923",
-					OutlineColor = "#000000"
-				},
-				Vape = {
-					FontColor = "#DCDCDC",
-					MainColor = "#1F1F1F",
-					Accent = "#26866A",
-					BackgroundColor = "#1A1A1A",
-					OutlineColor = "#0A0A0A"
-				},
-				Neko = {
-					FontColor = "#FFFFFF",
-					MainColor = "#171717",
-					Accent = "#D21F6A",
-					BackgroundColor = "#131313",
-					OutlineColor = "#000000"
-				},
-				Corn = {
-					FontColor = "#DCDCDC",
-					MainColor = "#252525",
-					Accent = "#FF9000",
-					BackgroundColor = "#191919",
-					OutlineColor = "#000000"
-				},
-				Minecraft = {
-					FontColor = "#FFFFFF",
-					MainColor = "#333333",
-					Accent = "#27CE40",
-					BackgroundColor = "#262626",
-					OutlineColor = "#000000"
-				}
-				Cyberpunk = {
-					FontColor = "#FFD700",
-					MainColor = "#1A1A2E",
-					Accent = "#FF2E63",
-					BackgroundColor = "#0F0F1C",
-					OutlineColor = "#121231"
+				    Name = "Presets",
+				    Flag = "UI/Presets",
+				    Options = {
+				        "Tokyo Night",
+				        "Quartz",
+				        "BBot",
+				        "Fatality",
+				        "Jester",
+				        "Mint",
+				        "Ubuntu",
+				        "Abyss",
+				        "Neverlose",
+				        "Aimware",
+				        "Youtube",
+				        "Gamesense",
+				        "Onetap",
+				        "Entropy",
+				        "Interwebz",
+				        "Dracula",
+				        "Spotify",
+				        "Sublime",
+				        "Vape",
+				        "Neko",
+				        "Corn",
+				        "Minecraft",
+				        "Cyberpunk",
+				        "Retro",
+				        "Galaxy",
+				        "Obsidian"
 				    },
-				    RetroWave = {
-					FontColor = "#F8F8FF",
-					MainColor = "#1B1B3A",
-					Accent = "#E84545",
-					BackgroundColor = "#101020",
-					OutlineColor = "#2A2A5C"
-				    },
-				    Solarized = {
-					FontColor = "#FDF6E3",
-					MainColor = "#002B36",
-					Accent = "#B58900",
-					BackgroundColor = "#073642",
-					OutlineColor = "#586E75"
-				    },
-				    Monokai = {
-					FontColor = "#F8F8F2",
-					MainColor = "#272822",
-					Accent = "#A6E22E",
-					BackgroundColor = "#1E1F1C",
-					OutlineColor = "#75715E"
-				    },
-				    Oceanic = {
-					FontColor = "#C0C5CE",
-					MainColor = "#1B2B34",
-					Accent = "#6699CC",
-					BackgroundColor = "#102026",
-					OutlineColor = "#4F5B66"
-				    },
-				    Galactic = {
-					FontColor = "#FFFFFF",
-					MainColor = "#1F2739",
-					Accent = "#3A506B",
-					BackgroundColor = "#121826",
-					OutlineColor = "#0A0D1A"
-				    },
-				    Midnight = {
-					FontColor = "#E5E5E5",
-					MainColor = "#121212",
-					Accent = "#1F51FF",
-					BackgroundColor = "#000000",
-					OutlineColor = "#222222"
-				    },
-				    Forest = {
-					FontColor = "#E0FFE5",
-					MainColor = "#2C5F2D",
-					Accent = "#97BC62",
-					BackgroundColor = "#132A13",
-					OutlineColor = "#0B1909"
-				    },
-				    Sunset = {
-					FontColor = "#FFEDD5",
-					MainColor = "#370617",
-					Accent = "#FFBA08",
-					BackgroundColor = "#6A040F",
-					OutlineColor = "#3F0A1B"
-				    },
-				    CherryBlossom = {
-					FontColor = "#F8E1E7",
-					MainColor = "#502A3C",
-					Accent = "#FFB6C1",
-					BackgroundColor = "#3C1A2B",
-					OutlineColor = "#280D1C"
-				    },
-				    Neon = {
-					FontColor = "#FFFFFF",
-					MainColor = "#212121",
-					Accent = "#39FF14",
-					BackgroundColor = "#121212",
-					OutlineColor = "#000000"
-				    },
-				    Arctic = {
-					FontColor = "#E5E5E5",
-					MainColor = "#1E2022",
-					Accent = "#5DADE2",
-					BackgroundColor = "#101010",
-					OutlineColor = "#2C3E50"
-				    },
-				    Tropical = {
-					FontColor = "#FFFFFF",
-					MainColor = "#344B47",
-					Accent = "#29A19C",
-					BackgroundColor = "#102925",
-					OutlineColor = "#081B1A"
-				    },
-				    Ember = {
-					FontColor = "#FFD1A9",
-					MainColor = "#2B1B17",
-					Accent = "#FF7F50",
-					BackgroundColor = "#1A0E0A",
-					OutlineColor = "#3E2B24"
-				    },
-				    Spectrum = {
-					FontColor = "#FFFFFF",
-					MainColor = "#202124",
-					Accent = "#FF5E79",
-					BackgroundColor = "#171819",
-					OutlineColor = "#000000"
-				    }
-				}
+				    State = "Tokyo Night",
+				    Callback = function(v)
+				        local themes = {
+				            Quartz = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#232330",
+				                Accent = "#426E87",
+				                BackgroundColor = "#1D1B26",
+				                OutlineColor = "#27232F"
+				            },
+				            BBot = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#1E1E1E",
+				                Accent = "#7E48A3",
+				                BackgroundColor = "#232323",
+				                OutlineColor = "#141414"
+				            },
+				            Fatality = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#1E1842",
+				                Accent = "#C50754",
+				                BackgroundColor = "#191335",
+				                OutlineColor = "#3C355D"
+				            },
+				            Jester = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#242424",
+				                Accent = "#DB4467",
+				                BackgroundColor = "#1C1C1C",
+				                OutlineColor = "#373737"
+				            },
+				            Mint = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#242424",
+				                Accent = "#3DB488",
+				                BackgroundColor = "#1C1C1C",
+				                OutlineColor = "#373737"
+				            },
+				            ['Tokyo Night'] = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#191925",
+				                Accent = "#6759B3",
+				                BackgroundColor = "#16161F",
+				                OutlineColor = "#323232"
+				            },
+				            Ubuntu = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#3E3E3E",
+				                Accent = "#E2581E",
+				                BackgroundColor = "#323232",
+				                OutlineColor = "#191919"
+				            },
+				            Abyss = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#2D2D2D",
+				                Accent = "#8C87B4",
+				                BackgroundColor = "#141414",
+				                OutlineColor = "#0A0A0A"
+				            },
+				            Neverlose = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#000F1E",
+				                Accent = "#00B4F0",
+				                BackgroundColor = "#050514",
+				                OutlineColor = "#000005"
+				            },
+				            Aimware = {
+				                FontColor = "#E8E8E8",
+				                MainColor = "#2B2B2B",
+				                Accent = "#C82828",
+				                BackgroundColor = "#191919",
+				                OutlineColor = "#000005"
+				            },
+				            Youtube = {
+				                FontColor = "#F1F1F1",
+				                MainColor = "#232323",
+				                Accent = "#FF0000",
+				                BackgroundColor = "#0F0F0F",
+				                OutlineColor = "#000000"
+				            },
+				            Gamesense = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#171717",
+				                Accent = "#A7D94D",
+				                BackgroundColor = "#0C0C0C",
+				                OutlineColor = "#000000"
+				            },
+				            Onetap = {
+				                FontColor = "#D6D9E0",
+				                MainColor = "#2C3037",
+				                Accent = "#DDA85D",
+				                BackgroundColor = "#1F2125",
+				                OutlineColor = "#000000"
+				            },
+				            Entropy = {
+				                FontColor = "#DCDCDC",
+				                MainColor = "#3D3A43",
+				                Accent = "#81BBE9",
+				                BackgroundColor = "#302F37",
+				                OutlineColor = "#0A0A0A"
+				            },
+				            Interwebz = {
+				                FontColor = "#FCFCFC",
+				                MainColor = "#291F38",
+				                Accent = "#C9654B",
+				                BackgroundColor = "#1F162B",
+				                OutlineColor = "#1A1A1A"
+				            },
+				            Dracula = {
+				                FontColor = "#B4B4B8",
+				                MainColor = "#2A2C38",
+				                Accent = "#9A81B3",
+				                BackgroundColor = "#252730",
+				                OutlineColor = "#202126"
+				            },
+				            Spotify = {
+				                FontColor = "#D0D0D0",
+				                MainColor = "#181818",
+				                Accent = "#1ED760",
+				                BackgroundColor = "#121212",
+				                OutlineColor = "#0A0A0A"
+				            },
+				            Sublime = {
+				                FontColor = "#E8FFFF",
+				                MainColor = "#32332D",
+				                Accent = "#FF9800",
+				                BackgroundColor = "#282923",
+				                OutlineColor = "#000000"
+				            },
+				            Vape = {
+				                FontColor = "#DCDCDC",
+				                MainColor = "#1F1F1F",
+				                Accent = "#26866A",
+				                BackgroundColor = "#1A1A1A",
+				                OutlineColor = "#0A0A0A"
+				            },
+				            Neko = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#171717",
+				                Accent = "#D21F6A",
+				                BackgroundColor = "#131313",
+				                OutlineColor = "#000000"
+				            },
+				            Corn = {
+				                FontColor = "#DCDCDC",
+				                MainColor = "#252525",
+				                Accent = "#FF9000",
+				                BackgroundColor = "#191919",
+				                OutlineColor = "#000000"
+				            },
+				            Minecraft = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#333333",
+				                Accent = "#27CE40",
+				                BackgroundColor = "#262626",
+				                OutlineColor = "#000000"
+				            },
+				            Cyberpunk = {
+				                FontColor = "#F8F8F2",
+				                MainColor = "#2E3440",
+				                Accent = "#8FBCBB",
+				                BackgroundColor = "#1F2330",
+				                OutlineColor = "#4C566A"
+				            },
+				            Retro = {
+				                FontColor = "#FFD700",
+				                MainColor = "#282C34",
+				                Accent = "#FF4500",
+				                BackgroundColor = "#1A1B1F",
+				                OutlineColor = "#1C1C1C"
+				            },
+				            Galaxy = {
+				                FontColor = "#FFFFFF",
+				                MainColor = "#1A1A2E",
+				                Accent = "#6A0572",
+				                BackgroundColor = "#16213E",
+				                OutlineColor = "#0F3460"
+				            },
+				            Obsidian = {
+				                FontColor = "#E0E0E0",
+				                MainColor = "#2C2C2C",
+				                Accent = "#5C5C5C",
+				                BackgroundColor = "#1E1E1E",
+				                OutlineColor = "#141414"
+				            }
+				        }
+				    end
+				})
 
 				local selectedTheme = themes[v]
 				if selectedTheme then
@@ -1650,7 +1563,6 @@ do
 			FillDirection = Enum.FillDirection.Horizontal,
 			SortOrder = Enum.SortOrder.LayoutOrder
 		})
-
 		local MarketplaceService = game:GetService("MarketplaceService")
 		local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 		local currentDate = os.date("%x")
@@ -1669,7 +1581,6 @@ do
 		    TextSize = Library.FontSize,
 		    TextStrokeTransparency = 0
 		})
-
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
 			BackgroundTransparency = 1,
