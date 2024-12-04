@@ -796,12 +796,13 @@ function Library:LoadConfigTab(Window)
 						OutlineColor = "#373737"
 					},
 					['Soul Preset'] = { 
-						FontColor = "#FFFFFF",
-						MainColor = "#191925",
-						Accent = "FF0000",
-						BackgroundColor = "#16161F",
-						OutlineColor = "#323232"
-					},
+					    FontColor = Color3.fromHex("FFFFFF"),
+					    MainColor = Color3.fromHex("191925"),
+					    Accent = Color3.fromHex("FF0000"),
+					    BackgroundColor = Color3.fromHex("16161F"),
+					    OutlineColor = Color3.fromHex("323232")
+					}
+
 					Tokyo Night = {
 						FontColor = "#FFFFFF",
 						MainColor = "#191925",
