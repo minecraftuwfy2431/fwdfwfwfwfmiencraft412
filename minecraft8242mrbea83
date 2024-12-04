@@ -1,10 +1,10 @@
 local Library = {
 	Open = true;
-	Accent = Color3.fromHex("6759b3");
+	Accent = Color3.fromHex("FF0000");
 	DarkerAccent = nil;
 	FontColor = Color3.fromHex("ffffff");
 	OutlineColor = Color3.fromHex("323232");	
-	MainColor = Color3.fromHex("FF0000");
+	MainColor = Color3.fromHex("191925");
 	BackgroundColor = Color3.fromHex("16161f");
 	Pages = {};
 	Sections = {};
