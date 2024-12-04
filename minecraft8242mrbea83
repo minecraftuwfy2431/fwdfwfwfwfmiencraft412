@@ -733,6 +733,7 @@ function Library:LoadConfigTab(Window)
 			Name = "Presets",
 			Flag = "UI/Presets",
 			Options = {
+				"Soul Preset", 
 				"Tokyo Night",
 				"Quartz",
 				"BBot",
@@ -756,7 +757,7 @@ function Library:LoadConfigTab(Window)
 				"Corn",
 				"Minecraft"
 			},
-			State = "Tokyo Night",
+			State = "Soul Preset",
 			Callback = function(v)
 				local themes = {
 					Quartz = {
@@ -794,7 +795,14 @@ function Library:LoadConfigTab(Window)
 						BackgroundColor = "#1C1C1C",
 						OutlineColor = "#373737"
 					},
-					['Tokyo Night'] = {
+					Soul Preset = { 
+						FontColor = "#FFFFFF",
+						MainColor = "#191925",
+						Accent = "FF0000",
+						BackgroundColor = "#16161F",
+						OutlineColor = "#323232"
+					},
+					Tokyo Night = {
 						FontColor = "#FFFFFF",
 						MainColor = "#191925",
 						Accent = "#6759B3",
