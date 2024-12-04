@@ -3310,88 +3310,135 @@ do
 		return Keybind
 	end
     --
+
 	function Sections:Colorpicker(Properties)
-		local Properties = Properties or {}
-		local Colorpicker = {
-			Window = self.Window,
-			Page = self.Page,
-			Section = self,
-			Name = (Properties.Name or "Colorpicker"),
-			State = (
-                Properties.state
-                    or Properties.State
-                    or Properties.def
-                    or Properties.Def
-                    or Properties.default
-                    or Properties.Default
-                    or Color3.fromRGB(255, 0, 0)
-            ),
-			Callback = (
-                Properties.callback
-                    or Properties.Callback
-                    or Properties.callBack
-                    or Properties.CallBack
-                    or function()
-			end
-            ),
-			Flag = (
-                Properties.flag
-                    or Properties.Flag
-                    or Properties.pointer
-                    or Properties.Pointer
-                    or Library.NextFlag()
-            ),
-			Colorpickers = 0,
-		}
-        --
-		local NewToggle = Library:Create('Frame', {
-			Parent = Colorpicker.Section.Elements.SectionContent,
-			Size = UDim2.new(1, 0, 0, 10),
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			BorderColor3 = Color3.new(0, 0, 0)
-		})
-		local TextLabel = Library:Create('TextLabel', {
-			Parent = NewToggle,
-			Position = UDim2.new(0, 15, 0, 0),
-			Size = UDim2.new(0, 100, 1, 0),
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			BorderColor3 = Color3.new(0, 0, 0),
-			Text = Colorpicker.Name,
-			TextColor3 = Color3.fromRGB(145, 145, 145),
-			FontFace = Library.Font,
-			TextSize = Library.FontSize,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			TextStrokeTransparency = 0
-		})
-        --
-		Library:Connection(NewToggle.MouseEnter, function()
-			TextLabel.TextColor3 = Library.Accent
-		end)
-        --
-		Library:Connection(NewToggle.MouseLeave, function()
-			TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
-		end)
-
-        -- // Functions
-		Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
-		local colorpickertypes = Library:NewPicker(
-            Colorpicker.State,
-            NewToggle,
-            Colorpicker.Colorpickers - 1,
-            Colorpicker.Flag,
-            Colorpicker.Callback
-        )
-		function Colorpicker:Set(color)
-			colorpickertypes:set(color)
-		end
-
-        -- // Returning
-		return Colorpicker
+	    local Properties = Properties or {}
+	    local Colorpicker = {
+	        Window = self.Window,
+	        Page = self.Page,
+	        Section = self,
+	        Name = (Properties.Name or "Colorpicker"),
+	        State = (
+	            Properties.state
+	            or Properties.State
+	            or Properties.def
+	            or Properties.Def
+	            or Properties.default
+	            or Properties.Default
+	            or Color3.fromRGB(255, 0, 0)
+	        ),
+	        Callback = (
+	            Properties.callback
+	            or Properties.Callback
+	            or Properties.callBack
+	            or Properties.CallBack
+	            or function()
+	        end),
+	        Flag = (
+	            Properties.flag
+	            or Properties.Flag
+	            or Properties.pointer
+	            or Properties.Pointer
+	            or Library.NextFlag()
+	        ),
+	        Colorpickers = 0,
+	    }
+	
+	    local ClipboardColor = nil
+	
+	    local NewToggle = Library:Create('Frame', {
+	        Parent = Colorpicker.Section.Elements.SectionContent,
+	        Size = UDim2.new(1, 0, 0, 10),
+	        BackgroundColor3 = Color3.new(1, 1, 1),
+	        BackgroundTransparency = 1,
+	        BorderSizePixel = 0,
+	        BorderColor3 = Color3.new(0, 0, 0)
+	    })
+	    local TextLabel = Library:Create('TextLabel', {
+	        Parent = NewToggle,
+	        Position = UDim2.new(0, 15, 0, 0),
+	        Size = UDim2.new(0, 100, 1, 0),
+	        BackgroundColor3 = Color3.new(1, 1, 1),
+	        BackgroundTransparency = 1,
+	        BorderSizePixel = 0,
+	        BorderColor3 = Color3.new(0, 0, 0),
+	        Text = Colorpicker.Name,
+	        TextColor3 = Color3.fromRGB(145, 145, 145),
+	        FontFace = Library.Font,
+	        TextSize = Library.FontSize,
+	        TextXAlignment = Enum.TextXAlignment.Left,
+	        TextStrokeTransparency = 0
+	    })
+	
+	    Library:Connection(NewToggle.MouseEnter, function()
+	        TextLabel.TextColor3 = Library.Accent
+	    end)
+	
+	    Library:Connection(NewToggle.MouseLeave, function()
+	        TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
+	    end)
+	
+	    Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
+	
+	    local colorpickertypes = Library:NewPicker(
+	        Colorpicker.State,
+	        NewToggle,
+	        Colorpicker.Colorpickers - 1,
+	        Colorpicker.Flag,
+	        Colorpicker.Callback
+	    )
+	
+	    function Colorpicker:Set(color)
+	        colorpickertypes:set(color)
+	    end
+	
+	    Library:Connection(NewToggle.MouseButton2Down, function() -- Right-click functionality
+	        local Menu = Instance.new("Frame")
+	        Menu.Size = UDim2.new(0, 100, 0, 60)
+	        Menu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	        Menu.BorderSizePixel = 1
+	        Menu.BorderColor3 = Color3.fromRGB(70, 70, 70)
+	        Menu.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
+	        Menu.Parent = game.CoreGui
+	
+	        local CopyButton = Instance.new("TextButton")
+	        CopyButton.Text = "Copy"
+	        CopyButton.Size = UDim2.new(1, 0, 0.5, 0)
+	        CopyButton.Position = UDim2.new(0, 0, 0, 0)
+	        CopyButton.Parent = Menu
+	        CopyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	        CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	
+	        local PasteButton = Instance.new("TextButton")
+	        PasteButton.Text = "Paste"
+	        PasteButton.Size = UDim2.new(1, 0, 0.5, 0)
+	        PasteButton.Position = UDim2.new(0, 0, 0.5, 0)
+	        PasteButton.Parent = Menu
+	        PasteButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	        PasteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	
+	        CopyButton.MouseButton1Down:Connect(function()
+	            ClipboardColor = Colorpicker.State
+	            Menu:Destroy()
+	        end)
+	
+	        PasteButton.MouseButton1Down:Connect(function()
+	            if ClipboardColor then
+	                Colorpicker:Set(ClipboardColor)
+	            end
+	            Menu:Destroy()
+	        end)
+	
+	        game:GetService("UserInputService").InputBegan:Connect(function(input)
+	            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	                Menu:Destroy()
+	            end
+	        end)
+	    end)
+	
+	    return Colorpicker
 	end
+
     --
 	function Sections:Textbox(Properties)
 		local Properties = Properties or {}
