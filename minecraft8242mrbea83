@@ -2855,10 +2855,10 @@ do
 		        handleoptionclick(option, NewOption, OptionName)
 		    end
 		
-		    local optionsHeight = #tbl * 15.5
-		    local maxDropdownHeight = 155
-		    ContainerOutline.Size = UDim2.new(1, -30, 0, math.clamp(optionsHeight, 0, maxDropdownHeight))
-		    ContainerInline.CanvasSize = UDim2.new(0, 0, 0, optionsHeight)
+		local maxDropdownHeight = 155
+		ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(optionsHeight, maxDropdownHeight))
+		ContainerInline.CanvasSize = UDim2.new(0, 0, 0, optionsHeight)
+		ContainerInline.AutomaticCanvasSize = optionsHeight > maxDropdownHeight and Enum.AutomaticSize.Y or Enum.AutomaticSize.None
 		end
 		
 		createoptions(Dropdown.Options)
