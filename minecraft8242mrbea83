@@ -770,7 +770,7 @@ function Library:LoadConfigTab(Window)
 			    "Tropical",
 			    "Ember",
 			    "Spectrum"
-			}
+			},
 
 			State = "Tokyo Night",
 			Callback = function(v)
