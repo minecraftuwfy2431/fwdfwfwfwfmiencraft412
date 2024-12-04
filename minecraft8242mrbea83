@@ -3392,7 +3392,7 @@ do
 	        colorpickertypes:set(color)
 	    end
 	
-	    Library:Connection(NewToggle.MouseButton2Down, function() -- Right-click functionality
+	    Library:Connection(NewToggle.MouseButton2Down, function() 
 	        local Menu = Instance.new("Frame")
 	        Menu.Size = UDim2.new(0, 100, 0, 60)
 	        Menu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
