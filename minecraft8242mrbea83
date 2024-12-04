@@ -795,7 +795,7 @@ function Library:LoadConfigTab(Window)
 						BackgroundColor = "#1C1C1C",
 						OutlineColor = "#373737"
 					},
-					['Soul Preset'] = { 
+					Soul Preset = { 
 					    FontColor = Color3.fromHex("FFFFFF"),
 					    MainColor = Color3.fromHex("191925"),
 					    Accent = Color3.fromHex("FF0000"),
