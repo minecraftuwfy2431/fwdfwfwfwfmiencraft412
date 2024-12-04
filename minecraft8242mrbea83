@@ -795,7 +795,7 @@ function Library:LoadConfigTab(Window)
 						BackgroundColor = "#1C1C1C",
 						OutlineColor = "#373737"
 					},
-					["Soul Preset"] = { 
+					['Soul Preset'] = { 
 						FontColor = "#FFFFFF",
 						MainColor = "#191925",
 						Accent = "FF0000",
