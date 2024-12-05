@@ -2322,17 +2322,22 @@ do
     Library:Connection(NewToggle.InputBegan, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton2 then
             if not isCopying then
-                if colorpickertypes.Value then
-                    lastColor = colorpickertypes.Value -- Assume Value stores the current color
-                    print("Copied Color:", lastColor)
+                -- Directly access the state of colorpickertypes
+                if colorpickertypes.State then
+                    lastColor = colorpickertypes.State -- Assume 'State' holds the current color
+                    print("Copied Color:", lastColor) -- Debugging
                     isCopying = true
                 end
             else
                 if lastColor then
-                    print("Setting Color:", lastColor)
-                    colorpickertypes.Value = lastColor -- Set the new color
+                    print("Setting Color:", lastColor) -- Debugging
+                    if colorpickertypes.Set then
+                        colorpickertypes:Set(lastColor) -- If there's a Set method, use it
+                    elseif colorpickertypes.State then
+                        colorpickertypes.State = lastColor -- Otherwise, directly set the State
+                    end
                     if Colorpicker.Callback then
-                        Colorpicker.Callback(lastColor)
+                        Colorpicker.Callback(lastColor) -- Trigger callback with the new color
                     end
                     isCopying = false
                 end
@@ -2341,7 +2346,11 @@ do
     end)
 
     function Colorpicker:Set(color)
-        colorpickertypes.Value = color
+        if colorpickertypes.Set then
+            colorpickertypes:Set(color)
+        elseif colorpickertypes.State then
+            colorpickertypes.State = color
+        end
         if Colorpicker.Callback then
             Colorpicker.Callback(color)
         end
@@ -2349,6 +2358,7 @@ do
 
     return Colorpicker
 end
+
 
 
 
