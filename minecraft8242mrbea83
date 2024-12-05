@@ -2322,13 +2322,18 @@ do
     Library:Connection(NewToggle.InputBegan, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton2 then
             if not isCopying then
-                lastColor = colorpickertypes:get()
-                print("Copied Color:", lastColor) -- Debugging
-                isCopying = true
+                if colorpickertypes.Value then
+                    lastColor = colorpickertypes.Value -- Assume Value stores the current color
+                    print("Copied Color:", lastColor)
+                    isCopying = true
+                end
             else
                 if lastColor then
-                    print("Setting Color:", lastColor) -- Debugging
-                    Colorpicker:Set(lastColor)
+                    print("Setting Color:", lastColor)
+                    colorpickertypes.Value = lastColor -- Set the new color
+                    if Colorpicker.Callback then
+                        Colorpicker.Callback(lastColor)
+                    end
                     isCopying = false
                 end
             end
@@ -2336,12 +2341,15 @@ do
     end)
 
     function Colorpicker:Set(color)
-        print("Applying Color:", color) -- Debugging
-        colorpickertypes:set(color)
+        colorpickertypes.Value = color
+        if Colorpicker.Callback then
+            Colorpicker.Callback(color)
+        end
     end
 
     return Colorpicker
 end
+
 
 
 		function Toggle.Set(bool)
