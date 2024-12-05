@@ -3374,16 +3374,32 @@ do
 			TextStrokeTransparency = 0
 		})
         --
-		Library:Connection(NewToggle.MouseEnter, function()
-			TextLabel.TextColor3 = Library.Accent
-		end)
-        --
-		Library:Connection(NewToggle.MouseLeave, function()
-			TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
-		end)
 
-        -- // Functions
+		Library:Connection(NewToggle.MouseEnter, function()
+		    TextLabel.TextColor3 = Library.Accent
+		end)
+		
+		Library:Connection(NewToggle.MouseLeave, function()
+		    TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
+		end)
+		
+		local lastColor = nil
+		local isCopying = false
+		
+		Library:Connection(NewToggle.MouseButton2Down, function()
+		    if not isCopying then
+		        lastColor = colorpickertypes:get() 
+		        isCopying = true
+		    else
+		        if lastColor then
+		            Colorpicker:Set(lastColor)
+		            isCopying = false
+		        end
+		    end
+		end)
+		
 		Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
+
 		local colorpickertypes = Library:NewPicker(
             Colorpicker.State,
             NewToggle,
