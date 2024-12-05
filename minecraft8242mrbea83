@@ -2591,131 +2591,167 @@ do
 	end
     --
 	function Sections:Dropdown(Properties)
-    local Properties = Properties or {}
-    local Dropdown = {
-        Window = self.Window,
-        Page = self.Page,
-        Section = self,
-        Open = false,
-        Name = Properties.Name or Properties.name or nil,
-        Options = Properties.options or Properties.Options or Properties.values or Properties.Values or {"1", "2", "3"},
-        Max = Properties.Max or Properties.max or nil,
-        State = Properties.state or Properties.State or Properties.def or Properties.Def or Properties.default or Properties.Default or nil,
-        Callback = Properties.callback or Properties.Callback or Properties.callBack or Properties.CallBack or function() end,
-        Flag = Properties.flag or Properties.Flag or Properties.pointer or Properties.Pointer or Library.NextFlag(),
-        OptionInsts = {},
-    }
-
+		local Properties = Properties or {};
+		local Dropdown = {
+			Window = self.Window,
+			Page = self.Page,
+			Section = self,
+			Open = false,
+			Name = Properties.Name or Properties.name or nil,
+			Options = (Properties.options or Properties.Options or Properties.values or Properties.Values or {
+				"1",
+				"2",
+				"3",
+			}),
+			Max = (Properties.Max or Properties.max or nil),
+			State = (
+                Properties.state
+                    or Properties.State
+                    or Properties.def
+                    or Properties.Def
+                    or Properties.default
+                    or Properties.Default
+                    or nil
+            ),
+			Callback = (
+                Properties.callback
+                    or Properties.Callback
+                    or Properties.callBack
+                    or Properties.CallBack
+                    or function()
+			end
+            ),
+			Flag = (
+                Properties.flag
+                    or Properties.Flag
+                    or Properties.pointer
+                    or Properties.Pointer
+                    or Library.NextFlag()
+            ),
+			OptionInsts = {},
+		}
         --
 		local NewDrop = Library:Create('Frame', {
-        Parent = Dropdown.Section.Elements.SectionContent,
-        Size = UDim2.new(1.12, 0, 0, 30),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-    })
-    local Outline = Library:Create('TextButton', {
-        Parent = NewDrop,
-        Position = UDim2.new(0, 0, 1, 1),
-        Size = UDim2.new(1, -30, 0, 17),
-        BackgroundColor3 = "OutlineColor",
-        BorderColor3 = Color3.new(0.0392, 0.0392, 0.0392),
-        AnchorPoint = Vector2.new(0, 1),
-        Text = "",
-        AutoButtonColor = false,
-    })
-    local Inline = Library:Create('Frame', {
-        Parent = Outline,
-        Position = UDim2.new(0, 1, 0, 1),
-        Size = UDim2.new(1, -2, 1, -2),
-        BackgroundColor3 = "MainColor",
-        BorderSizePixel = 0,
-    })
-    local Value = Library:Create('TextLabel', {
-        Parent = Inline,
-        Position = UDim2.new(0, 4, 0, 0),
-        Size = UDim2.new(1, -30, 1, 0),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        TextColor3 = "FontColor",
-        FontFace = Library.Font,
-        Text = "",
-        TextSize = Library.FontSize,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextWrapped = true,
-    })
-    local Icon = Library:Create('TextLabel', {
-        Parent = Inline,
-        Position = UDim2.new(0, -5, 0, 0),
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        Text = "+",
-        TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
-        FontFace = Library.Font,
-        TextSize = Library.FontSize,
-        TextXAlignment = Enum.TextXAlignment.Right,
-    })
-    local Title = Library:Create('TextLabel', {
-        Parent = NewDrop,
-        Position = UDim2.new(0, 0, 0, 0),
-        Size = UDim2.new(1, 0, 0, 10),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
-        FontFace = Library.Font,
-        TextSize = Library.FontSize,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Text = Dropdown.Name,
-    })
-    local ContainerOutline = Library:Create('Frame', {
-        Parent = NewDrop,
-        Position = UDim2.new(0, 0, 1, 2),
-        Size = UDim2.new(1, -30, 0, 1),
-        BackgroundColor3 = "OutlineColor",
-        BorderColor3 = Color3.new(0.0392, 0.0392, 0.0392),
-        Visible = false,
-        ZIndex = 5,
-    })
-    local ContainerInline = Library:Create('ScrollingFrame', {
-        Parent = ContainerOutline,
-        ScrollingDirection = Enum.ScrollingDirection.Y,
-        ScrollBarThickness = 3,
-        CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarImageColor3 = "Accent",
-        AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        Position = UDim2.new(0, 1, 0, 1),
-        Size = UDim2.new(1, -2, 1, -2),
-        BackgroundColor3 = "MainColor",
-        BorderSizePixel = 0,
-        ZIndex = 6,
-    })
-    local UIListLayout = Library:Create('UIListLayout', {
-        Parent = ContainerInline,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-    })
-
-    Library:Connection(Outline.MouseButton1Down, function()
-        ContainerOutline.Visible = not ContainerOutline.Visible
-        if ContainerOutline.Visible then
-            NewDrop.ZIndex = 2
-            Icon.Text = "-"
-        else
-            NewDrop.ZIndex = 1
-            Icon.Text = "+"
-        end
-    end)
-
-    Library:Connection(userinput.InputBegan, function(Input)
-        if ContainerOutline.Visible and Input.UserInputType == Enum.UserInputType.MouseButton1 then
-            if not Library:IsMouseOverFrame(ContainerOutline) and not Library:IsMouseOverFrame(NewDrop) then
-                ContainerOutline.Visible = false
-                NewDrop.ZIndex = 1
-                Icon.Text = "+"
-            end
-        end
-    end)
-
+			Parent = Dropdown.Section.Elements.SectionContent,
+			Size = UDim2.new(1.12, 0, 0, 30),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0)
+		})
+		local Outline = Library:Create('TextButton', {
+			Parent = NewDrop,
+			Position = UDim2.new(0, 0, 1, 1),
+			Size = UDim2.new(1, -30, 0, 17),
+			BackgroundColor3 = "OutlineColor",
+			BorderColor3 = Color3.new(0.0392, 0.0392, 0.0392),
+			AnchorPoint = NewVector2(0, 1),
+			Text = "",
+			AutoButtonColor = false
+		})
+		local Inline = Library:Create('Frame', {
+			Parent = Outline,
+			Position = UDim2.new(0, 1, 0, 1),
+			Size = UDim2.new(1, -2, 1, -2),
+			BackgroundColor3 = "MainColor",
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0)
+		})
+		local Value = Library:Create('TextLabel', {
+			Parent = Inline,
+			Position = UDim2.new(0, 4, 0, 0),
+			Size = UDim2.new(1, -30, 1, 0),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0),
+			TextColor3 = "FontColor",
+			FontFace = Library.Font,
+			Text = "",
+			TextSize = Library.FontSize,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextStrokeTransparency = 0,
+			TextWrapped = true
+		})
+		local Icon = Library:Create('TextLabel', {
+			Parent = Inline,
+			Position = UDim2.new(0, -5, 0, 0),
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0),
+			Text = "+",
+			TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
+			FontFace = Library.Font,
+			TextSize = Library.FontSize,
+			TextXAlignment = Enum.TextXAlignment.Right,
+			TextStrokeTransparency = 0
+		})
+		local Title = Library:Create('TextLabel', {
+			Parent = NewDrop,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, 0, 0, 10),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0),
+			TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
+			FontFace = Library.Font,
+			TextSize = Library.FontSize,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextStrokeTransparency = 0,
+			Text = Dropdown.Name
+		})
+		local ContainerOutline = Library:Create('Frame', {
+			Parent = NewDrop,
+			Position = UDim2.new(0, 0, 1, 2),
+			Size = UDim2.new(1, -30, 0, 1),
+			BackgroundColor3 = "OutlineColor",
+			BorderColor3 = Color3.new(0.0392, 0.0392, 0.0392),
+			Visible = false,
+			ZIndex = 5
+		})
+		local ContainerInline = Library:Create('ScrollingFrame', {
+			Parent = ContainerOutline,
+			ScrollingDirection = Enum.ScrollingDirection.Y,
+			ScrollBarThickness = 3,
+			CanvasSize = UDim2.new(0, 0, 0, 0),
+			ScrollBarImageColor3 = "Accent",
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			Position = UDim2.new(0, 1, 0, 1),
+			Size = UDim2.new(1, -2, 1, -2),
+			BackgroundColor3 = "MainColor",
+			BorderSizePixel = 0,
+			Rotation = 0.000001,
+			BorderColor3 = Color3.new(0, 0, 0),
+			ZIndex = 6;
+		})
+		local UIListLayout = Library:Create('UIListLayout', {
+			Parent = ContainerInline,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		})
+        
+        -- // Connections
+		Library:Connection(Outline.MouseButton1Down, function()
+			ContainerOutline.Visible = not ContainerOutline.Visible
+			if ContainerOutline.Visible then
+				NewDrop.ZIndex = 2
+				Icon.Text = "-"
+			else
+				NewDrop.ZIndex = 1
+				Icon.Text = "+"
+			end
+		end)
+		Library:Connection(userinput.InputBegan, function(Input)
+			if ContainerOutline.Visible and Input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if not Library:IsMouseOverFrame(ContainerOutline) and not Library:IsMouseOverFrame(NewDrop) then
+					ContainerOutline.Visible = false
+					NewDrop.ZIndex = 1
+					Icon.Text = "+"
+				end
+			end
+		end)
 		Library:Connection(NewDrop.MouseEnter, function()
 			Outline.BorderColor3 = Library.Accent
 			Title.TextColor3 = Library.Accent
@@ -2779,37 +2815,50 @@ do
 			end)
 		end
         --
-		 local function createoptions(tbl)
-        for _, option in next, tbl do
-            local NewOption = Library:Create('TextButton', {
-                Parent = ContainerInline,
-                Size = UDim2.new(1, 0, 0, 15),
-                BackgroundTransparency = 1,
-                Text = "",
-                TextSize = 14,
-                ZIndex = 7,
-            })
-            local OptionName = Library:Create('TextLabel', {
-                Parent = NewOption,
-                Position = UDim2.new(0, 2, 0, 0),
-                Size = UDim2.new(1, 0, 1, 0),
-                BackgroundTransparency = 1,
-                Text = option,
-                TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
-                FontFace = Library.Font,
-                TextSize = Library.FontSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                ZIndex = 8,
-            })
-            Dropdown.OptionInsts[option] = {button = NewOption, text = OptionName}
-        end
-        ContainerInline.CanvasSize = UDim2.new(0, 0, 0, #tbl * 16)
-        ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(#tbl * 16, 155))
-    end
-
-    createoptions(Dropdown.Options)
-    return Dropdown
-end
+		local function createoptions(tbl)
+			for _, option in next, tbl do
+				Dropdown.OptionInsts[option] = {}
+				local NewOption = Library:Create('TextButton', {
+					Parent = ContainerInline,
+					Size = UDim2.new(1, 0, 0, 15),
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
+					BorderColor3 = Color3.new(0, 0, 0),
+					Text = "",
+					TextColor3 = Color3.new(0, 0, 0),
+					AutoButtonColor = false,
+					FontFace = Library.Font,
+					TextSize = 14,
+					ZIndex = 7;
+				})
+				local OptionName = Library:Create('TextLabel', {
+					Parent = NewOption,
+					Position = UDim2.new(0, 2, 0, 0),
+					Size = UDim2.new(1, 0, 1, 0),
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
+					BorderColor3 = Color3.new(0, 0, 0),
+					Text = option,
+					TextColor3 = Color3.new(0.5686, 0.5686, 0.5686),
+					FontFace = Library.Font,
+					TextSize = Library.FontSize,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextStrokeTransparency = 0,
+					ZIndex = 8;
+				})
+                --
+				if #tbl ~= 0 then
+					local typeshit = #tbl * 15.5
+					ContainerOutline.Size = UDim2.new(1,-30,0,math.clamp(typeshit,0,155))
+				end
+				Dropdown.OptionInsts[option].button = NewOption
+				Dropdown.OptionInsts[option].text = OptionName
+				handleoptionclick(option, NewOption, OptionName)
+			end
+		end
+		createoptions(Dropdown.Options)
         --
 		local set
 		set = function(option)
