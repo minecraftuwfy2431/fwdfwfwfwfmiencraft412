@@ -1547,7 +1547,6 @@ do
 		    TextSize = Library.FontSize,
 		    TextStrokeTransparency = 0
 		})
-
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
 			BackgroundTransparency = 1,
