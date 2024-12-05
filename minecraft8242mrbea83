@@ -94,31 +94,31 @@ Library.Pages.__index = Library.Pages;
 Library.Sections.__index = Library.Sections;
 
 if not isfolder(Library.Folder) then
-	makefolder(Library.Folder)
+    makefolder(Library.Folder)
 end
 
 if not isfile(Library.Folder .. "hue.jpg") then
-    writefile(Library.Folder .. "hue.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/hue.jpg"))
+    writefile(Library.Folder .. "hue.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/hue.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "sat.jpg") then
-    writefile(Library.Folder .. "sat.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/sat.jpg"))
+    writefile(Library.Folder .. "sat.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/sat.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "val.jpg") then
-    writefile(Library.Folder .. "val.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/val.jpg"))
+    writefile(Library.Folder .. "val.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/val.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "cursor.jpg") then
-    writefile(Library.Folder .. "cursor.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/cursor.jpg"))
+    writefile(Library.Folder .. "cursor.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/cursor.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "highlight.jpg") then
-    writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.jpg"))
+    writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "ProggyClean.ttf") then
-    writefile(Library.Folder .. "ProggyClean.ttf", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/ProggyClean.ttf"))
+    writefile(Library.Folder .. "ProggyClean.ttf", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/ProggyClean.ttf?raw=true"))
 end
 
 local Data = {
@@ -1537,23 +1537,19 @@ do
 			FillDirection = Enum.FillDirection.Horizontal,
 			SortOrder = Enum.SortOrder.LayoutOrder
 		})
-		local MarketplaceService = game:GetService("MarketplaceService")
-		local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
-		local currentDate = os.date("%x")
-		
 		local DragButton = Library:Create('TextButton', {
-		    Parent = Outline,
-		    Size = UDim2.new(1, 0, 0, 21),
-		    BackgroundColor3 = Color3.new(1, 1, 1),
-		    BackgroundTransparency = 1,
-		    BorderSizePixel = 0,
-		    BorderColor3 = Color3.new(0, 0, 0),
-		    Text = "soulhub | " .. gameName .. " | " .. currentDate,
-		    TextColor3 = Color3.new(1, 1, 1),
-		    AutoButtonColor = false,
-		    FontFace = Library.Font,
-		    TextSize = Library.FontSize,
-		    TextStrokeTransparency = 0
+			Parent = Outline,
+			Size = UDim2.new(1, 0, 0, 21),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0),
+			Text = "soulhub | " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+			TextColor3 = "Accent",
+			AutoButtonColor = false,
+			FontFace = Library.Font,
+			TextSize = Library.FontSize,
+			TextStrokeTransparency = 0
 		})
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
