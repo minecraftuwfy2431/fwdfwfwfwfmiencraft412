@@ -2783,7 +2783,8 @@ end)
 			end)
 		end
         --
-		function Sections:Dropdown(Properties)
+
+function Sections:Dropdown(Properties)
     local Properties = Properties or {}
     local Dropdown = {
         Window = self.Window,
@@ -2799,8 +2800,8 @@ end)
         OptionInsts = {},
     }
 
-    local MaxHeight = 155 -- Maximum height for dropdown before enabling scrolling
-    local OptionHeight = 16 -- Height of each option
+    local MaxHeight = 155
+    local OptionHeight = 16
 
     local NewDrop = Library:Create('Frame', {
         Parent = Dropdown.Section.Elements.SectionContent,
@@ -2939,9 +2940,7 @@ end)
         ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(totalHeight, MaxHeight))
     end
 
-    createoptions(Dropdown.Options)
-    return Dropdown
-end
+
         --
 		local set
 		set = function(option)
