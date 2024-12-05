@@ -2278,97 +2278,50 @@ do
             -- // Returning
 			return Keybind
 		end
+		function Toggle:Colorpicker(Properties)
+			local Properties = Properties or {}
+			local Colorpicker = {
+				State = (
+                    Properties.state
+                        or Properties.State
+                        or Properties.def
+                        or Properties.Def
+                        or Properties.default
+                        or Properties.Default
+                        or Color3.fromRGB(255, 0, 0)
+                ),
+				Callback = (
+                    Properties.callback
+                        or Properties.Callback
+                        or Properties.callBack
+                        or Properties.CallBack
+                        or function()
+				end
+                ),
+				Flag = (
+                    Properties.flag
+                        or Properties.Flag
+                        or Properties.pointer
+                        or Properties.Pointer
+                        or Library.NextFlag()
+                ),
+			}
+            -- // Functions
+			Toggle.Colorpickers = Toggle.Colorpickers + 1
+			local colorpickertypes = Library:NewPicker(
+                Colorpicker.State,
+                NewToggle,
+                Toggle.Colorpickers - 1,
+                Colorpicker.Flag,
+                Colorpicker.Callback
+            )
+			function Colorpicker:Set(color)
+				colorpickertypes:set(color)
+			end
 
-				function Toggle:Colorpicker(Properties)
-    local Properties = Properties or {}
-    local Colorpicker = {
-        State = (
-            Properties.state
-            or Properties.State
-            or Properties.def
-            or Properties.Def
-            or Properties.default
-            or Properties.Default
-            or Color3.fromRGB(255, 0, 0)
-        ),
-        Callback = (
-            Properties.callback
-            or Properties.Callback
-            or Properties.callBack
-            or Properties.CallBack
-            or function() end
-        ),
-        Flag = (
-            Properties.flag
-            or Properties.Flag
-            or Properties.pointer
-            or Properties.Pointer
-            or Library.NextFlag()
-        ),
-    }
-
-    Toggle.Colorpickers = Toggle.Colorpickers + 1
-    local colorpickertypes = Library:NewPicker(
-        Colorpicker.State,
-        NewToggle,
-        Toggle.Colorpickers - 1,
-        Colorpicker.Flag,
-        Colorpicker.Callback
-    )
-
-    if not colorpickertypes then
-        error("Library:NewPicker returned nil")
-    end
-
-    -- Debug: Inspect the structure of colorpickertypes
-    print("Inspecting colorpickertypes:")
-    for key, value in pairs(colorpickertypes) do
-        print(key, value)
-    end
-
-    local lastColor = nil
-    local isCopying = false
-
-    Library:Connection(NewToggle.InputBegan, function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton2 then
-            if not isCopying then
-                if colorpickertypes.State then
-                    lastColor = colorpickertypes.State -- Copy the current color
-                    print("Copied Color:", lastColor)
-                    isCopying = true
-                end
-            else
-                if lastColor then
-                    print("Setting Color:", lastColor)
-                    if colorpickertypes.Set then
-                        colorpickertypes:Set(lastColor) -- Use Set method if available
-                    else
-                        colorpickertypes.State = lastColor -- Update the State directly
-                    end
-                    if Colorpicker.Callback then
-                        Colorpicker.Callback(lastColor) -- Trigger Callback to refresh UI
-                    end
-                    isCopying = false
-                end
-            end
-        end
-    end)
-
-    function Colorpicker:Set(color)
-        if colorpickertypes.Set then
-            colorpickertypes:Set(color)
-        else
-            colorpickertypes.State = color
-        end
-        if Colorpicker.Callback then
-            Colorpicker.Callback(color)
-        end
-    end
-
-    return Colorpicker
-end
-
-
+            -- // Returning
+			return Colorpicker
+		end
 		function Toggle.Set(bool)
 			bool = type(bool) == "boolean" and bool or false
 			if Toggle.Toggled ~= bool then
@@ -3364,103 +3317,87 @@ end
 	end
     --
 	function Sections:Colorpicker(Properties)
-    local Properties = Properties or {}
-    local Colorpicker = {
-        Window = self.Window,
-        Page = self.Page,
-        Section = self,
-        Name = (Properties.Name or "Colorpicker"),
-        State = (
-            Properties.state
-            or Properties.State
-            or Properties.def
-            or Properties.Def
-            or Properties.default
-            or Properties.Default
-            or Color3.fromRGB(255, 0, 0)
-        ),
-        Callback = (
-            Properties.callback
-            or Properties.Callback
-            or Properties.callBack
-            or Properties.CallBack
-            or function() end
-        ),
-        Flag = (
-            Properties.flag
-            or Properties.Flag
-            or Properties.pointer
-            or Properties.Pointer
-            or Library.NextFlag()
-        ),
-        Colorpickers = 0,
-    }
+		local Properties = Properties or {}
+		local Colorpicker = {
+			Window = self.Window,
+			Page = self.Page,
+			Section = self,
+			Name = (Properties.Name or "Colorpicker"),
+			State = (
+                Properties.state
+                    or Properties.State
+                    or Properties.def
+                    or Properties.Def
+                    or Properties.default
+                    or Properties.Default
+                    or Color3.fromRGB(255, 0, 0)
+            ),
+			Callback = (
+                Properties.callback
+                    or Properties.Callback
+                    or Properties.callBack
+                    or Properties.CallBack
+                    or function()
+			end
+            ),
+			Flag = (
+                Properties.flag
+                    or Properties.Flag
+                    or Properties.pointer
+                    or Properties.Pointer
+                    or Library.NextFlag()
+            ),
+			Colorpickers = 0,
+		}
+        --
+		local NewToggle = Library:Create('Frame', {
+			Parent = Colorpicker.Section.Elements.SectionContent,
+			Size = UDim2.new(1, 0, 0, 10),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0)
+		})
+		local TextLabel = Library:Create('TextLabel', {
+			Parent = NewToggle,
+			Position = UDim2.new(0, 15, 0, 0),
+			Size = UDim2.new(0, 100, 1, 0),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			BorderColor3 = Color3.new(0, 0, 0),
+			Text = Colorpicker.Name,
+			TextColor3 = Color3.fromRGB(145, 145, 145),
+			FontFace = Library.Font,
+			TextSize = Library.FontSize,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextStrokeTransparency = 0
+		})
+        --
+		Library:Connection(NewToggle.MouseEnter, function()
+			TextLabel.TextColor3 = Library.Accent
+		end)
+        --
+		Library:Connection(NewToggle.MouseLeave, function()
+			TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
+		end)
 
-    local NewToggle = Library:Create('Frame', {
-        Parent = Colorpicker.Section.Elements.SectionContent,
-        Size = UDim2.new(1, 0, 0, 10),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        BorderColor3 = Color3.new(0, 0, 0)
-    })
-    local TextLabel = Library:Create('TextLabel', {
-        Parent = NewToggle,
-        Position = UDim2.new(0, 15, 0, 0),
-        Size = UDim2.new(0, 100, 1, 0),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        BorderColor3 = Color3.new(0, 0, 0),
-        Text = Colorpicker.Name,
-        TextColor3 = Color3.fromRGB(145, 145, 145),
-        FontFace = Library.Font,
-        TextSize = Library.FontSize,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextStrokeTransparency = 0
-    })
+        -- // Functions
+		Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
+		local colorpickertypes = Library:NewPicker(
+            Colorpicker.State,
+            NewToggle,
+            Colorpicker.Colorpickers - 1,
+            Colorpicker.Flag,
+            Colorpicker.Callback
+        )
+		function Colorpicker:Set(color)
+			colorpickertypes:set(color)
+		end
 
-    Library:Connection(NewToggle.MouseEnter, function()
-        TextLabel.TextColor3 = Library.Accent
-    end)
-
-    Library:Connection(NewToggle.MouseLeave, function()
-        TextLabel.TextColor3 = Color3.new(0.5686, 0.5686, 0.5686)
-    end)
-
-    local lastColor = nil
-    local isCopying = false
-
-    Library:Connection(NewToggle.InputBegan, function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton2 then
-            if not isCopying then
-                lastColor = colorpickertypes:get()
-                isCopying = true
-            else
-                if lastColor then
-                    Colorpicker:Set(lastColor)
-                    isCopying = false
-                end
-            end
-        end
-    end)
-
-    Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
-    local colorpickertypes = Library:NewPicker(
-        Colorpicker.State,
-        NewToggle,
-        Colorpicker.Colorpickers - 1,
-        Colorpicker.Flag,
-        Colorpicker.Callback
-    )
-
-    function Colorpicker:Set(color)
-        colorpickertypes:set(color)
-    end
-
-    return Colorpicker
-end
-
+        -- // Returning
+		return Colorpicker
+	end
     --
 	function Sections:Textbox(Properties)
 		local Properties = Properties or {}
