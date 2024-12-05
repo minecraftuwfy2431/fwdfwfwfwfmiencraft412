@@ -97,23 +97,23 @@ if not isfolder(Library.Folder) then
 	makefolder(Library.Folder)
 end
 if not isfile(Library.Folder .. "hue.jpg") then
-    writefile(Library.Folder .. "hue.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/hue.png?raw=true"))
+    writefile(Library.Folder .. "hue.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/hue.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "sat.jpg") then
-    writefile(Library.Folder .. "sat.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/sat.png?raw=true"))
+    writefile(Library.Folder .. "sat.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/sat.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "val.jpg") then
-    writefile(Library.Folder .. "val.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/val.png?raw=true"))
+    writefile(Library.Folder .. "val.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/val.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "cursor.jpg") then
-    writefile(Library.Folder .. "cursor.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/cursor.png?raw=true"))
+    writefile(Library.Folder .. "cursor.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/cursor.jpg?raw=true"))
 end
 
 if not isfile(Library.Folder .. "highlight.jpg") then
-    writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.png?raw=true"))
+    writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.jpg?raw=true"))
 end
 
 writefile(Library.Folder .. "ProggyClean.ttf", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/ProggyClean.ttf?raw=true"))
