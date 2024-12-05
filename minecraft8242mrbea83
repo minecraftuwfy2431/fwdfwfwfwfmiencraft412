@@ -2322,22 +2322,21 @@ do
     Library:Connection(NewToggle.InputBegan, function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton2 then
             if not isCopying then
-                -- Directly access the state of colorpickertypes
                 if colorpickertypes.State then
-                    lastColor = colorpickertypes.State -- Assume 'State' holds the current color
-                    print("Copied Color:", lastColor) -- Debugging
+                    lastColor = colorpickertypes.State -- Copy the current color
+                    print("Copied Color:", lastColor)
                     isCopying = true
                 end
             else
                 if lastColor then
-                    print("Setting Color:", lastColor) -- Debugging
+                    print("Setting Color:", lastColor)
                     if colorpickertypes.Set then
-                        colorpickertypes:Set(lastColor) -- If there's a Set method, use it
-                    elseif colorpickertypes.State then
-                        colorpickertypes.State = lastColor -- Otherwise, directly set the State
+                        colorpickertypes:Set(lastColor) -- Use the Set method if available
+                    else
+                        colorpickertypes.State = lastColor -- Update the State directly
                     end
                     if Colorpicker.Callback then
-                        Colorpicker.Callback(lastColor) -- Trigger callback with the new color
+                        Colorpicker.Callback(lastColor) -- Trigger Callback to refresh UI
                     end
                     isCopying = false
                 end
@@ -2347,20 +2346,17 @@ do
 
     function Colorpicker:Set(color)
         if colorpickertypes.Set then
-            colorpickertypes:Set(color)
-        elseif colorpickertypes.State then
-            colorpickertypes.State = color
+            colorpickertypes:Set(color) -- Refresh the UI using Set method
+        else
+            colorpickertypes.State = color -- Directly set the State
         end
         if Colorpicker.Callback then
-            Colorpicker.Callback(color)
+            Colorpicker.Callback(color) -- Ensure the Callback is triggered
         end
     end
 
     return Colorpicker
 end
-
-
-
 
 		function Toggle.Set(bool)
 			bool = type(bool) == "boolean" and bool or false
