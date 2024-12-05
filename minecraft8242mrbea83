@@ -2316,6 +2316,16 @@ do
         Colorpicker.Callback
     )
 
+    if not colorpickertypes then
+        error("Library:NewPicker returned nil")
+    end
+
+    -- Debug: Inspect the structure of colorpickertypes
+    print("Inspecting colorpickertypes:")
+    for key, value in pairs(colorpickertypes) do
+        print(key, value)
+    end
+
     local lastColor = nil
     local isCopying = false
 
@@ -2331,7 +2341,7 @@ do
                 if lastColor then
                     print("Setting Color:", lastColor)
                     if colorpickertypes.Set then
-                        colorpickertypes:Set(lastColor) -- Use the Set method if available
+                        colorpickertypes:Set(lastColor) -- Use Set method if available
                     else
                         colorpickertypes.State = lastColor -- Update the State directly
                     end
@@ -2346,17 +2356,18 @@ do
 
     function Colorpicker:Set(color)
         if colorpickertypes.Set then
-            colorpickertypes:Set(color) -- Refresh the UI using Set method
+            colorpickertypes:Set(color)
         else
-            colorpickertypes.State = color -- Directly set the State
+            colorpickertypes.State = color
         end
         if Colorpicker.Callback then
-            Colorpicker.Callback(color) -- Ensure the Callback is triggered
+            Colorpicker.Callback(color)
         end
     end
 
     return Colorpicker
 end
+
 
 		function Toggle.Set(bool)
 			bool = type(bool) == "boolean" and bool or false
