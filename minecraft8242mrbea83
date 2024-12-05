@@ -3386,17 +3386,19 @@ do
 		local lastColor = nil
 		local isCopying = false
 		
-		Library:Connection(NewToggle.MouseButton2Down, function()
-		    if not isCopying then
-		        lastColor = colorpickertypes:get() 
-		        isCopying = true
-		    else
-		        if lastColor then
-		            Colorpicker:Set(lastColor)
-		            isCopying = false
-		        end
-		    end
-		end)
+		Library:Connection(NewToggle.InputBegan, function(input)
+	    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+	        if not isCopying then
+	            lastColor = colorpickertypes:get() 
+	            isCopying = true
+	        else
+	            if lastColor then
+	                Colorpicker:Set(lastColor)
+	                isCopying = false
+	            end
+	        end
+	    end
+	end)
 		
 		Colorpicker.Colorpickers = Colorpicker.Colorpickers + 1
 
