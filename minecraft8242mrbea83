@@ -918,6 +918,16 @@ function Library:LoadConfigTab(Window)
 				Library:Unload()
 			end
 		})
+
+		Menu:Button({
+		Name = "Rejoin Game",
+		Callback = function()
+		   	local ts = game:GetService("TeleportService")
+			local p = game:GetService("Players").LocalPlayer
+			ts:Teleport(game.PlaceId, p)
+		end
+		})
+	
 		randomfunc = Cfgs:Textbox({
 			Flag = "SettingsConfigurationName",
 			Name = "Config name"
