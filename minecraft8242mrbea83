@@ -930,7 +930,7 @@ function Library:LoadConfigTab(Window)
 
 		Menu:Label({
 		Name = "Developer Functions",
-		Centered = false
+		Centered = true
 		})
 
 		Menu:Button({
