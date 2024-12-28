@@ -927,7 +927,21 @@ function Library:LoadConfigTab(Window)
 			ts:Teleport(game.PlaceId, p)
 		end
 		})
-	
+
+		Menu:Button({
+		Name = "Load Dex",
+		Callback = function()
+		   loadstring(game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/HERE/refs/heads/main/BROHERE28742MRBE92", true))()
+		end
+		})
+
+		Menu:Button({
+		Name = "Load IY",
+		Callback = function()
+		     loadstring(game:HttpGet("https://raw.githubusercontent.com/edgeiy/infiniteyield/master/source", true))()
+		end
+		})
+
 		randomfunc = Cfgs:Textbox({
 			Flag = "SettingsConfigurationName",
 			Name = "Config name"
