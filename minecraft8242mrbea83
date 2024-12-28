@@ -928,6 +928,11 @@ function Library:LoadConfigTab(Window)
 		end
 		})
 
+		Menu:Label({
+		Name = "Developer Functions",
+		Centered = false
+		})
+
 		Menu:Button({
 		Name = "Load Dex",
 		Callback = function()
