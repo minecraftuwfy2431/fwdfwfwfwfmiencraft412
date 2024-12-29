@@ -697,10 +697,10 @@ function Library:LoadClientTab(Window)
         local Camera = workspace.CurrentCamera
         local RunService = game:GetService("RunService")
         local Mouse = LocalPlayer:GetMouse()
-        local HttpService = game:GetService("HttpService")
-        local TPS = game:GetService("TeleportService")
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+        local deletedParts = {}
+        local waypointFile = "waypoint.txt"
         local spinning = false
         local spinSpeed = 1
         local platformPart
@@ -711,7 +711,11 @@ function Library:LoadClientTab(Window)
         local teleportDistance = 200
         local xrayEnabled = false
         local xrayDistance = 50
-        local aspect_ratio = {enabled = false, horizontal_stretch = 100, vertical_stretch = 50}
+        local aspect_ratio = {
+            enabled = false,
+            horizontal_stretch = 100,
+            vertical_stretch = 50,
+        }
         local fovEnabled = false
         local maxZoomEnabled = false
         local minZoomEnabled = false
@@ -722,7 +726,16 @@ function Library:LoadClientTab(Window)
         local orbitEnabled = false
         local orbitRadius = 10
         local orbitSpeed = 5
-        local usernames = {}
+
+        local function updatePlayerList()
+            local playerNames = {}
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    table.insert(playerNames, player.Name)
+                end
+            end
+            return playerNames
+        end
 
         local function applyXray()
             for _, object in ipairs(workspace:GetDescendants()) do
@@ -734,26 +747,6 @@ function Library:LoadClientTab(Window)
                 end
             end
         end
-
-        task.spawn(function()
-            while RunService.RenderStepped:Wait() do
-                if aspect_ratio.enabled then
-                    local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = Camera.CFrame:GetComponents()
-                    Camera.CFrame = CFrame.new(
-                        X, Y, Z,
-                        R00 * aspect_ratio.horizontal_stretch / 100,
-                        R01 * aspect_ratio.vertical_stretch / 100,
-                        R02,
-                        R10,
-                        R11 * aspect_ratio.vertical_stretch / 100,
-                        R12,
-                        R20 * aspect_ratio.horizontal_stretch / 100,
-                        R21 * aspect_ratio.vertical_stretch / 100,
-                        R22
-                    )
-                end
-            end
-        end)
 
         local PlayerSection = ClientPage:Section({
             Name = "Players",
@@ -834,21 +827,17 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        PlayerSection:Dropdown({
+        local playerOptions = PlayerSection:Dropdown({
             Name = "Player Options",
             Flag = "PlayerOptionsDropdown",
-            Options = {"None", "Loop Teleport", "Loop Tween", "Orbit Player"},
+            Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
             Callback = function(option)
-                loopTeleportEnabled = false
-                loopTweenEnabled = false
-                orbitEnabled = false
-
                 if option == "Loop Teleport" then
-                    loopTeleportEnabled = true
+                    loopTeleportEnabled = not loopTeleportEnabled
                 elseif option == "Loop Tween" then
-                    loopTweenEnabled = true
+                    loopTweenEnabled = not loopTweenEnabled
                 elseif option == "Orbit Player" then
-                    orbitEnabled = true
+                    orbitEnabled = not orbitEnabled
                 end
             end,
         })
@@ -878,8 +867,7 @@ function Library:LoadClientTab(Window)
         })
 
         task.spawn(function()
-            while true do
-                task.wait()
+            while task.wait(0.1) do
                 if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
                 end
@@ -914,173 +902,249 @@ function Library:LoadClientTab(Window)
             Side = "Right"
         })
 
-        InteractionSection:Button({
-            Name = "Streamer Mode",
-            Callback = function()
-                local plr = game:GetService("Players").LocalPlayer
-                local name = plr.Name
-                local display = "discord.gg/gamingchairs"
-                
-                local function IsA(...)
-                    local Args = {...}
-                    if table.find(Args, Args[1].ClassName) then
-                        return true
-                    end
-                end
-                
-                local function e()
-                    for _, v in next, workspace:GetDescendants() do
-                        if v:IsA("Model") and game:GetService("Players"):GetPlayerFromCharacter(v) == plr then
-                            return v
-                        end
-                    end
-                end
-                
-                local cha = e()
-                
-                local function changeText(n)
-                    plr.Name, plr.DisplayName = name, display
-                    if n:IsA("TextLabel") or n:IsA("TextButton") or n:IsA("TextBox") then
-                        if n.Text:lower():find(name:lower()) and not n.Text:find("discord.gg/gamingchairs") then
-                            n.Text = n.Text:gsub(name:lower(), "discord.gg/gamingchairs")
-                        end
-                        if n.Text:lower():find(display:lower()) and not n.Text:find("discord.gg/gamingchairs") then
-                            n.Text = n.Text:lower():gsub(display:lower(), "discord.gg/gamingchairs")
-                        end
-                    end
-                end
-                
-                task.spawn(function()
-                    plr.Name, plr.DisplayName = name, display
-                    while task.wait(5) do
-                        for _, v in next, game:GetDescendants() do
-                            changeText(v)
-                        end
-                    end
-                end)
-                
-                game.DescendantAdded:Connect(changeText)
-                
-                for _, part in next, cha:GetDescendants() do
-                    if part:IsA("Part") then
-                        part.Color = Color3.fromRGB(math.random(1, 255), math.random(1, 255), math.random(1, 255))
-                    end
-                    if IsA(part, "Shirt", "Pants", "ShirtGraphic", "Accessory") then
-                        part:Destroy()
-                    end
-                end				
+	InteractionSection:Toggle({
+            Name = "Anti Afk",
+            Flag = "ClickToDd33cle",
+            Callback = function(enabled)
+		if enabled then
+		for _, v in next, getconnections(plr.Idled) do
+			v:Disable()
+		end
+		local vu = game:GetService("VirtualUser")
+		plr.Idled:connect(function()
+			vu:Button2Down(Vector2.new(0, 0), camera.CFrame)
+			wait(1)
+			vu:Button2Up(Vector2.new(0, 0), camera.CFrame)
+		end)
+	       end
+            end,
+        })
+
+        InteractionSection:Toggle({
+            Name = "Click to Delete",
+            Flag = "ClickToDeleteToggle",
+            Callback = function(enabled)
+                getgenv().ClickToDeleteEnabled = enabled
+            end,
+        })
+
+        Mouse.Button1Down:Connect(function()
+            if getgenv().ClickToDeleteEnabled and Mouse.Target then
+                local clone = Mouse.Target:Clone()
+                table.insert(deletedParts, {Clone = clone, Parent = Mouse.Target.Parent, Position = Mouse.Target.Position})
+                Mouse.Target:Destroy()
             end
-        })
+        end)
 
         InteractionSection:Button({
-            Name = "Force Shift Lock",
+            Name = "Restore Deleted Parts",
             Callback = function()
-                Players.LocalPlayer.DevEnableMouseLock = true
-            end,
-        })
-
-        InteractionSection:Button({
-            Name = "Force Death",
-            Callback = function()
-                LocalPlayer.Character.Humanoid.Health = 0
-            end,
-        })
-
-        InteractionSection:Button({
-            Name = "Server Hop",
-            Callback = function()
-                Library:Notification("Server Hopping", 2, nil, "Top")
-                wait(2)
-                local Api = "https://games.roblox.com/v1/games/"
-                local _place, _id = game.PlaceId, game.JobId
-                local _servers = Api .. _place .. "/servers/Public?sortOrder=Desc&limit=100"
-                local function ListServers(cursor)
-                    local Raw = game:HttpGet(_servers .. ((cursor and "&cursor=" .. cursor) or ""))
-                    return HttpService:JSONDecode(Raw)
-                end
-                local Next
-                repeat
-                    local Servers = ListServers(Next)
-                    for _, v in next, Servers.data do
-                        if v.playing < v.maxPlayers and v.id ~= _id then
-                            local s, _ = pcall(TPS.TeleportToPlaceInstance, TPS, _place, v.id, LocalPlayer)
-                            if s then
-                                break
-                            end
-                        end
-                    end
-                    Next = Servers.nextPageCursor
-                until not Next
-            end,
-        })
-
-        InteractionSection:Button({
-            Name = "Rejoin Lowest Server",
-            Callback = function()
-                Library:Notification("Rejoining Lowest", 2, nil, "Top")
-                wait(2)
-                local PlaceID = game.PlaceId
-                local AllIDs = {}
-                local actualHour = os.date("!*t").hour
-                local foundAnything = ""
-                local function TPReturner()
-                    local Site
-                    if foundAnything == "" then
-                        Site = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceID .. "/servers/Public?sortOrder=Asc&limit=100"))
-                    else
-                        Site = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceID .. "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. foundAnything))
-                    end
-                    local ID = ""
-                    if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
-                        foundAnything = Site.nextPageCursor
-                    end
-                    local num = 0
-                    for _, v in pairs(Site.data) do
-                        ID = tostring(v.id)
-                        if tonumber(v.maxPlayers) > tonumber(v.playing) then
-                            for _, Existing in pairs(AllIDs) do
-                                if ID == tostring(Existing) then
-                                    num = num + 1
-                                end
-                            end
-                            if num == 0 then
-                                table.insert(AllIDs, ID)
-                                writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
-                                TPS:TeleportToPlaceInstance(PlaceID, ID, LocalPlayer)
-                                wait(4)
-                            end
-                        end
+                for _, partData in ipairs(deletedParts) do
+                    if partData.Clone and not partData.Clone.Parent then
+                        partData.Clone.Parent = partData.Parent
+                        partData.Clone.Position = partData.Position
                     end
                 end
-                TPReturner()
+                deletedParts = {}
             end,
         })
 
-        InteractionSection:Button({
-            Name = "Delete Saved Servers",
-            Callback = function()
-                delfile("NotSameServers.json")
-                Library:Notification("Successfully Deleted Saved Servers", 2, nil, "Top")
+        InteractionSection:Toggle({
+            Name = "Click to Teleport",
+            Flag = "ClickToTeleportToggle",
+            Callback = function(enabled)
+                clickToTeleportEnabled = enabled
             end,
         })
 
-        InteractionSection:Textbox({
-            Name = "Add Username to Avoid",
-            Callback = function(username)
-                table.insert(usernames, username)
-                writefile("tracked_usernames.txt", table.concat(usernames, "\n"))
-                Library:Notification("Added username to avoid: " .. username, 3, nil, "Top")
+        InteractionSection:Slider({
+            Name = "Teleport Distance",
+            Flag = "TeleportDistanceSlider",
+            Min = 0,
+            Max = 500,
+            Default = 200,
+            Decimals = 1,
+            Callback = function(value)
+                teleportDistance = value
             end,
         })
 
-        InteractionSection:Button({
-            Name = "Clear Username Avoid List",
-            Callback = function()
-                usernames = {}
-                writefile("tracked_usernames.txt", "")
-                Library:Notification("Cleared username avoid list.", 2, nil, "Top")
+        Mouse.Button1Down:Connect(function()
+            if clickToTeleportEnabled and Mouse.Target then
+                local targetPosition = Mouse.Hit.Position
+                local distance = (targetPosition - HumanoidRootPart.Position).Magnitude
+                if distance <= teleportDistance then
+                    HumanoidRootPart.CFrame = CFrame.new(targetPosition)
+                end
+            end
+        end)
+
+        InteractionSection:Toggle({
+            Name = "X-Ray",
+            Flag = "XRayToggle",
+            Callback = function(enabled)
+                xrayEnabled = enabled
+                applyXray()
             end,
         })
+
+        InteractionSection:Slider({
+            Name = "X-Ray Distance",
+            Flag = "XRayDistanceSlider",
+            Min = 0,
+            Max = 500,
+            Default = 50,
+            Decimals = 1,
+            Callback = function(value)
+                xrayDistance = value
+                if xrayEnabled then
+                    applyXray()
+                end
+            end,
+        })
+
+        local CameraSection = ClientPage:Section({
+            Name = "Camera",
+            Side = "Left"
+        })
+
+        CameraSection:Toggle({
+            Name = "FOV Adjustment",
+            Flag = "FOVToggle",
+            Callback = function(enabled)
+                fovEnabled = enabled
+                if not enabled then
+                    Camera.FieldOfView = 70
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Field of View",
+            Flag = "FOVSlider",
+            Min = 50,
+            Max = 120,
+            Default = 70,
+            Decimals = 1,
+            Callback = function(value)
+                if fovEnabled then
+                    Camera.FieldOfView = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Max Zoom Adjustment",
+            Flag = "MaxZoomToggle",
+            Callback = function(enabled)
+                maxZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMaxZoomDistance = 400
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Max Zoom Distance",
+            Flag = "MaxZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMaxZoomDistance,
+            Decimals = 1,
+            Callback = function(value)
+                if maxZoomEnabled then
+                    LocalPlayer.CameraMaxZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Min Zoom Adjustment",
+            Flag = "MinZoomToggle",
+            Callback = function(enabled)
+                minZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMinZoomDistance = 0.5
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Min Zoom Distance",
+            Flag = "MinZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMinZoomDistance,
+            Decimals = 1,
+            Callback = function(value)
+                if minZoomEnabled then
+                    LocalPlayer.CameraMinZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Aspect Ratio",
+            Flag = "AspectRatioToggle",
+            Callback = function(state)
+                aspect_ratio.enabled = state
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Horizontal Stretch",
+            Flag = "HorizontalStretchSlider",
+            Min = 0,
+            Max = 100,
+            Default = 100,
+            Callback = function(value)
+                aspect_ratio.horizontal_stretch = value
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Vertical Stretch",
+            Flag = "VerticalStretchSlider",
+            Min = 0,
+            Max = 100,
+            Default = 50,
+            Callback = function(value)
+                aspect_ratio.vertical_stretch = value
+            end,
+        })
+
+        local SpinSection = ClientPage:Section({
+            Name = "Spin",
+            Side = "Right"
+        })
+
+        SpinSection:Toggle({
+            Name = "Enable Spin",
+            Flag = "SpinToggle",
+            Callback = function(enabled)
+                spinning = enabled
+            end,
+        })
+
+        SpinSection:Slider({
+            Name = "Spin Speed",
+            Flag = "SpinSpeedSlider",
+            Min = 1,
+            Max = 20,
+            Default = 1,
+            Decimals = 1,
+            Callback = function(value)
+                spinSpeed = value
+            end,
+        })
+
+        task.spawn(function()
+            while task.wait() do
+                if spinning and HumanoidRootPart then
+                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+                end
+            end
+        end)
     end
 end
 
