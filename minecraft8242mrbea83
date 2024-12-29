@@ -911,7 +911,7 @@ function Library:LoadConfigTab(Window)
 		})
 	
 		local ProtectoGuio = protectgui or function() end
-
+		
 		local clientMenuToggle = nil
 		local screenGui = nil
 		
@@ -927,7 +927,7 @@ function Library:LoadConfigTab(Window)
 		    frame.Position = UDim2.new(1, -160, 0.5, -100)
 		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 		    frame.BorderSizePixel = 2
-		    frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
+		    frame.BorderColor3 = Library.Accent
 		    frame.Active = true
 		    frame.Draggable = true
 		    ProtectoGuio(frame)
@@ -985,7 +985,7 @@ function Library:LoadConfigTab(Window)
 		    timerLabel.Parent = frame
 		
 		    local function titleHoverText(hover)
-		        titleLabel.Text = hover and "Delete?" or "Client!"
+		        titleLabel.Text = hover and "Delete" or "Client Menu"
 		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
 		    end
 		
