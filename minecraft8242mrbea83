@@ -687,8 +687,194 @@ function Library:KeybindList()
 end
 
 function Library:LoadClientTab(Window)
+    local ClientPage = Window:Page({
+        Name = "Client"
+    })
 
-end 
+    do
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local Camera = workspace.CurrentCamera
+
+        local CameraSection = ClientPage:Section({
+            Name = "Camera",
+            Side = "Left"
+        })
+
+        CameraSection:Toggle({
+            Name = "Enable FOV Adjustment",
+            Flag = "FOVToggle",
+            Callback = function(enabled)
+                getgenv().FOVEnabled = enabled
+                if not enabled then
+                    Camera.FieldOfView = 70
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Field of View",
+            Flag = "FOVSlider",
+            Min = 50,
+            Max = 120,
+            Default = 70,
+            Decimals = 0,
+            Callback = function(value)
+                if getgenv().FOVEnabled then
+                    Camera.FieldOfView = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Enable Max Zoom Adjustment",
+            Flag = "MaxZoomToggle",
+            Callback = function(enabled)
+                getgenv().MaxZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMaxZoomDistance = 400
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Max Zoom Distance",
+            Flag = "MaxZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMaxZoomDistance,
+            Decimals = 0,
+            Callback = function(value)
+                if getgenv().MaxZoomEnabled then
+                    LocalPlayer.CameraMaxZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Enable Min Zoom Adjustment",
+            Flag = "MinZoomToggle",
+            Callback = function(enabled)
+                getgenv().MinZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMinZoomDistance = 0.5
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Min Zoom Distance",
+            Flag = "MinZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMinZoomDistance,
+            Decimals = 0,
+            Callback = function(value)
+                if getgenv().MinZoomEnabled then
+                    LocalPlayer.CameraMinZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Enable Camera Mode Adjustment",
+            Flag = "CameraModeToggle",
+            Callback = function(enabled)
+                getgenv().CameraModeEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMode = Enum.CameraMode.Classic
+                end
+            end,
+        })
+
+        CameraSection:Dropdown({
+            Name = "Camera Mode",
+            Flag = "CameraModeDropdown",
+            Options = { "Classic", "LockFirstPerson" },
+            Callback = function(selected)
+                if getgenv().CameraModeEnabled then
+                    LocalPlayer.CameraMode = Enum.CameraMode[selected]
+                end
+            end,
+        })
+
+        local BodySection = ClientPage:Section({
+            Name = "Body Customization",
+            Side = "Right"
+        })
+
+        BodySection:Toggle({
+            Name = "Enable Body Chams",
+            Flag = "BodyChamsToggle",
+            Callback = function(enabled)
+                getgenv().BodyChamsEnabled = enabled
+                if not enabled then
+                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Material = Enum.Material.Plastic
+                            part.Color = Color3.new(1, 1, 1)
+                        end
+                    end
+                end
+            end,
+        }):Colorpicker({
+            Name = "Body Chams Color",
+            Default = Color3.fromRGB(255, 0, 0),
+            Flag = "BodyChamsColorPicker",
+            Callback = function(color)
+                if getgenv().BodyChamsEnabled then
+                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Color = color
+                        end
+                    end
+                end
+            end,
+        })
+
+        BodySection:Dropdown({
+            Name = "Body Material",
+            Flag = "BodyMaterialDropdown",
+            Options = { "Plastic", "SmoothPlastic", "ForceField", "Neon", "Glass", "Wood", "Slate" },
+            Callback = function(selected)
+                if getgenv().BodyChamsEnabled then
+                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Material = Enum.Material[selected]
+                        end
+                    end
+                end
+            end,
+        })
+
+        local StateSection = ClientPage:Section({
+            Name = "Player State",
+            Side = "Left"
+        })
+
+        StateSection:Toggle({
+            Name = "Enable State Spoofer",
+            Flag = "StateSpooferToggle",
+            Callback = function(enabled)
+                getgenv().StateSpooferEnabled = enabled
+                if not enabled then
+                    LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+                end
+            end,
+        })
+
+        StateSection:Dropdown({
+            Name = "Current State",
+            Flag = "PlayerStateDropdown",
+            Options = { "Running", "Swimming", "Jumping", "FallingDown", "Climbing", "Flying", "Landed", "None" },
+            Callback = function(selected)
+                if getgenv().StateSpooferEnabled then
+                    LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType[selected])
+                end
+            end,
+        })
+    end
+end
 
 function Library:LoadWorldTab(Window)
     local WorldPage = Window:Page({
