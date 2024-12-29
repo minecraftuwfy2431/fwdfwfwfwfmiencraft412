@@ -4364,7 +4364,7 @@ do
 					ZIndex = 8;
 				})
                 --
-				if #tbl ~= 0 then
+				if #tbl ~= 0 then 
 				    local typeshit = #tbl * 15.5
 				    ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(typeshit, 155))
 				    ContainerInline.CanvasSize = UDim2.new(0, 0, 0, typeshit)
