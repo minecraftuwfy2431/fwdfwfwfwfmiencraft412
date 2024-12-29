@@ -4357,16 +4357,15 @@ do
 					TextStrokeTransparency = 0,
 					ZIndex = 8;
 				})
-                --
-				if #tbl ~= 0 then
-					local typeshit = #tbl * 15.5
-					ContainerOutline.Size = UDim2.new(1,-30,0,math.clamp(typeshit,0,155))
-					ContainerInline.CanvasSize = UDim2.new(0, 0, 0, typeshit)
-				end
 				Dropdown.OptionInsts[option].button = NewOption
 				Dropdown.OptionInsts[option].text = OptionName
 				handleoptionclick(option, NewOption, OptionName)
 			end
+		
+			local optionHeight = #tbl * 15
+			ContainerInline.CanvasSize = UDim2.new(0, 0, 0, optionHeight)
+			local visibleHeight = math.clamp(optionHeight, 0, 155)
+			ContainerOutline.Size = UDim2.new(1, -30, 0, visibleHeight)
 		end
 		createoptions(Dropdown.Options)
         --
