@@ -1098,7 +1098,7 @@ function Library:LoadWorldTab(Window)
 	                end
 	            end)
 	        else
-	            setfpscap(60)
+	            setfpscap(5000)
 	        end
 	    end,
 	})
