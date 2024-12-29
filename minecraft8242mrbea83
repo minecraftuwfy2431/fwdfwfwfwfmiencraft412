@@ -1093,7 +1093,7 @@ function Library:LoadClientTab(Window)
             Callback = function(enabled)
                 fovEnabled = enabled
                 if not enabled then
-                    Camera.FieldOfView = 70
+                   Camera.FieldOfView = 70
                 end
             end,
         })
