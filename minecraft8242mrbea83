@@ -842,9 +842,10 @@ function Library:LoadClientTab(Window)
 
         Mouse.Button1Down:Connect(function()
             if clickToTeleportEnabled and Mouse.Target then
-                local distance = (Mouse.Target.Position - HumanoidRootPart.Position).Magnitude
+                local targetPosition = Mouse.Hit.Position
+                local distance = (targetPosition - HumanoidRootPart.Position).Magnitude
                 if distance <= teleportDistance then
-                    HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.Position)
+                    HumanoidRootPart.CFrame = CFrame.new(targetPosition)
                 end
             end
         end)
@@ -963,7 +964,8 @@ function Library:LoadClientTab(Window)
             Name = "Set Waypoint",
             Callback = function()
                 local waypointCFrame = HumanoidRootPart.CFrame
-                writefile(waypointFile, tostring(waypointCFrame))
+                writefile(waypointFile, string.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                    waypointCFrame:GetComponents()))
                 Library:Notification("Waypoint Set: Stored in " .. waypointFile, 5, nil, "Top")
             end,
         })
@@ -973,9 +975,12 @@ function Library:LoadClientTab(Window)
             Callback = function()
                 if isfile(waypointFile) then
                     local cframeData = readfile(waypointFile)
-                    local success, result = pcall(function() return loadstring("return " .. cframeData)() end)
-                    if success and typeof(result) == "CFrame" then
-                        HumanoidRootPart.CFrame = result
+                    local components = {}
+                    for component in string.gmatch(cframeData, "([^,]+)") do
+                        table.insert(components, tonumber(component))
+                    end
+                    if #components == 12 then
+                        HumanoidRootPart.CFrame = CFrame.new(unpack(components))
                         Library:Notification("Waypoint Loaded: " .. waypointFile, 5, nil, "Top")
                     else
                         Library:Notification("Error Loading Waypoint", 5, nil, "Top")
