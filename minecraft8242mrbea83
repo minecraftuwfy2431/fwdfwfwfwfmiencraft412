@@ -940,7 +940,7 @@ function Library:LoadConfigTab(Window)
 		})
 	
 		local ProtectoGuio = protectgui or function() end
-
+		local executor = identifyexecutor and identifyexecutor() or "Shit Executor :)"
 		local clientMenuToggle = nil
 		local screenGui = nil
 		
@@ -970,6 +970,10 @@ function Library:LoadConfigTab(Window)
 		    return #game:GetService("Players"):GetPlayers()
 		end
 		
+		local function getPlayerCFrame()
+		    return tostring(game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:GetPrimaryPartCFrame() or "CFrame unavailable")
+		end
+		
 		local function createGui()
 		    if screenGui then return end
 		    screenGui = Instance.new("ScreenGui")
@@ -978,11 +982,11 @@ function Library:LoadConfigTab(Window)
 		    screenGui.Parent = game.CoreGui
 		
 		    local frame = Instance.new("Frame")
-		    frame.Size = UDim2.new(0, 150, 0, 200)
-		    frame.Position = UDim2.new(1, -160, 0.5, -100)
+		    frame.Size = UDim2.new(0, 150, 0, 250)
+		    frame.Position = UDim2.new(1, -160, 0.5, -125)
 		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 		    frame.BorderSizePixel = 2
-		    frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
+		    frame.BorderColor3 = Library.Accent
 		    frame.Active = true
 		    frame.Draggable = true
 		    ProtectoGuio(frame)
@@ -993,7 +997,7 @@ function Library:LoadConfigTab(Window)
 		    titleLabel.Position = UDim2.new(0, 0, 0, 0)
 		    titleLabel.BackgroundTransparency = 1
 		    titleLabel.Text = "Client Menu"
-		    titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    titleLabel.TextColor3 = Library.Accent
 		    titleLabel.Font = Enum.Font.SourceSans
 		    titleLabel.TextSize = 24
 		    ProtectoGuio(titleLabel)
@@ -1003,7 +1007,7 @@ function Library:LoadConfigTab(Window)
 		    pingLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    pingLabel.Position = UDim2.new(0, 0, 0.15, 0)
 		    pingLabel.BackgroundTransparency = 1
-		    pingLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    pingLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
 		    pingLabel.Font = Enum.Font.SourceSans
 		    pingLabel.TextSize = 18
 		    ProtectoGuio(pingLabel)
@@ -1013,7 +1017,7 @@ function Library:LoadConfigTab(Window)
 		    fpsLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    fpsLabel.Position = UDim2.new(0, 0, 0.275, 0)
 		    fpsLabel.BackgroundTransparency = 1
-		    fpsLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
 		    fpsLabel.Font = Enum.Font.SourceSans
 		    fpsLabel.TextSize = 18
 		    ProtectoGuio(fpsLabel)
@@ -1023,7 +1027,7 @@ function Library:LoadConfigTab(Window)
 		    playerCountLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    playerCountLabel.Position = UDim2.new(0, 0, 0.4, 0)
 		    playerCountLabel.BackgroundTransparency = 1
-		    playerCountLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    playerCountLabel.TextColor3 = Color3.fromRGB(255, 0, 255)
 		    playerCountLabel.Font = Enum.Font.SourceSans
 		    playerCountLabel.TextSize = 18
 		    ProtectoGuio(playerCountLabel)
@@ -1039,9 +1043,33 @@ function Library:LoadConfigTab(Window)
 		    ProtectoGuio(timerLabel)
 		    timerLabel.Parent = frame
 		
+		    local cframeLabel = Instance.new("TextButton")
+		    cframeLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    cframeLabel.Position = UDim2.new(0, 0, 0.65, 0)
+		    cframeLabel.BackgroundTransparency = 1
+		    cframeLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+		    cframeLabel.Font = Enum.Font.SourceSans
+		    cframeLabel.TextSize = 16
+		    ProtectoGuio(cframeLabel)
+		    cframeLabel.Parent = frame
+		    cframeLabel.MouseButton1Click:Connect(function()
+		        setclipboard(getPlayerCFrame())
+		    end)
+		
+		    local executorLabel = Instance.new("TextLabel")
+		    executorLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    executorLabel.Position = UDim2.new(0, 0, 0.775, 0)
+		    executorLabel.BackgroundTransparency = 1
+		    executorLabel.Text = "Executor: " .. executor
+		    executorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    executorLabel.Font = Enum.Font.SourceSans
+		    executorLabel.TextSize = 16
+		    ProtectoGuio(executorLabel)
+		    executorLabel.Parent = frame
+		
 		    local function titleHoverText(hover)
 		        titleLabel.Text = hover and "Delete" or "Client Menu"
-		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
+		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Library.Accent
 		    end
 		
 		    titleLabel.MouseEnter:Connect(function() titleHoverText(true) end)
@@ -1069,6 +1097,7 @@ function Library:LoadConfigTab(Window)
 		            pingLabel.Text = "Ping: " .. getPing()
 		            fpsLabel.Text = "FPS: " .. getFPSValue()
 		            playerCountLabel.Text = "Players: " .. getPlayerCount()
+		            cframeLabel.Text = "CFrame: " .. getPlayerCFrame()
 		            wait(1)
 		        end
 		    end)
