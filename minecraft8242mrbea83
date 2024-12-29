@@ -4394,7 +4394,7 @@ do
 		end
         --
 		local function createoptions(tbl)
-		    local totalHeight = #tbl * 15
+		    local totalHeight = #tbl * 15 
 		
 		    for _, option in next, tbl do
 		        Dropdown.OptionInsts[option] = {}
@@ -4434,11 +4434,12 @@ do
 		        handleoptionclick(option, NewOption, OptionName)
 		    end
 		
-		    local maxVisibleHeight = 155 
+		    local maxVisibleHeight = 155
+		    local calculatedHeight = math.min(totalHeight, maxVisibleHeight)
+		
 		    ContainerInline.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
-		    ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(totalHeight, maxVisibleHeight))
+		    ContainerOutline.Size = UDim2.new(1, -30, 0, calculatedHeight)
 		end
-
 		createoptions(Dropdown.Options)
         --
 		local set
