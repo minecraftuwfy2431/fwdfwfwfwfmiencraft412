@@ -903,7 +903,7 @@ function Library:LoadClientTab(Window)
         })
 
 	InteractionSection:Toggle({
-            Name = "Anti Afk",
+            Name = "Anti AFK",
             Flag = "ClickToDd33cle",
             Callback = function(enabled)
 		if enabled then
