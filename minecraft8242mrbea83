@@ -1072,7 +1072,7 @@ function Library:LoadClientTab(Window)
         InteractionSection:Button({
             Name = "Force Death",
             Callback = function()
-                game.LocalPlayer.Character.Humanoid.Health = 0
+                game.Players.LocalPlayer.Character.Humanoid.Health = 0
             end,
         })
 
