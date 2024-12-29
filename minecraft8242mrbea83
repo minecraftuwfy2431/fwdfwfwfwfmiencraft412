@@ -1047,6 +1047,7 @@ function Library:LoadConfigTab(Window)
 		    cframeLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    cframeLabel.Position = UDim2.new(0, 0, 0.65, 0)
 		    cframeLabel.BackgroundTransparency = 1
+		    cframeLabel.Text = "CFRAME"
 		    cframeLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
 		    cframeLabel.Font = Enum.Font.SourceSans
 		    cframeLabel.TextSize = 16
@@ -1097,7 +1098,6 @@ function Library:LoadConfigTab(Window)
 		            pingLabel.Text = "Ping: " .. getPing()
 		            fpsLabel.Text = "FPS: " .. getFPSValue()
 		            playerCountLabel.Text = "Players: " .. getPlayerCount()
-		            cframeLabel.Text = "CFrame: " .. getPlayerCFrame()
 		            wait(1)
 		        end
 		    end)
