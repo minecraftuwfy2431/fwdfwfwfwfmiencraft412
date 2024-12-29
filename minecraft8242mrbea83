@@ -1290,6 +1290,52 @@ function Library:LoadWorldTab(Window)
 	    end,
 	})
 
+	local RunService = game:GetService("RunService")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	
+	ExtraSection:Toggle({
+	    Name = "Small Rendering",
+	    Flag = "SmallRenderingToggle",
+	    Callback = function(enabled)
+	        getgenv().SmallRenderingEnabled = enabled
+	        if not enabled then
+	            for _, descendant in ipairs(workspace:GetDescendants()) do
+	                if descendant:IsA("BasePart") or descendant:IsA("Model") then
+	                    descendant.LocalTransparencyModifier = 0
+	                end
+	            end
+	        end
+	    end,
+	})
+	
+	ExtraSection:Slider({
+	    Name = "Rendering Distance",
+	    Flag = "RenderingDistanceSlider",
+	    Min = 50,
+	    Max = 1000,
+	    Default = 200,
+	    Decimals = 0,
+	    Callback = function(distance)
+	        getgenv().RenderingDistance = distance
+	    end,
+	})
+	
+	getgenv().RenderingDistance = 200
+	RunService.RenderStepped:Connect(function()
+	    if getgenv().SmallRenderingEnabled then
+	        for _, descendant in ipairs(workspace:GetDescendants()) do
+	            if descendant:IsA("BasePart") or descendant:IsA("Model") then
+	                local distance = (descendant.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+	                if distance > getgenv().RenderingDistance then
+	                    descendant.LocalTransparencyModifier = 1
+	                else
+	                    descendant.LocalTransparencyModifier = 0
+	                end
+	            end
+	        end
+	    end
+	end)
     end
 end
 
