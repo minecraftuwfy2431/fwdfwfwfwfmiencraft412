@@ -1661,7 +1661,6 @@ local ESPSeettings = {
 				end
 			end,
 		})
-		end
 		environmentESP:Slider({
 			Name = "Max Distance",
 			Flag = "EnvironmentESP/MaxDistance",
