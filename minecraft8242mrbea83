@@ -858,30 +858,6 @@ function Library:LoadWorldTab(Window)
         })
 
         LightingSection:Toggle({
-            Name = "Shadow Softness",
-            Flag = "ShadowSoftnessToggle",
-            Callback = function(enabled)
-                shadowSoftnessEnabled = enabled
-                if not enabled then
-                    game.Lighting.ShadowSoftness = 0
-                end
-            end,
-        })
-
-        LightingSection:Slider({
-            Name = "Shadow Softness Value",
-            Flag = "ShadowSoftnessSlider",
-            Min = 0,
-            Max = 1,
-            Decimals = 0.01,
-            Callback = function(value)
-                if shadowSoftnessEnabled then
-                    game.Lighting.ShadowSoftness = value
-                end
-            end,
-        })
-
-        LightingSection:Toggle({
             Name = "Technology",
             Flag = "TechnologyToggle",
             Callback = function(enabled)
@@ -916,142 +892,131 @@ function Library:LoadWorldTab(Window)
             end,
         })
 
-        local LightingEffectsSection = WorldPage:Section({
-            Name = "Lighting Effects",
+        local FogSection = WorldPage:Section({
+            Name = "Fog",
             Side = "Right"
         })
 
-        LightingEffectsSection:Toggle({
-            Name = "Blur",
-            Flag = "BlurToggle",
+        FogSection:Toggle({
+            Name = "Fog",
+            Flag = "FogToggle",
             Callback = function(enabled)
-                if enabled then
-                    local blur = Instance.new("BlurEffect", game.Lighting)
-                    blur.Size = 0
-                    blur.Name = "BlurEffect"
-                else
-                    local blur = game.Lighting:FindFirstChild("BlurEffect")
-                    if blur then blur:Destroy() end
+                fogEnabled = enabled
+                if not enabled then
+                    game.Lighting.FogEnd = 100000
+                end
+            end,
+        }):Colorpicker({
+            Default = Color3.fromRGB(200, 200, 255),
+            Flag = "FogColorPicker",
+            Callback = function(color)
+                if fogEnabled then
+                    game.Lighting.FogColor = color
                 end
             end,
         })
 
-        LightingEffectsSection:Slider({
-            Name = "Blur Size",
-            Flag = "BlurSizeSlider",
+        FogSection:Slider({
+            Name = "Fog Start",
+            Flag = "FogStartSlider",
             Min = 0,
-            Max = 50,
+            Max = 1000,
             Decimals = 1,
             Callback = function(value)
-                local blur = game.Lighting:FindFirstChild("BlurEffect")
-                if blur then
-                    blur.Size = value
+                if fogEnabled then
+                    game.Lighting.FogStart = value
                 end
             end,
         })
 
-        LightingEffectsSection:Toggle({
-            Name = "Bloom",
-            Flag = "BloomToggle",
-            Callback = function(enabled)
-                if enabled then
-                    local bloom = Instance.new("BloomEffect", game.Lighting)
-                    bloom.Intensity = 1
-                    bloom.Size = 24
-                    bloom.Threshold = 2
-                    bloom.Name = "BloomEffect"
-                else
-                    local bloom = game.Lighting:FindFirstChild("BloomEffect")
-                    if bloom then bloom:Destroy() end
-                end
-            end,
-        })
-
-        LightingEffectsSection:Slider({
-            Name = "Bloom Intensity",
-            Flag = "BloomIntensitySlider",
-            Min = 0,
-            Max = 10,
-            Decimals = 0.1,
+        FogSection:Slider({
+            Name = "Fog End",
+            Flag = "FogEndSlider",
+            Min = 100,
+            Max = 100000,
+            Decimals = 1,
             Callback = function(value)
-                local bloom = game.Lighting:FindFirstChild("BloomEffect")
-                if bloom then
-                    bloom.Intensity = value
+                if fogEnabled then
+                    game.Lighting.FogEnd = value
                 end
             end,
         })
 
-        LightingEffectsSection:Slider({
-            Name = "Bloom Size",
-            Flag = "BloomSizeSlider",
-            Min = 0,
-            Max = 100,
-            Decimals = 0.1,
-            Callback = function(value)
-                local bloom = game.Lighting:FindFirstChild("BloomEffect")
-                if bloom then
-                    bloom.Size = value
+        local SkyboxSection = WorldPage:Section({
+            Name = "Skybox",
+            Side = "Left"
+        })
+
+        SkyboxSection:Dropdown({
+            Name = "Select Skybox",
+            Flag = "SkyboxDropdown",
+            Options = {
+                "Clear Day",
+                "Starry Night",
+                "Sunset Glow",
+                "Stormy Skies",
+                "Space Nebula",
+                "Forest Dawn",
+                "Ocean Horizon",
+                "Desert Heat",
+                "Aurora Night",
+                "Mountain Twilight",
+                "Deep Cave",
+                "Eerie Fog",
+                "Misty Meadow",
+                "Snowy Peak",
+                "Cyber Grid",
+                "City Sunset",
+                "Custom"
+            },
+            Callback = function(selected)
+                local skyboxUrls = {
+                    ["Clear Day"] = "rbxassetid://123456789",
+                    ["Starry Night"] = "rbxassetid://987654321",
+                    ["Sunset Glow"] = "rbxassetid://555555555",
+                    ["Stormy Skies"] = "rbxassetid://666666666",
+                    ["Space Nebula"] = "rbxassetid://789101112",
+                    ["Forest Dawn"] = "rbxassetid://121314151",
+                    ["Ocean Horizon"] = "rbxassetid://161718192",
+                    ["Desert Heat"] = "rbxassetid://202122232",
+                    ["Aurora Night"] = "rbxassetid://242526272",
+                    ["Mountain Twilight"] = "rbxassetid://282930313",
+                    ["Deep Cave"] = "rbxassetid://323334353",
+                    ["Eerie Fog"] = "rbxassetid://363738393",
+                    ["Misty Meadow"] = "rbxassetid://404142434",
+                    ["Snowy Peak"] = "rbxassetid://444546474",
+                    ["Cyber Grid"] = "rbxassetid://484950515",
+                    ["City Sunset"] = "rbxassetid://525354555"
+                }
+
+                if selected == "Custom" then return end
+                local url = skyboxUrls[selected]
+                if url then
+                    setSkybox(url)
                 end
             end,
         })
 
-        LightingEffectsSection:Slider({
-            Name = "Bloom Threshold",
-            Flag = "BloomThresholdSlider",
-            Min = 0,
-            Max = 5,
-            Decimals = 0.1,
-            Callback = function(value)
-                local bloom = game.Lighting:FindFirstChild("BloomEffect")
-                if bloom then
-                    bloom.Threshold = value
-                end
+        SkyboxSection:Textbox({
+            Name = "Custom Skybox URL",
+            Flag = "SkyboxCustomURL",
+            Callback = function(url)
+                setSkybox(url)
             end,
         })
 
-        LightingEffectsSection:Toggle({
-            Name = "Sun Rays",
-            Flag = "SunRaysToggle",
-            Callback = function(enabled)
-                if enabled then
-                    local sunRays = Instance.new("SunRaysEffect", game.Lighting)
-                    sunRays.Intensity = 0.1
-                    sunRays.Spread = 0.5
-                    sunRays.Name = "SunRaysEffect"
-                else
-                    local sunRays = game.Lighting:FindFirstChild("SunRaysEffect")
-                    if sunRays then sunRays:Destroy() end
-                end
-            end,
-        })
-
-        LightingEffectsSection:Slider({
-            Name = "Sun Rays Intensity",
-            Flag = "SunRaysIntensitySlider",
-            Min = 0,
-            Max = 1,
-            Decimals = 0.01,
-            Callback = function(value)
-                local sunRays = game.Lighting:FindFirstChild("SunRaysEffect")
-                if sunRays then
-                    sunRays.Intensity = value
-                end
-            end,
-        })
-
-        LightingEffectsSection:Slider({
-            Name = "Sun Rays Spread",
-            Flag = "SunRaysSpreadSlider",
-            Min = 0,
-            Max = 1,
-            Decimals = 0.01,
-            Callback = function(value)
-                local sunRays = game.Lighting:FindFirstChild("SunRaysEffect")
-                if sunRays then
-                    sunRays.Spread = value
-                end
-            end,
-        })
+        local function setSkybox(url)
+            local skybox = game.Lighting:FindFirstChildOfClass("Sky")
+            if not skybox then
+                skybox = Instance.new("Sky", game.Lighting)
+            end
+            skybox.SkyboxBk = url
+            skybox.SkyboxFt = url
+            skybox.SkyboxLf = url
+            skybox.SkyboxRt = url
+            skybox.SkyboxUp = url
+            skybox.SkyboxDn = url
+        end
     end
 end
 
