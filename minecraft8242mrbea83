@@ -1186,8 +1186,7 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-	local originalCameraCFrame = camera.CFrame
-		RunService.RenderStepped:Connect(function()
+	RunService.RenderStepped:Connect(function()
 			if aspect_ratio.enabled then
 				local currentCFrame = camera.CFrame
 				if currentCFrame ~= originalCameraCFrame then
