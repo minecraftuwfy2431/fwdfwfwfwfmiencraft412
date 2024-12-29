@@ -718,7 +718,7 @@ function Library:LoadClientTab(Window)
             Min = 50,
             Max = 120,
             Default = 70,
-            Decimals = 0,
+            Decimals = 1,
             Callback = function(value)
                 if getgenv().FOVEnabled then
                     Camera.FieldOfView = value
@@ -743,7 +743,7 @@ function Library:LoadClientTab(Window)
             Min = 0,
             Max = 1000,
             Default = LocalPlayer.CameraMaxZoomDistance,
-            Decimals = 0,
+            Decimals = 1,
             Callback = function(value)
                 if getgenv().MaxZoomEnabled then
                     LocalPlayer.CameraMaxZoomDistance = value
@@ -768,7 +768,7 @@ function Library:LoadClientTab(Window)
             Min = 0,
             Max = 1000,
             Default = LocalPlayer.CameraMinZoomDistance,
-            Decimals = 0,
+            Decimals = 1,
             Callback = function(value)
                 if getgenv().MinZoomEnabled then
                     LocalPlayer.CameraMinZoomDistance = value
