@@ -690,7 +690,7 @@ function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
     })
-
+	
     do
         local Players = game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
