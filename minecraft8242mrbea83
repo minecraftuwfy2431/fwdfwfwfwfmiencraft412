@@ -820,25 +820,35 @@ function Library:LoadClientTab(Window)
         PlayerSection:Dropdown({
 	    Name = "Player Options",
 	    Flag = "PlayerOptionsDropdown",
-	    Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
+	    Options = {"Loop Teleport", "Loop Tween", "Orbit Player", "Attach To Back"},
 	    Callback = function(option)
 	        if option == "Loop Teleport" then
 	            loopTeleportEnabled = not loopTeleportEnabled
 	            if not loopTeleportEnabled then
 	                loopTweenEnabled = false
 	                orbitEnabled = false
+	                attachToBackEnabled = false
 	            end
 	        elseif option == "Loop Tween" then
 	            loopTweenEnabled = not loopTweenEnabled
 	            if not loopTweenEnabled then
 	                loopTeleportEnabled = false
 	                orbitEnabled = false
+	                attachToBackEnabled = false
 	            end
 	        elseif option == "Orbit Player" then
 	            orbitEnabled = not orbitEnabled
 	            if not orbitEnabled then
 	                loopTeleportEnabled = false
 	                loopTweenEnabled = false
+	                attachToBackEnabled = false
+	            end
+	        elseif option == "Attach To Back" then
+	            attachToBackEnabled = not attachToBackEnabled
+	            if not attachToBackEnabled then
+	                loopTeleportEnabled = false
+	                loopTweenEnabled = false
+	                orbitEnabled = false
 	            end
 	        end
 	    end,
@@ -903,6 +913,54 @@ function Library:LoadClientTab(Window)
 	            HumanoidRootPart.CFrame = CFrame.new(
 	                selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(xOffset, 0, zOffset),
 	                selectedPlayer.Character.HumanoidRootPart.Position
+	            )
+	        end
+	    end
+	end)
+
+	PlayerSection:Slider({
+	    Name = "Back Offset X",
+	    Flag = "BackOffsetXSlider",
+	    Min = -10,
+	    Max = 10,
+	    Default = 0,
+	    Decimals = 1,
+	    Callback = function(value)
+	        backOffsetX = value
+	    end,
+	})
+	
+	PlayerSection:Slider({
+	    Name = "Back Offset Y",
+	    Flag = "BackOffsetYSlider",
+	    Min = -10,
+	    Max = 10,
+	    Default = 0,
+	    Decimals = 1,
+	    Callback = function(value)
+	        backOffsetY = value
+	    end,
+	})
+	
+	PlayerSection:Slider({
+	    Name = "Back Offset Z",
+	    Flag = "BackOffsetZSlider",
+	    Min = -10,
+	    Max = 10,
+	    Default = -5,
+	    Decimals = 1,
+	    Callback = function(value)
+	        backOffsetZ = value
+	    end,
+	})
+	
+	task.spawn(function()
+	    while task.wait(0.1) do
+	        if attachToBackEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+	            local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+	            HumanoidRootPart.CFrame = CFrame.new(
+	                targetPosition + Vector3.new(backOffsetX, backOffsetY, backOffsetZ),
+	                targetPosition
 	            )
 	        end
 	    end
