@@ -738,25 +738,51 @@ function Library:LoadWorldTab(Window)
             end,
         })
 
-        LightingSection:Slider({
+        LightingSection:Toggle({
             Name = "Brightness",
+            Flag = "BrightnessToggle",
+            Callback = function(enabled)
+                brightnessEnabled = enabled
+                if not enabled then
+                    game.Lighting.Brightness = 2
+                end
+            end,
+        })
+
+        LightingSection:Slider({
+            Name = "Brightness Value",
             Flag = "BrightnessSlider",
             Min = 0,
             Max = 10,
             Decimals = 1,
             Callback = function(value)
-                game.Lighting.Brightness = value
+                if brightnessEnabled then
+                    game.Lighting.Brightness = value
+                end
+            end,
+        })
+
+        LightingSection:Toggle({
+            Name = "Exposure",
+            Flag = "ExposureToggle",
+            Callback = function(enabled)
+                exposureEnabled = enabled
+                if not enabled then
+                    game.Lighting.ExposureCompensation = 0
+                end
             end,
         })
 
         LightingSection:Slider({
-            Name = "Exposure",
+            Name = "Exposure Value",
             Flag = "ExposureSlider",
             Min = 0,
             Max = 5,
             Decimals = 1,
             Callback = function(value)
-                game.Lighting.ExposureCompensation = value
+                if exposureEnabled then
+                    game.Lighting.ExposureCompensation = value
+                end
             end,
         })
 
@@ -768,14 +794,27 @@ function Library:LoadWorldTab(Window)
             end,
         })
 
-        LightingSection:Slider({
+        LightingSection:Toggle({
             Name = "Shadow Softness",
+            Flag = "ShadowSoftnessToggle",
+            Callback = function(enabled)
+                shadowSoftnessEnabled = enabled
+                if not enabled then
+                    game.Lighting.ShadowSoftness = 0
+                end
+            end,
+        })
+
+        LightingSection:Slider({
+            Name = "Shadow Softness Value",
             Flag = "ShadowSoftnessSlider",
             Min = 0,
             Max = 1,
             Decimals = 2,
             Callback = function(value)
-                game.Lighting.ShadowSoftness = value
+                if shadowSoftnessEnabled then
+                    game.Lighting.ShadowSoftness = value
+                end
             end,
         })
 
@@ -792,7 +831,9 @@ function Library:LoadWorldTab(Window)
                     game.Lighting.FogEnd = 100000
                 end
             end,
-        }):Slider({
+        })
+
+        FogSection:Slider({
             Name = "Fog Start",
             Flag = "FogStartSlider",
             Min = 0,
@@ -803,7 +844,9 @@ function Library:LoadWorldTab(Window)
                     game.Lighting.FogStart = value
                 end
             end,
-        }):Slider({
+        })
+
+        FogSection:Slider({
             Name = "Fog End",
             Flag = "FogEndSlider",
             Min = 100,
@@ -814,7 +857,9 @@ function Library:LoadWorldTab(Window)
                     game.Lighting.FogEnd = value
                 end
             end,
-        }):Colorpicker({
+        })
+
+        FogSection:Colorpicker({
             Default = Color3.fromRGB(200, 200, 255),
             Flag = "FogColorPicker",
             Callback = function(color)
@@ -890,7 +935,9 @@ function Library:LoadWorldTab(Window)
                     if atmosphere then atmosphere:Destroy() end
                 end
             end,
-        }):Slider({
+        })
+
+        AtmosphereSection:Slider({
             Name = "Density",
             Flag = "AtmosphereDensity",
             Min = 0,
@@ -904,7 +951,9 @@ function Library:LoadWorldTab(Window)
                     end
                 end
             end,
-        }):Colorpicker({
+        })
+
+        AtmosphereSection:Colorpicker({
             Default = Color3.fromRGB(200, 200, 255),
             Flag = "AtmosphereColorPicker",
             Callback = function(color)
@@ -921,14 +970,27 @@ function Library:LoadWorldTab(Window)
             Name = "Clock"
         })
 
-        TimeSection:Slider({
+        TimeSection:Toggle({
             Name = "Time",
+            Flag = "ClockToggle",
+            Callback = function(enabled)
+                clockEnabled = enabled
+                if not enabled then
+                    game.Lighting.ClockTime = 12
+                end
+            end,
+        })
+
+        TimeSection:Slider({
+            Name = "Time Value",
             Flag = "ClockTimeSlider",
             Min = 0,
             Max = 24,
             Decimals = 1,
             Callback = function(value)
-                game.Lighting.ClockTime = value
+                if clockEnabled then
+                    game.Lighting.ClockTime = value
+                end
             end,
         })
     end
