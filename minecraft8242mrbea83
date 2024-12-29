@@ -753,16 +753,6 @@ function Library:LoadClientTab(Window)
             Side = "Left"
         })
 
-        local playerDropdown
-        PlayerSection:Button({
-            Name = "Update Dropdown",
-            Callback = function()
-                if playerDropdown then
-                    playerDropdown:SetOptions(updatePlayerList())
-                end
-            end,
-        })
-
         playerDropdown = PlayerSection:Dropdown({
             Name = "Select Player",
             Flag = "PlayerDropdown",
