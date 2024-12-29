@@ -1221,7 +1221,7 @@ function Library:LoadConfigTab(Window)
 		})
 
 		ScriptSystem:Label({
-		Name = "System abuse leads to blacklist.",
+		Name = "System Abuse Leads To Blacklist",
 		Centered = true
 		})
 	end
