@@ -701,6 +701,9 @@ function Library:LoadConfigTab(Window)
 		local Themes = Config:Section({
 			Name = "Themes Configuration"
 		})
+		local Info = Config:Section({
+			Name = "Script Information"
+		})
 		local Cfgs = Config:Section({
 			Name = "Configs",
 			Side = "Right"
@@ -900,6 +903,32 @@ function Library:LoadConfigTab(Window)
 				Library:ChangeAccent()
 			end
 		})
+
+		Info:Label({
+			Name = "Script Version: 1.12",
+			Centered = true,
+		})
+
+		Info:Label({
+		    Name = "Last Update: " .. os.date("%B %d, %Y", os.time() - 86400),
+		    Centered = true,
+		})
+
+		Info:Label({
+		    Name = "Developer: soulhub - 1114257240883482624",
+		    Centered = true,
+		})
+
+		Info:Label({
+		    Name = "Discord: https://discord.gg/gamingchairs",
+		    Centered = true,
+		})
+
+		Info:Label({
+		    Name = "© soulhub",
+		    Centered = true,
+		})
+
 		Menu:Keybind({
 			Name = "UI Toggle",
 			Flag = "MenuKey",
