@@ -705,6 +705,10 @@ function Library:LoadConfigTab(Window)
 			Name = "Configs",
 			Side = "Right"
 		})
+		local ScriptSystem = Config:Section({
+			Name = "Script System",
+			Side = "Right"
+		})
 		local abc = false
 		local CurrentList = {}
 		local CFGList, loadedcfgshit, autoloadlabel, randomfunc, maincolor, backgroundcolor, outlinecolor, fontcolor
@@ -1179,6 +1183,42 @@ function Library:LoadConfigTab(Window)
 		else
 			autoloadlabel:SetText("Current Auto Load: None")
 		end
+
+		ScriptSystem:Label({
+		Name = "Snitch Report System",
+		Centered = true
+		})
+
+		ScriptSystem:Button({
+		Name = "Send Report",
+		Callback = function()
+			
+		end,
+		})
+
+		ScriptSystem:Textbox({
+		Flag = "Df4334f3v3v3xwx",
+		Name = "Snitch Username",
+		Callback = function(c)
+			
+		end,
+		})
+
+		ScriptSystem:Textbox({
+		Flag = "Df433v354hreex",
+		Name = "Video Link",
+		Callback = function(c)
+			
+		end,
+		})
+
+		ScriptSystem:Textbox({
+		Flag = "Df433v354hreex",
+		Name = "Extra Context (Optional)",
+		Callback = function(c)
+			
+		end,
+		})
 	end
 end
 --
