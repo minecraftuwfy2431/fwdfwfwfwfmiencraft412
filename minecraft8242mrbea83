@@ -15,7 +15,7 @@ local Library = {
 	Holder = nil;
 	PageHolder = nil;
 	RegistryMap = {};
-	Toggles = {};
+	Toggles = {};A
 	Keys = {
 		[Enum.KeyCode.LeftShift] = "LShift",
 		[Enum.KeyCode.RightShift] = "RShift",
@@ -4385,6 +4385,7 @@ do
 				if #tbl ~= 0 then
 					local typeshit = #tbl * 15.5
 					ContainerOutline.Size = UDim2.new(1,-30,0,math.clamp(typeshit,0,155))
+					ContainerInline.CanvasSize = UDim2.new(0, 0, 0, typeshit)
 				end
 				Dropdown.OptionInsts[option].button = NewOption
 				Dropdown.OptionInsts[option].text = OptionName
