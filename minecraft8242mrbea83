@@ -763,7 +763,7 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        playerDropdown = PlayerSection:Dropdown({
+        PlayerSection:Dropdown({
             Name = "Select Player",
             Flag = "PlayerDropdown",
             Options = updatePlayerList(),
