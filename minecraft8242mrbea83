@@ -976,7 +976,7 @@ function Library:LoadWorldTab(Window)
 
         local TimeSection = WorldPage:Section({
             Name = "Clock",
-            Side = "Left"
+            Side = "Right"
         })
 
         TimeSection:Toggle({
