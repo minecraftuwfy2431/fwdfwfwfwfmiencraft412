@@ -686,7 +686,7 @@ function Library:KeybindList()
 	return KeyList
 end
 
-function Library:LoadClientTab(Window)
+	function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
     })
@@ -696,9 +696,17 @@ function Library:LoadClientTab(Window)
         local LocalPlayer = Players.LocalPlayer
         local Camera = workspace.CurrentCamera
         local Mouse = LocalPlayer:GetMouse()
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+        local Humanoid = Character:WaitForChild("Humanoid")
         local deletedParts = {}
         local xrayEnabled = false
         local xrayDistance = 50
+        local spinning = false
+        local spinSpeed = 1
+        local fakeLagEnabled = false
+        local lagInterval = 1
+        local platformPart
 
         local CameraSection = ClientPage:Section({
             Name = "Camera",
@@ -708,6 +716,7 @@ function Library:LoadClientTab(Window)
         CameraSection:Toggle({
             Name = "FOV Adjustment",
             Flag = "FOVToggle",
+            Keybind = "F",
             Callback = function(enabled)
                 getgenv().FOVEnabled = enabled
                 if not enabled then
@@ -733,6 +742,7 @@ function Library:LoadClientTab(Window)
         CameraSection:Toggle({
             Name = "Max Zoom Adjustment",
             Flag = "MaxZoomToggle",
+            Keybind = "Z",
             Callback = function(enabled)
                 getgenv().MaxZoomEnabled = enabled
                 if not enabled then
@@ -758,6 +768,7 @@ function Library:LoadClientTab(Window)
         CameraSection:Toggle({
             Name = "Min Zoom Adjustment",
             Flag = "MinZoomToggle",
+            Keybind = "X",
             Callback = function(enabled)
                 getgenv().MinZoomEnabled = enabled
                 if not enabled then
@@ -783,6 +794,7 @@ function Library:LoadClientTab(Window)
         CameraSection:Toggle({
             Name = "Camera Mode Adjustment",
             Flag = "CameraModeToggle",
+            Keybind = "C",
             Callback = function(enabled)
                 getgenv().CameraModeEnabled = enabled
                 if not enabled then
@@ -802,85 +814,6 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        local BodySection = ClientPage:Section({
-            Name = "Body Customization",
-            Side = "Right"
-        })
-
-        BodySection:Toggle({
-            Name = "Body Chams",
-            Flag = "BodyChamsToggle",
-            Callback = function(enabled)
-                getgenv().BodyChamsEnabled = enabled
-                if not enabled then
-                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Material = Enum.Material.Plastic
-                            part.Color = Color3.new(1, 1, 1)
-                        end
-                    end
-                end
-            end,
-        }):Colorpicker({
-            Name = "Chams Color",
-            Default = Color3.fromRGB(255, 0, 0),
-            Flag = "BodyChamsColorPicker",
-            Callback = function(color)
-                if getgenv().BodyChamsEnabled then
-                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Color = color
-                        end
-                    end
-                end
-            end,
-        })
-
-        BodySection:Dropdown({
-            Name = "Body Material",
-            Flag = "BodyMaterialDropdown",
-            Options = { "Plastic", "SmoothPlastic", "ForceField", "Neon", "Glass", "Wood", "Slate" },
-            Callback = function(selected)
-                if getgenv().BodyChamsEnabled then
-                    for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Material = Enum.Material[selected]
-                        end
-                    end
-                end
-            end,
-        })
-
-        local StateSection = ClientPage:Section({
-            Name = "Player State",
-            Side = "Left"
-        })
-
-        StateSection:Toggle({
-            Name = "State Spoofer",
-            Flag = "StateSpooferToggle",
-            Callback = function(enabled)
-                getgenv().StateSpooferEnabled = enabled
-                if not enabled then
-                    LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
-                end
-            end,
-        })
-
-        StateSection:Dropdown({
-            Name = "Current State",
-            Flag = "PlayerStateDropdown",
-            Options = { "Running", "Swimming", "Jumping", "FallingDown", "Climbing", "Flying", "Landed", "None" },
-            Callback = function(selected)
-                if getgenv().StateSpooferEnabled then
-                    while getgenv().StateSpooferEnabled do
-                        LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType[selected])
-                        task.wait(0.1)
-                    end
-                end
-            end,
-        })
-
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
             Side = "Right"
@@ -889,6 +822,7 @@ function Library:LoadClientTab(Window)
         InteractionSection:Toggle({
             Name = "Click to Delete",
             Flag = "ClickToDeleteToggle",
+            Keybind = "D",
             Callback = function(enabled)
                 getgenv().ClickToDeleteEnabled = enabled
             end,
@@ -896,7 +830,7 @@ function Library:LoadClientTab(Window)
 
         Mouse.Button1Down:Connect(function()
             if getgenv().ClickToDeleteEnabled and Mouse.Target then
-                table.insert(deletedParts, Mouse.Target)
+                table.insert(deletedParts, {Instance = Mouse.Target, Parent = Mouse.Target.Parent})
                 Mouse.Target:Destroy()
             end
         end)
@@ -905,8 +839,8 @@ function Library:LoadClientTab(Window)
             Name = "Restore Deleted Parts",
             Callback = function()
                 for _, part in ipairs(deletedParts) do
-                    if part.Parent == nil then
-                        part.Parent = workspace
+                    if part.Instance and part.Parent then
+                        part.Instance.Parent = part.Parent
                     end
                 end
                 deletedParts = {}
@@ -916,6 +850,7 @@ function Library:LoadClientTab(Window)
         InteractionSection:Toggle({
             Name = "Click to Teleport",
             Flag = "ClickToTeleportToggle",
+            Keybind = "T",
             Callback = function(enabled)
                 getgenv().ClickToTeleportEnabled = enabled
             end,
@@ -935,9 +870,9 @@ function Library:LoadClientTab(Window)
 
         Mouse.Button1Down:Connect(function()
             if getgenv().ClickToTeleportEnabled and Mouse.Target then
-                local distance = (Mouse.Target.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                local distance = (Mouse.Target.Position - HumanoidRootPart.Position).Magnitude
                 if distance <= getgenv().TeleportDistance then
-                    LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(Mouse.Hit.Position))
+                    HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.Position)
                 end
             end
         end)
@@ -950,6 +885,7 @@ function Library:LoadClientTab(Window)
         XRaySection:Toggle({
             Name = "Enable X-Ray",
             Flag = "XRayToggle",
+            Keybind = "R",
             Callback = function(enabled)
                 xrayEnabled = enabled
                 for _, part in ipairs(workspace:GetDescendants()) do
@@ -974,10 +910,119 @@ function Library:LoadClientTab(Window)
 
         workspace.DescendantAdded:Connect(function(part)
             if xrayEnabled and part:IsA("BasePart") then
-                local distance = (part.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                local distance = (part.Position - HumanoidRootPart.Position).Magnitude
                 part.LocalTransparencyModifier = distance <= xrayDistance and 0.5 or 0
             end
         end)
+
+        local PlayerSection = ClientPage:Section({
+            Name = "Player",
+            Side = "Right"
+        })
+
+        PlayerSection:Toggle({
+            Name = "Freeze Player",
+            Flag = "FreezePlayerToggle",
+            Keybind = "F",
+            Callback = function(enabled)
+                if enabled then
+                    HumanoidRootPart.Anchored = true
+                else
+                    HumanoidRootPart.Anchored = false
+                end
+            end,
+        })
+
+        PlayerSection:Toggle({
+            Name = "Fake Lag",
+            Flag = "FakeLagToggle",
+            Keybind = "L",
+            Callback = function(enabled)
+                fakeLagEnabled = enabled
+                if not enabled then
+                    HumanoidRootPart.Anchored = false
+                end
+            end,
+        })
+
+        PlayerSection:Slider({
+            Name = "Lag Interval",
+            Flag = "LagIntervalSlider",
+            Min = 0.1,
+            Max = 5,
+            Default = 1,
+            Decimals = 1,
+            Callback = function(value)
+                lagInterval = value
+            end,
+        })
+
+        task.spawn(function()
+            while task.wait(lagInterval) do
+                if fakeLagEnabled then
+                    HumanoidRootPart.Anchored = true
+                    task.wait(0.1)
+                    HumanoidRootPart.Anchored = false
+                end
+            end
+        end)
+
+        PlayerSection:Toggle({
+            Name = "Spin Player",
+            Flag = "SpinPlayerToggle",
+            Keybind = "S",
+            Callback = function(enabled)
+                spinning = enabled
+            end,
+        })
+
+        PlayerSection:Slider({
+            Name = "Spin Speed",
+            Flag = "SpinSpeedSlider",
+            Min = 1,
+            Max = 50,
+            Default = 10,
+            Decimals = 1,
+            Callback = function(value)
+                spinSpeed = value
+            end,
+        })
+
+        task.spawn(function()
+            while task.wait() do
+                if spinning then
+                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+                end
+            end
+        end)
+
+        local PlatformSection = ClientPage:Section({
+            Name = "Platform",
+            Side = "Left"
+        })
+
+        PlatformSection:Button({
+            Name = "Spawn Platform",
+            Callback = function()
+                if not platformPart then
+                    platformPart = Instance.new("Part")
+                    platformPart.Size = Vector3.new(10, 1, 10)
+                    platformPart.Position = HumanoidRootPart.Position - Vector3.new(0, 3, 0)
+                    platformPart.Anchored = true
+                    platformPart.Parent = workspace
+                end
+            end,
+        })
+
+        PlatformSection:Button({
+            Name = "Remove Platform",
+            Callback = function()
+                if platformPart and platformPart.Parent then
+                    platformPart:Destroy()
+                    platformPart = nil
+                end
+            end,
+        })
     end
 end
 
