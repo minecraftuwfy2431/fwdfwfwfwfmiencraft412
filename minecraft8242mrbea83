@@ -912,6 +912,126 @@ function Library:LoadConfigTab(Window)
 				Library.KeyshitList:SetVisible(v)
 			end
 		})
+
+		local ProtectoGuio = protectgui or function() end
+
+		local clientMenuToggle = nil
+		local screenGui = nil
+		
+		local function createGui()
+		    if screenGui then return end
+		    screenGui = Instance.new("ScreenGui")
+		    screenGui.Name = "ServerStatsGui"
+		    ProtectoGuio(screenGui)
+		    screenGui.Parent = game.CoreGui
+		
+		    local frame = Instance.new("Frame")
+		    frame.Size = UDim2.new(0, 150, 0, 200)
+		    frame.Position = UDim2.new(1, -160, 0.5, -100)
+		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		    frame.BorderSizePixel = 2
+		    frame.BorderColor3 = Color3.fromRGB(100, 149, 237)
+		    frame.Active = true
+		    frame.Draggable = true
+		    ProtectoGuio(frame)
+		    frame.Parent = screenGui
+		
+		    local titleLabel = Instance.new("TextButton")
+		    titleLabel.Size = UDim2.new(1, 0, 0.15, 0)
+		    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+		    titleLabel.BackgroundTransparency = 1
+		    titleLabel.Text = "Client!"
+		    titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    titleLabel.Font = Enum.Font.SourceSans
+		    titleLabel.TextSize = 24
+		    ProtectoGuio(titleLabel)
+		    titleLabel.Parent = frame
+		
+		    local pingLabel = Instance.new("TextLabel")
+		    pingLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    pingLabel.Position = UDim2.new(0, 0, 0.15, 0)
+		    pingLabel.BackgroundTransparency = 1
+		    pingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    pingLabel.Font = Enum.Font.SourceSans
+		    pingLabel.TextSize = 18
+		    ProtectoGuio(pingLabel)
+		    pingLabel.Parent = frame
+		
+		    local fpsLabel = Instance.new("TextLabel")
+		    fpsLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    fpsLabel.Position = UDim2.new(0, 0, 0.275, 0)
+		    fpsLabel.BackgroundTransparency = 1
+		    fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    fpsLabel.Font = Enum.Font.SourceSans
+		    fpsLabel.TextSize = 18
+		    ProtectoGuio(fpsLabel)
+		    fpsLabel.Parent = frame
+		
+		    local playerCountLabel = Instance.new("TextLabel")
+		    playerCountLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    playerCountLabel.Position = UDim2.new(0, 0, 0.4, 0)
+		    playerCountLabel.BackgroundTransparency = 1
+		    playerCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    playerCountLabel.Font = Enum.Font.SourceSans
+		    playerCountLabel.TextSize = 18
+		    ProtectoGuio(playerCountLabel)
+		    playerCountLabel.Parent = frame
+		
+		    local timerLabel = Instance.new("TextLabel")
+		    timerLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    timerLabel.Position = UDim2.new(0, 0, 0.525, 0)
+		    timerLabel.BackgroundTransparency = 1
+		    timerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    timerLabel.Font = Enum.Font.SourceSans
+		    timerLabel.TextSize = 18
+		    ProtectoGuio(timerLabel)
+		    timerLabel.Parent = frame
+		
+		    local titleHoverText = function(hover)
+		        titleLabel.Text = hover and "Delete?" or "Client!"
+		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
+		    end
+		
+		    titleLabel.MouseEnter:Connect(function() titleHoverText(true) end)
+		    titleLabel.MouseLeave:Connect(function() titleHoverText(false) end)
+		    titleLabel.MouseButton1Click:Connect(function()
+		        screenGui:Destroy()
+		        screenGui = nil
+		    end)
+		
+		    spawn(function()
+		        local timer = 0
+		        while screenGui do
+		            timer += 1
+		            local hours = math.floor(timer / 3600)
+		            local minutes = math.floor((timer % 3600) / 60)
+		            local seconds = timer % 60
+		            if hours > 0 then
+		                timerLabel.Text = string.format("Timer: %dh %dm %ds", hours, minutes, seconds)
+		            elseif minutes > 0 then
+		                timerLabel.Text = string.format("Timer: %dm %ds", minutes, seconds)
+		            else
+		                timerLabel.Text = string.format("Timer: %ds", seconds)
+		            end
+		            wait(1)
+		        end
+		    end)
+		end
+		
+		clientMenuToggle = Menu:Toggle({
+		    Name = "Local Client Menu",
+		    Flag = "Kef3fc453g3st",
+		    State = false,
+		    Callback = function(state)
+		        if state then
+		            createGui()
+		        elseif screenGui then
+		            screenGui:Destroy()
+		            screenGui = nil
+		        end
+		    end
+		})
+
 		Menu:Button({
 			Name = "Unload",
 			Callback = function()
