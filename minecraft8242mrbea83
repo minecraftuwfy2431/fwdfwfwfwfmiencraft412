@@ -703,123 +703,124 @@ function Library:LoadClientTab(Window)
         local waypointFile = "waypoint.txt"
         local spinning = false
         local spinSpeed = 1
-        local xrayEnabled = false
-        local xrayDistance = 50
         local platformPart
         local platformFollowEnabled = false
         local platformSize = Vector3.new(10, 1, 10)
         local platformTransparency = 0
         local clickToTeleportEnabled = false
         local teleportDistance = 200
+        local xrayEnabled = false
+        local xrayDistance = 50
         local aspect_ratio = {
             enabled = false,
             horizontal_stretch = 100,
             vertical_stretch = 50,
         }
+        local fovEnabled = false
+        local maxZoomEnabled = false
+        local minZoomEnabled = false
+        local selectedPlayer
+        local tweenSpeed = 100
 
-        local originalCameraCFrame = Camera.CFrame
-        RunService.RenderStepped:Connect(function()
-            if aspect_ratio.enabled then
-                local currentCFrame = Camera.CFrame
-                if currentCFrame ~= originalCameraCFrame then
-                    local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = currentCFrame:GetComponents()
-                    Camera.CFrame = CFrame.new(
-                        X,
-                        Y,
-                        Z,
-                        R00 * aspect_ratio.horizontal_stretch / 100,
-                        R01 * aspect_ratio.vertical_stretch / 100,
-                        R02,
-                        R10,
-                        R11 * aspect_ratio.vertical_stretch / 100,
-                        R12,
-                        R20 * aspect_ratio.horizontal_stretch / 100,
-                        R21 * aspect_ratio.vertical_stretch / 100,
-                        R22
-                    )
+        local function updatePlayerList()
+            local playerNames = {}
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    table.insert(playerNames, player.Name)
                 end
             end
-        end)
+            return playerNames
+        end
 
-        local CameraSection = ClientPage:Section({
-            Name = "Camera",
+        local function applyXray()
+            for _, object in ipairs(workspace:GetDescendants()) do
+                if object:IsA("BasePart") then
+                    local distance = (HumanoidRootPart.Position - object.Position).Magnitude
+                    if distance <= xrayDistance then
+                        object.Transparency = xrayEnabled and 0.5 or 0
+                    end
+                end
+            end
+        end
+
+        local PlayerSection = ClientPage:Section({
+            Name = "Players",
             Side = "Left"
         })
 
-        CameraSection:Slider({
-            Name = "Field of View",
-            Flag = "FOVSlider",
-            Min = 50,
-            Max = 120,
-            Default = 70,
-            Decimals = 1,
-            Callback = function(value)
-                Camera.FieldOfView = value
-            end,
-        })
-
-        CameraSection:Toggle({
-            Name = "Aspect Ratio",
-            Flag = "AspectRatioToggle",
-            Callback = function(state)
-                aspect_ratio.enabled = state
-            end,
-        })
-
-        CameraSection:Slider({
-            Name = "Horizontal Stretch",
-            Flag = "HorizontalStretchSlider",
-            Min = 0,
-            Max = 100,
-            Default = 100,
-            Callback = function(value)
-                aspect_ratio.horizontal_stretch = value
-            end,
-        })
-
-        CameraSection:Slider({
-            Name = "Vertical Stretch",
-            Flag = "VerticalStretchSlider",
-            Min = 0,
-            Max = 100,
-            Default = 50,
-            Callback = function(value)
-                aspect_ratio.vertical_stretch = value
-            end,
-        })
-
-        local SpinSection = ClientPage:Section({
-            Name = "Spin",
-            Side = "Right"
-        })
-
-        SpinSection:Toggle({
-            Name = "Enable Spin",
-            Flag = "SpinToggle",
-            Callback = function(enabled)
-                spinning = enabled
-            end,
-        })
-
-        SpinSection:Slider({
-            Name = "Spin Speed",
-            Flag = "SpinSpeedSlider",
-            Min = 1,
-            Max = 20,
-            Default = 1,
-            Decimals = 1,
-            Callback = function(value)
-                spinSpeed = value
-            end,
-        })
-
-        task.spawn(function()
-            while task.wait() do
-                if spinning and HumanoidRootPart then
-                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+        local playerDropdown
+        PlayerSection:Button({
+            Name = "Update Dropdown",
+            Callback = function()
+                if playerDropdown then
+                    playerDropdown:SetOptions(updatePlayerList())
                 end
-            end
-        end)
+            end,
+        })
+
+        playerDropdown = PlayerSection:Dropdown({
+            Name = "Select Player",
+            Flag = "PlayerDropdown",
+            Options = updatePlayerList(),
+            Callback = function(playerName)
+                selectedPlayer = Players:FindFirstChild(playerName)
+            end,
+        })
+
+        PlayerSection:Button({
+            Name = "Spectate Player",
+            Callback = function()
+                if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    Camera.CameraSubject = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+                end
+            end,
+        })
+
+        PlayerSection:Button({
+            Name = "Stop Spectating",
+            Callback = function()
+                Camera.CameraSubject = LocalPlayer.Character
+            end,
+        })
+
+        PlayerSection:Slider({
+            Name = "Tween Speed",
+            Flag = "TweenSpeedSlider",
+            Min = 10,
+            Max = 300,
+            Default = 100,
+            Decimals = 1,
+            Callback = function(value)
+                tweenSpeed = value
+            end,
+        })
+
+        PlayerSection:Button({
+            Name = "Tween To Player",
+            Callback = function()
+                if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+                    local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
+                    local duration = distance / tweenSpeed
+
+                    local tweenService = game:GetService("TweenService")
+                    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+                    local goal = {CFrame = CFrame.new(targetPosition)}
+
+                    local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
+                    tween:Play()
+                end
+            end,
+        })
+
+        PlayerSection:Button({
+            Name = "Teleport To Player",
+            Callback = function()
+                if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
+                end
+            end,
+        })
 
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
@@ -885,55 +886,175 @@ function Library:LoadClientTab(Window)
             end
         end)
 
-        local WaypointSection = ClientPage:Section({
-            Name = "Waypoints",
+        InteractionSection:Toggle({
+            Name = "X-Ray",
+            Flag = "XRayToggle",
+            Callback = function(enabled)
+                xrayEnabled = enabled
+                applyXray()
+            end,
+        })
+
+        InteractionSection:Slider({
+            Name = "X-Ray Distance",
+            Flag = "XRayDistanceSlider",
+            Min = 0,
+            Max = 500,
+            Default = 50,
+            Decimals = 1,
+            Callback = function(value)
+                xrayDistance = value
+                if xrayEnabled then
+                    applyXray()
+                end
+            end,
+        })
+
+        local CameraSection = ClientPage:Section({
+            Name = "Camera",
             Side = "Left"
         })
 
-        WaypointSection:Button({
-            Name = "Set Waypoint",
-            Callback = function()
-                local waypointCFrame = HumanoidRootPart.CFrame
-                writefile(waypointFile, string.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                    waypointCFrame:GetComponents()))
-                Library:Notification("Waypoint Set: Stored in " .. waypointFile, 5, nil, "Top")
-            end,
-        })
-
-        WaypointSection:Button({
-            Name = "Load Waypoint",
-            Callback = function()
-                if isfile(waypointFile) then
-                    local cframeData = readfile(waypointFile)
-                    local components = {}
-                    for component in string.gmatch(cframeData, "([^,]+)") do
-                        table.insert(components, tonumber(component))
-                    end
-                    if #components == 12 then
-                        HumanoidRootPart.CFrame = CFrame.new(unpack(components))
-                        Library:Notification("Waypoint Loaded: " .. waypointFile, 5, nil, "Top")
-                    else
-                        Library:Notification("Error Loading Waypoint", 5, nil, "Top")
-                    end
-                else
-                    Library:Notification("Waypoint File Not Found", 5, nil, "Top")
+        CameraSection:Toggle({
+            Name = "FOV Adjustment",
+            Flag = "FOVToggle",
+            Callback = function(enabled)
+                fovEnabled = enabled
+                if not enabled then
+                    Camera.FieldOfView = 70
                 end
             end,
         })
 
-        WaypointSection:Button({
-            Name = "Delete Waypoint",
-            Callback = function()
-                if isfile(waypointFile) then
-                    delfile(waypointFile)
-                    Library:Notification("Waypoint Deleted: " .. waypointFile, 5, nil, "Top")
-                else
-                    Library:Notification("No Waypoint File to Delete", 5, nil, "Top")
+        CameraSection:Slider({
+            Name = "Field of View",
+            Flag = "FOVSlider",
+            Min = 50,
+            Max = 120,
+            Default = 70,
+            Decimals = 1,
+            Callback = function(value)
+                if fovEnabled then
+                    Camera.FieldOfView = value
                 end
             end,
         })
+
+        CameraSection:Toggle({
+            Name = "Max Zoom Adjustment",
+            Flag = "MaxZoomToggle",
+            Callback = function(enabled)
+                maxZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMaxZoomDistance = 400
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Max Zoom Distance",
+            Flag = "MaxZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMaxZoomDistance,
+            Decimals = 1,
+            Callback = function(value)
+                if maxZoomEnabled then
+                    LocalPlayer.CameraMaxZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Min Zoom Adjustment",
+            Flag = "MinZoomToggle",
+            Callback = function(enabled)
+                minZoomEnabled = enabled
+                if not enabled then
+                    LocalPlayer.CameraMinZoomDistance = 0.5
+                end
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Min Zoom Distance",
+            Flag = "MinZoomSlider",
+            Min = 0,
+            Max = 1000,
+            Default = LocalPlayer.CameraMinZoomDistance,
+            Decimals = 1,
+            Callback = function(value)
+                if minZoomEnabled then
+                    LocalPlayer.CameraMinZoomDistance = value
+                end
+            end,
+        })
+
+        CameraSection:Toggle({
+            Name = "Aspect Ratio",
+            Flag = "AspectRatioToggle",
+            Callback = function(state)
+                aspect_ratio.enabled = state
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Horizontal Stretch",
+            Flag = "HorizontalStretchSlider",
+            Min = 0,
+            Max = 100,
+            Default = 100,
+            Callback = function(value)
+                aspect_ratio.horizontal_stretch = value
+            end,
+        })
+
+        CameraSection:Slider({
+            Name = "Vertical Stretch",
+            Flag = "VerticalStretchSlider",
+            Min = 0,
+            Max = 100,
+            Default = 50,
+            Callback = function(value)
+                aspect_ratio.vertical_stretch = value
+            end,
+        })
+
+        local SpinSection = ClientPage:Section({
+            Name = "Spin",
+            Side = "Right"
+        })
+
+        SpinSection:Toggle({
+            Name = "Enable Spin",
+            Flag = "SpinToggle",
+            Callback = function(enabled)
+                spinning = enabled
+            end,
+        })
+
+        SpinSection:Slider({
+            Name = "Spin Speed",
+            Flag = "SpinSpeedSlider",
+            Min = 1,
+            Max = 20,
+            Default = 1,
+            Decimals = 1,
+            Callback = function(value)
+                spinSpeed = value
+            end,
+        })
+
+        task.spawn(function()
+            while task.wait() do
+                if spinning and HumanoidRootPart then
+                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+                end
+            end
+        end)
     end
 end
+
 
 function Library:LoadWorldTab(Window)
     local WorldPage = Window:Page({
