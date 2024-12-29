@@ -827,20 +827,24 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        local playerOptions = PlayerSection:Dropdown({
-            Name = "Player Options",
-            Flag = "PlayerOptionsDropdown",
-            Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
-            Callback = function(option)
-                if option == "Loop Teleport" then
-                    loopTeleportEnabled = not loopTeleportEnabled
-                elseif option == "Loop Tween" then
-                    loopTweenEnabled = not loopTweenEnabled
-                elseif option == "Orbit Player" then
-                    orbitEnabled = not orbitEnabled
-                end
-            end,
-        })
+       	local playerOptions = PlayerSection:Dropdown({
+	    Name = "Player Options",
+	    Flag = "PlayerOptionsDropdown",
+	    Options = {"None", "Loop Teleport", "Loop Tween", "Orbit Player"},
+	    Callback = function(option)
+	        loopTeleportEnabled = false
+	        loopTweenEnabled = false
+	        orbitEnabled = false
+	
+	        if option == "Loop Teleport" then
+	            loopTeleportEnabled = true
+	        elseif option == "Loop Tween" then
+	            loopTweenEnabled = true
+	        elseif option == "Orbit Player" then
+	            orbitEnabled = true
+	        end
+	    end,
+	})
 
         PlayerSection:Slider({
             Name = "Orbit Radius",
