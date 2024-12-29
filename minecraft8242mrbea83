@@ -945,6 +945,13 @@ function Library:LoadClientTab(Window)
                 end
             end,
         })
+
+	 WaypointSection:Button({
+            Name = "Delete Waypoint",
+            Callback = function()
+              	delfile(waypointFile)
+            end,
+        })
     end
 end
 
