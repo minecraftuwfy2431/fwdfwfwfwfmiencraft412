@@ -827,9 +827,9 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        local playerOptions = PlayerSection:Dropdown({
+        local playerOptions = PlayerSection:({
             Name = "Player Options",
-            Flag = "PlayerOptionsDropdown",
+            Flag = "PlayerOptions",
             Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
             Callback = function(option)
                 if option == "Loop Teleport" then
@@ -4365,8 +4365,9 @@ do
 				})
                 --
 				if #tbl ~= 0 then
-					local typeshit = #tbl * 15.5
-					ContainerOutline.Size = UDim2.new(1,-30,0,math.clamp(typeshit,0,155))
+				    local typeshit = #tbl * 15.5
+				    ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(typeshit, 155))
+				    ContainerInline.CanvasSize = UDim2.new(0, 0, 0, typeshit)
 				end
 				Dropdown.OptionInsts[option].button = NewOption
 				Dropdown.OptionInsts[option].text = OptionName
