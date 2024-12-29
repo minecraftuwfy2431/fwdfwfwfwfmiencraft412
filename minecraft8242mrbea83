@@ -817,20 +817,32 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        local playerOptions = PlayerSection:Dropdown({
-            Name = "Player Options",
-            Flag = "PlayerOptionsDropdown",
-            Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
-            Callback = function(option)
-                if option == "Loop Teleport" then
-                    loopTeleportEnabled = not loopTeleportEnabled
-                elseif option == "Loop Tween" then
-                    loopTweenEnabled = not loopTweenEnabled
-                elseif option == "Orbit Player" then
-                    orbitEnabled = not orbitEnabled
-                end
-            end,
-        })
+        PlayerSection:Dropdown({
+	    Name = "Player Options",
+	    Flag = "PlayerOptionsDropdown",
+	    Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
+	    Callback = function(option)
+	        if option == "Loop Teleport" then
+	            loopTeleportEnabled = not loopTeleportEnabled
+	            if not loopTeleportEnabled then
+	                loopTweenEnabled = false
+	                orbitEnabled = false
+	            end
+	        elseif option == "Loop Tween" then
+	            loopTweenEnabled = not loopTweenEnabled
+	            if not loopTweenEnabled then
+	                loopTeleportEnabled = false
+	                orbitEnabled = false
+	            end
+	        elseif option == "Orbit Player" then
+	            orbitEnabled = not orbitEnabled
+	            if not orbitEnabled then
+	                loopTeleportEnabled = false
+	                loopTweenEnabled = false
+	            end
+	        end
+	    end,
+	})
 
         PlayerSection:Slider({
             Name = "Orbit Radius",
@@ -857,35 +869,35 @@ function Library:LoadClientTab(Window)
         })
 
         task.spawn(function()
-            while task.wait(0.1) do
-                if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
-                end
-
-                if loopTweenEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
-                    local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
-                    local duration = distance / tweenSpeed
-
-                    local tweenService = game:GetService("TweenService")
-                    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
-                    local goal = {CFrame = CFrame.new(targetPosition)}
-
-                    local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
-                    tween:Play()
-                end
-
-                if orbitEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local angle = tick() * orbitSpeed
-                    local xOffset = math.cos(angle) * orbitRadius
-                    local zOffset = math.sin(angle) * orbitRadius
-                    HumanoidRootPart.CFrame = CFrame.new(
-                        selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(xOffset, 0, zOffset),
-                        selectedPlayer.Character.HumanoidRootPart.Position
-                    )
-                end
-            end
-        end)
+	    while task.wait(0.1) do
+	        if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+	            HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
+	        end
+	
+	        if loopTweenEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+	            local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+	            local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
+	            local duration = distance / tweenSpeed
+	
+	            local tweenService = game:GetService("TweenService")
+	            local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+	            local goal = {CFrame = CFrame.new(targetPosition)}
+	
+	            local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
+	            tween:Play()
+	        end
+	
+	        if orbitEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+	            local angle = tick() * orbitSpeed
+	            local xOffset = math.cos(angle) * orbitRadius
+	            local zOffset = math.sin(angle) * orbitRadius
+	            HumanoidRootPart.CFrame = CFrame.new(
+	                selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(xOffset, 0, zOffset),
+	                selectedPlayer.Character.HumanoidRootPart.Position
+	            )
+	        end
+	    end
+	end)
 
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
