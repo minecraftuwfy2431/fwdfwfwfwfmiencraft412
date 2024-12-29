@@ -700,17 +700,15 @@ function Library:LoadClientTab(Window)
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
         local deletedParts = {}
+        local waypointFile = "waypoint.txt"
         local xrayEnabled = false
         local xrayDistance = 50
-        local spinning = false
-        local spinSpeed = 1
-        local fakeLagEnabled = false
-        local lagInterval = 1
         local platformPart
         local platformFollowEnabled = false
         local platformSize = Vector3.new(10, 1, 10)
         local platformTransparency = 0
-        local waypointFile = "waypoint.json"
+        local clickToTeleportEnabled = false
+        local teleportDistance = 200
         local aspect_ratio = {
             enabled = false,
             horizontal_stretch = 100,
@@ -746,21 +744,6 @@ function Library:LoadClientTab(Window)
             Side = "Left"
         })
 
-        CameraSection:Toggle({
-            Name = "FOV Adjustment",
-            Flag = "FOVToggle",
-            Callback = function(enabled)
-                getgenv().FOVEnabled = enabled
-                if not enabled then
-                    Camera.FieldOfView = 70
-                end
-            end,
-        }):Keybind({
-            Name = "FOV Keybind",
-            Flag = "FOVKeybind",
-            Mode = "Toggle",
-        })
-
         CameraSection:Slider({
             Name = "Field of View",
             Flag = "FOVSlider",
@@ -769,9 +752,7 @@ function Library:LoadClientTab(Window)
             Default = 70,
             Decimals = 1,
             Callback = function(value)
-                if getgenv().FOVEnabled then
-                    Camera.FieldOfView = value
-                end
+                Camera.FieldOfView = value
             end,
         })
 
@@ -781,10 +762,6 @@ function Library:LoadClientTab(Window)
             Callback = function(state)
                 aspect_ratio.enabled = state
             end,
-        }):Keybind({
-            Name = "Aspect Ratio Keybind",
-            Flag = "AspectRatioKeybind",
-            Mode = "Toggle",
         })
 
         CameraSection:Slider({
@@ -820,10 +797,6 @@ function Library:LoadClientTab(Window)
             Callback = function(enabled)
                 getgenv().ClickToDeleteEnabled = enabled
             end,
-        }):Keybind({
-            Name = "Click to Delete Keybind",
-            Flag = "ClickToDeleteKeybind",
-            Mode = "Toggle",
         })
 
         Mouse.Button1Down:Connect(function()
@@ -848,38 +821,31 @@ function Library:LoadClientTab(Window)
         })
 
         InteractionSection:Toggle({
-            Name = "X-Ray",
-            Flag = "XRayToggle",
+            Name = "Click to Teleport",
+            Flag = "ClickToTeleportToggle",
             Callback = function(enabled)
-                xrayEnabled = enabled
-                for _, part in ipairs(workspace:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.LocalTransparencyModifier = enabled and 0.5 or 0
-                    end
-                end
+                clickToTeleportEnabled = enabled
             end,
-        }):Keybind({
-            Name = "X-Ray Keybind",
-            Flag = "XRayKeybind",
-            Mode = "Toggle",
         })
 
         InteractionSection:Slider({
-            Name = "X-Ray Distance",
-            Flag = "XRayDistanceSlider",
-            Min = 10,
+            Name = "Teleport Distance",
+            Flag = "TeleportDistanceSlider",
+            Min = 0,
             Max = 500,
-            Default = 50,
+            Default = 200,
             Decimals = 1,
             Callback = function(value)
-                xrayDistance = value
+                teleportDistance = value
             end,
         })
 
-        workspace.DescendantAdded:Connect(function(part)
-            if xrayEnabled and part:IsA("BasePart") then
-                local distance = (part.Position - HumanoidRootPart.Position).Magnitude
-                part.LocalTransparencyModifier = distance <= xrayDistance and 0.5 or 0
+        Mouse.Button1Down:Connect(function()
+            if clickToTeleportEnabled and Mouse.Target then
+                local distance = (Mouse.Target.Position - HumanoidRootPart.Position).Magnitude
+                if distance <= teleportDistance then
+                    HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.Position)
+                end
             end
         end)
 
@@ -977,14 +943,7 @@ function Library:LoadClientTab(Window)
             Flag = "PlatformFollowToggle",
             Callback = function(enabled)
                 platformFollowEnabled = enabled
-                if not enabled and platformPart then
-                    platformPart.Anchored = true
-                end
             end,
-        }):Keybind({
-            Name = "Follow Client Keybind",
-            Flag = "PlatformFollowKeybind",
-            Mode = "Toggle",
         })
 
         task.spawn(function()
@@ -1003,8 +962,9 @@ function Library:LoadClientTab(Window)
         WaypointSection:Button({
             Name = "Set Waypoint",
             Callback = function()
-                local waypointData = {CFrame = HumanoidRootPart.CFrame}
-                writefile(waypointFile, game:GetService("HttpService"):JSONEncode(waypointData))
+                local waypointCFrame = HumanoidRootPart.CFrame
+                writefile(waypointFile, tostring(waypointCFrame))
+                Library:Notification("Waypoint Set: Stored in " .. waypointFile, 5, nil, "Top")
             end,
         })
 
@@ -1012,10 +972,16 @@ function Library:LoadClientTab(Window)
             Name = "Load Waypoint",
             Callback = function()
                 if isfile(waypointFile) then
-                    local waypointData = game:GetService("HttpService"):JSONDecode(readfile(waypointFile))
-                    if waypointData and waypointData.CFrame then
-                        HumanoidRootPart.CFrame = CFrame.new(waypointData.CFrame.Position)
+                    local cframeData = readfile(waypointFile)
+                    local success, result = pcall(function() return loadstring("return " .. cframeData)() end)
+                    if success and typeof(result) == "CFrame" then
+                        HumanoidRootPart.CFrame = result
+                        Library:Notification("Waypoint Loaded: " .. waypointFile, 5, nil, "Top")
+                    else
+                        Library:Notification("Error Loading Waypoint", 5, nil, "Top")
                     end
+                else
+                    Library:Notification("Waypoint File Not Found", 5, nil, "Top")
                 end
             end,
         })
@@ -1025,6 +991,9 @@ function Library:LoadClientTab(Window)
             Callback = function()
                 if isfile(waypointFile) then
                     delfile(waypointFile)
+                    Library:Notification("Waypoint Deleted: " .. waypointFile, 5, nil, "Top")
+                else
+                    Library:Notification("No Waypoint File to Delete", 5, nil, "Top")
                 end
             end,
         })
