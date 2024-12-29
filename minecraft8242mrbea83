@@ -821,7 +821,7 @@ function Library:LoadWorldTab(Window)
         })
 
         LightingSection:Slider({
-            Name = "Environment Specular Scale Value",
+            Name = "Specular Scale",
             Flag = "EnvironmentSpecularScaleSlider",
             Min = 0,
             Max = 1,
@@ -845,7 +845,7 @@ function Library:LoadWorldTab(Window)
         })
 
         LightingSection:Slider({
-            Name = "Environment Diffuse Scale Value",
+            Name = "Diffuse Scale Value",
             Flag = "EnvironmentDiffuseScaleSlider",
             Min = 0,
             Max = 1,
