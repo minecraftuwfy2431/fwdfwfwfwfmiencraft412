@@ -905,7 +905,6 @@ function Library:LoadWorldTab(Window)
                 end
             end,
         }):Colorpicker({
-            Name = "Color",
             Default = Color3.fromRGB(200, 200, 255),
             Flag = "AtmosphereColorPicker",
             Callback = function(color)
@@ -932,7 +931,6 @@ function Library:LoadWorldTab(Window)
                 game.Lighting.ClockTime = value
             end,
         })
-
     end
 end
 
