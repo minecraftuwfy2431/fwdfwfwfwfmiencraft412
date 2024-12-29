@@ -944,6 +944,32 @@ function Library:LoadConfigTab(Window)
 		local clientMenuToggle = nil
 		local screenGui = nil
 		
+		local function getFPS()
+		    local frames = 0
+		    local fps = 0
+		    game:GetService("RunService").RenderStepped:Connect(function()
+		        frames = frames + 1
+		    end)
+		    spawn(function()
+		        while true do
+		            fps = frames
+		            frames = 0
+		            wait(1)
+		        end
+		    end)
+		    return function()
+		        return fps
+		    end
+		end
+		
+		local function getPing()
+		    return game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+		end
+		
+		local function getPlayerCount()
+		    return #game:GetService("Players"):GetPlayers()
+		end
+		
 		local function createGui()
 		    if screenGui then return end
 		    screenGui = Instance.new("ScreenGui")
@@ -956,7 +982,7 @@ function Library:LoadConfigTab(Window)
 		    frame.Position = UDim2.new(1, -160, 0.5, -100)
 		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 		    frame.BorderSizePixel = 2
-		    frame.BorderColor3 = Library.Accent
+		    frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
 		    frame.Active = true
 		    frame.Draggable = true
 		    ProtectoGuio(frame)
@@ -967,7 +993,7 @@ function Library:LoadConfigTab(Window)
 		    titleLabel.Position = UDim2.new(0, 0, 0, 0)
 		    titleLabel.BackgroundTransparency = 1
 		    titleLabel.Text = "Client Menu"
-		    titleLabel.TextColor3 = Library.Accent
+		    titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 		    titleLabel.Font = Enum.Font.SourceSans
 		    titleLabel.TextSize = 24
 		    ProtectoGuio(titleLabel)
@@ -977,8 +1003,7 @@ function Library:LoadConfigTab(Window)
 		    pingLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    pingLabel.Position = UDim2.new(0, 0, 0.15, 0)
 		    pingLabel.BackgroundTransparency = 1
-		    pingLabel.Text = "Label"
-		    pingLabel.TextColor3 = Library.Accent
+		    pingLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 		    pingLabel.Font = Enum.Font.SourceSans
 		    pingLabel.TextSize = 18
 		    ProtectoGuio(pingLabel)
@@ -988,8 +1013,7 @@ function Library:LoadConfigTab(Window)
 		    fpsLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    fpsLabel.Position = UDim2.new(0, 0, 0.275, 0)
 		    fpsLabel.BackgroundTransparency = 1
-		    fpsLabel.Text = "Label"
-		    fpsLabel.TextColor3 = Library.Accent
+		    fpsLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 		    fpsLabel.Font = Enum.Font.SourceSans
 		    fpsLabel.TextSize = 18
 		    ProtectoGuio(fpsLabel)
@@ -999,8 +1023,7 @@ function Library:LoadConfigTab(Window)
 		    playerCountLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    playerCountLabel.Position = UDim2.new(0, 0, 0.4, 0)
 		    playerCountLabel.BackgroundTransparency = 1
-		    playerCountLabel.Text = "Label"
-		    playerCountLabel.TextColor3 = Library.Accent
+		    playerCountLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 		    playerCountLabel.Font = Enum.Font.SourceSans
 		    playerCountLabel.TextSize = 18
 		    ProtectoGuio(playerCountLabel)
@@ -1010,7 +1033,7 @@ function Library:LoadConfigTab(Window)
 		    timerLabel.Size = UDim2.new(1, 0, 0.125, 0)
 		    timerLabel.Position = UDim2.new(0, 0, 0.525, 0)
 		    timerLabel.BackgroundTransparency = 1
-		    timerLabel.TextColor3 = Library.Accent
+		    timerLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
 		    timerLabel.Font = Enum.Font.SourceSans
 		    timerLabel.TextSize = 18
 		    ProtectoGuio(timerLabel)
@@ -1028,6 +1051,7 @@ function Library:LoadConfigTab(Window)
 		        screenGui = nil
 		    end)
 		
+		    local getFPSValue = getFPS()
 		    spawn(function()
 		        local timer = 0
 		        while screenGui do
@@ -1042,6 +1066,9 @@ function Library:LoadConfigTab(Window)
 		            else
 		                timerLabel.Text = string.format("Timer: %ds", seconds)
 		            end
+		            pingLabel.Text = "Ping: " .. getPing()
+		            fpsLabel.Text = "FPS: " .. getFPSValue()
+		            playerCountLabel.Text = "Players: " .. getPlayerCount()
 		            wait(1)
 		        end
 		    end)
