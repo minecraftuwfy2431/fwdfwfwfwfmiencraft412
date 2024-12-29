@@ -902,24 +902,6 @@ function Library:LoadClientTab(Window)
             Side = "Right"
         })
 
-	InteractionSection:Toggle({
-            Name = "Anti Afk",
-            Flag = "ClickToDd33cle",
-            Callback = function(enabled)
-		if enabled then
-		for _, v in next, getconnections(plr.Idled) do
-			v:Disable()
-		end
-		local vu = game:GetService("VirtualUser")
-		plr.Idled:connect(function()
-			vu:Button2Down(Vector2.new(0, 0), camera.CFrame)
-			wait(1)
-			vu:Button2Up(Vector2.new(0, 0), camera.CFrame)
-		end)
-	       end
-            end,
-        })
-
         InteractionSection:Toggle({
             Name = "Click to Delete",
             Flag = "ClickToDeleteToggle",
