@@ -925,6 +925,11 @@ function Library:LoadConfigTab(Window)
 		})
 
 		Info:Label({
+		    Name = "Enjoy Your Expirence",
+		    Centered = true,
+		})
+			
+		Info:Label({
 		    Name = "© soulhub",
 		    Centered = true,
 		})
