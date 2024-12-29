@@ -689,10 +689,10 @@ end
 function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
-    })
+    }) 
 
     do
-        local Players = game:GetService("Players")
+       local Players = game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
         local Camera = workspace.CurrentCamera
         local RunService = game:GetService("RunService")
@@ -898,6 +898,15 @@ function Library:LoadClientTab(Window)
 	        end
 	    end
 	end)
+
+	PlayerSection:Button({
+	    Name = "Stop Player Options",
+	    Callback = function()
+	        loopTeleportEnabled = false
+	        loopTweenEnabled = false
+	        orbitEnabled = false
+	    end,
+	})
 
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
