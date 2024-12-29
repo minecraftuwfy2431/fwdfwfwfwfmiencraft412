@@ -907,21 +907,21 @@ function Library:LoadConfigTab(Window)
 		})
 
 		local ProtectoGuio = protectgui or function() end
-
+	
 		local clientMenuToggle = nil
 		local screenGui = nil
 		
 		local function createGui()
 		    if screenGui then return end
 		    screenGui = Instance.new("ScreenGui")
-		    screenGui.Name = "LocalClientMenu"
+		    screenGui.Name = "ServerStatsGui"
 		    ProtectoGuio(screenGui)
 		    screenGui.Parent = game.CoreGui
 		
 		    local frame = Instance.new("Frame")
-		    frame.Size = UDim2.new(0, 200, 0, 250)
-		    frame.Position = UDim2.new(1, -210, 0.5, -125)
-		    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+		    frame.Size = UDim2.new(0, 150, 0, 200)
+		    frame.Position = UDim2.new(1, -160, 0.5, -100)
+		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 		    frame.BorderSizePixel = 2
 		    frame.BorderColor3 = Library.Accent
 		    frame.Active = true
@@ -930,25 +930,20 @@ function Library:LoadConfigTab(Window)
 		    frame.Parent = screenGui
 		
 		    local titleLabel = Instance.new("TextButton")
-		    titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+		    titleLabel.Size = UDim2.new(1, 0, 0.15, 0)
 		    titleLabel.Position = UDim2.new(0, 0, 0, 0)
-		    titleLabel.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-		    titleLabel.BorderSizePixel = 2
-		    titleLabel.BorderColor3 = Color3.fromRGB(255, 255, 0)
-		    titleLabel.Text = "Local Client Menu"
-		    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-		    titleLabel.Font = Enum.Font.SourceSansBold
-		    titleLabel.TextSize = 20
+		    titleLabel.BackgroundTransparency = 1
+		    titleLabel.Text = "Client!"
+		    titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+		    titleLabel.Font = Enum.Font.SourceSans
+		    titleLabel.TextSize = 24
 		    ProtectoGuio(titleLabel)
 		    titleLabel.Parent = frame
 		
 		    local pingLabel = Instance.new("TextLabel")
-		    pingLabel.Size = UDim2.new(1, 0, 0.15, 0)
-		    pingLabel.Position = UDim2.new(0, 0, 0.2, 0)
-		    pingLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		    pingLabel.BorderSizePixel = 1
-		    pingLabel.BorderColor3 = Color3.fromRGB(255, 255, 0)
-		    pingLabel.Text = "Ping: 0ms"
+		    pingLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    pingLabel.Position = UDim2.new(0, 0, 0.15, 0)
+		    pingLabel.BackgroundTransparency = 1
 		    pingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		    pingLabel.Font = Enum.Font.SourceSans
 		    pingLabel.TextSize = 18
@@ -956,12 +951,9 @@ function Library:LoadConfigTab(Window)
 		    pingLabel.Parent = frame
 		
 		    local fpsLabel = Instance.new("TextLabel")
-		    fpsLabel.Size = UDim2.new(1, 0, 0.15, 0)
-		    fpsLabel.Position = UDim2.new(0, 0, 0.35, 0)
-		    fpsLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		    fpsLabel.BorderSizePixel = 1
-		    fpsLabel.BorderColor3 = Color3.fromRGB(255, 255, 0)
-		    fpsLabel.Text = "FPS: 0"
+		    fpsLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    fpsLabel.Position = UDim2.new(0, 0, 0.275, 0)
+		    fpsLabel.BackgroundTransparency = 1
 		    fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		    fpsLabel.Font = Enum.Font.SourceSans
 		    fpsLabel.TextSize = 18
@@ -969,12 +961,9 @@ function Library:LoadConfigTab(Window)
 		    fpsLabel.Parent = frame
 		
 		    local playerCountLabel = Instance.new("TextLabel")
-		    playerCountLabel.Size = UDim2.new(1, 0, 0.15, 0)
-		    playerCountLabel.Position = UDim2.new(0, 0, 0.5, 0)
-		    playerCountLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		    playerCountLabel.BorderSizePixel = 1
-		    playerCountLabel.BorderColor3 = Color3.fromRGB(255, 255, 0)
-		    playerCountLabel.Text = "Players: 0"
+		    playerCountLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    playerCountLabel.Position = UDim2.new(0, 0, 0.4, 0)
+		    playerCountLabel.BackgroundTransparency = 1
 		    playerCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		    playerCountLabel.Font = Enum.Font.SourceSans
 		    playerCountLabel.TextSize = 18
@@ -982,18 +971,22 @@ function Library:LoadConfigTab(Window)
 		    playerCountLabel.Parent = frame
 		
 		    local timerLabel = Instance.new("TextLabel")
-		    timerLabel.Size = UDim2.new(1, 0, 0.15, 0)
-		    timerLabel.Position = UDim2.new(0, 0, 0.65, 0)
-		    timerLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		    timerLabel.BorderSizePixel = 1
-		    timerLabel.BorderColor3 = Color3.fromRGB(255, 255, 0)
-		    timerLabel.Text = "Time: 0s"
+		    timerLabel.Size = UDim2.new(1, 0, 0.125, 0)
+		    timerLabel.Position = UDim2.new(0, 0, 0.525, 0)
+		    timerLabel.BackgroundTransparency = 1
 		    timerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		    timerLabel.Font = Enum.Font.SourceSans
 		    timerLabel.TextSize = 18
 		    ProtectoGuio(timerLabel)
 		    timerLabel.Parent = frame
 		
+		    local titleHoverText = function(hover)
+		        titleLabel.Text = hover and "Delete?" or "Client!"
+		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
+		    end
+		
+		    titleLabel.MouseEnter:Connect(function() titleHoverText(true) end)
+		    titleLabel.MouseLeave:Connect(function() titleHoverText(false) end)
 		    titleLabel.MouseButton1Click:Connect(function()
 		        screenGui:Destroy()
 		        screenGui = nil
@@ -1006,13 +999,19 @@ function Library:LoadConfigTab(Window)
 		            local hours = math.floor(timer / 3600)
 		            local minutes = math.floor((timer % 3600) / 60)
 		            local seconds = timer % 60
-		            timerLabel.Text = string.format("Time: %dh %dm %ds", hours, minutes, seconds)
+		            if hours > 0 then
+		                timerLabel.Text = string.format("Timer: %dh %dm %ds", hours, minutes, seconds)
+		            elseif minutes > 0 then
+		                timerLabel.Text = string.format("Timer: %dm %ds", minutes, seconds)
+		            else
+		                timerLabel.Text = string.format("Timer: %ds", seconds)
+		            end
 		            wait(1)
 		        end
 		    end)
 		end
 		
-		Menu:Toggle({
+		clientMenuToggle = Menu:Toggle({
 		    Name = "Local Client Menu",
 		    Flag = "Kef3fc453g3st",
 		    State = false,
