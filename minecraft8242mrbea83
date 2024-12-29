@@ -694,7 +694,6 @@ end
     do
         local Players = game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
-        local Camera = workspace.CurrentCamera
         local Mouse = LocalPlayer:GetMouse()
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
@@ -707,6 +706,10 @@ end
         local fakeLagEnabled = false
         local lagInterval = 1
         local platformPart
+        local platformFollowEnabled = false
+        local platformSize = Vector3.new(10, 1, 10)
+        local platformTransparency = 0
+        local waypoints = {}
 
         local CameraSection = ClientPage:Section({
             Name = "Camera",
@@ -716,13 +719,16 @@ end
         CameraSection:Toggle({
             Name = "FOV Adjustment",
             Flag = "FOVToggle",
-            Keybind = "F",
             Callback = function(enabled)
                 getgenv().FOVEnabled = enabled
                 if not enabled then
                     Camera.FieldOfView = 70
                 end
             end,
+        }):Keybind({
+            Name = "FOV Keybind",
+            Flag = "FOVKeybind",
+            Mode = "Toggle",
         })
 
         CameraSection:Slider({
@@ -742,13 +748,16 @@ end
         CameraSection:Toggle({
             Name = "Max Zoom Adjustment",
             Flag = "MaxZoomToggle",
-            Keybind = "Z",
             Callback = function(enabled)
                 getgenv().MaxZoomEnabled = enabled
                 if not enabled then
                     LocalPlayer.CameraMaxZoomDistance = 400
                 end
             end,
+        }):Keybind({
+            Name = "Max Zoom Keybind",
+            Flag = "MaxZoomKeybind",
+            Mode = "Toggle",
         })
 
         CameraSection:Slider({
@@ -768,13 +777,16 @@ end
         CameraSection:Toggle({
             Name = "Min Zoom Adjustment",
             Flag = "MinZoomToggle",
-            Keybind = "X",
             Callback = function(enabled)
                 getgenv().MinZoomEnabled = enabled
                 if not enabled then
                     LocalPlayer.CameraMinZoomDistance = 0.5
                 end
             end,
+        }):Keybind({
+            Name = "Min Zoom Keybind",
+            Flag = "MinZoomKeybind",
+            Mode = "Toggle",
         })
 
         CameraSection:Slider({
@@ -794,13 +806,16 @@ end
         CameraSection:Toggle({
             Name = "Camera Mode Adjustment",
             Flag = "CameraModeToggle",
-            Keybind = "C",
             Callback = function(enabled)
                 getgenv().CameraModeEnabled = enabled
                 if not enabled then
                     LocalPlayer.CameraMode = Enum.CameraMode.Classic
                 end
             end,
+        }):Keybind({
+            Name = "Camera Mode Keybind",
+            Flag = "CameraModeKeybind",
+            Mode = "Toggle",
         })
 
         CameraSection:Dropdown({
@@ -822,15 +837,18 @@ end
         InteractionSection:Toggle({
             Name = "Click to Delete",
             Flag = "ClickToDeleteToggle",
-            Keybind = "D",
             Callback = function(enabled)
                 getgenv().ClickToDeleteEnabled = enabled
             end,
+        }):Keybind({
+            Name = "Click to Delete Keybind",
+            Flag = "ClickToDeleteKeybind",
+            Mode = "Toggle",
         })
 
         Mouse.Button1Down:Connect(function()
             if getgenv().ClickToDeleteEnabled and Mouse.Target then
-                table.insert(deletedParts, {Instance = Mouse.Target, Parent = Mouse.Target.Parent})
+                table.insert(deletedParts, {Instance = Mouse.Target, Parent = Mouse.Target.Parent, Position = Mouse.Target.Position})
                 Mouse.Target:Destroy()
             end
         end)
@@ -838,9 +856,10 @@ end
         InteractionSection:Button({
             Name = "Restore Deleted Parts",
             Callback = function()
-                for _, part in ipairs(deletedParts) do
-                    if part.Instance and part.Parent then
-                        part.Instance.Parent = part.Parent
+                for _, partData in ipairs(deletedParts) do
+                    if partData.Instance and not partData.Instance.Parent then
+                        partData.Instance.Parent = partData.Parent
+                        partData.Instance.Position = partData.Position
                     end
                 end
                 deletedParts = {}
@@ -850,10 +869,13 @@ end
         InteractionSection:Toggle({
             Name = "Click to Teleport",
             Flag = "ClickToTeleportToggle",
-            Keybind = "T",
             Callback = function(enabled)
                 getgenv().ClickToTeleportEnabled = enabled
             end,
+        }):Keybind({
+            Name = "Click to Teleport Keybind",
+            Flag = "ClickToTeleportKeybind",
+            Mode = "Toggle",
         })
 
         InteractionSection:Slider({
@@ -877,125 +899,6 @@ end
             end
         end)
 
-        local XRaySection = ClientPage:Section({
-            Name = "X-Ray",
-            Side = "Left"
-        })
-
-        XRaySection:Toggle({
-            Name = "Enable X-Ray",
-            Flag = "XRayToggle",
-            Keybind = "R",
-            Callback = function(enabled)
-                xrayEnabled = enabled
-                for _, part in ipairs(workspace:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.LocalTransparencyModifier = enabled and 0.5 or 0
-                    end
-                end
-            end,
-        })
-
-        XRaySection:Slider({
-            Name = "X-Ray Distance",
-            Flag = "XRayDistanceSlider",
-            Min = 10,
-            Max = 500,
-            Default = 50,
-            Decimals = 1,
-            Callback = function(value)
-                xrayDistance = value
-            end,
-        })
-
-        workspace.DescendantAdded:Connect(function(part)
-            if xrayEnabled and part:IsA("BasePart") then
-                local distance = (part.Position - HumanoidRootPart.Position).Magnitude
-                part.LocalTransparencyModifier = distance <= xrayDistance and 0.5 or 0
-            end
-        end)
-
-        local PlayerSection = ClientPage:Section({
-            Name = "Player",
-            Side = "Right"
-        })
-
-        PlayerSection:Toggle({
-            Name = "Freeze Player",
-            Flag = "FreezePlayerToggle",
-            Keybind = "F",
-            Callback = function(enabled)
-                if enabled then
-                    HumanoidRootPart.Anchored = true
-                else
-                    HumanoidRootPart.Anchored = false
-                end
-            end,
-        })
-
-        PlayerSection:Toggle({
-            Name = "Fake Lag",
-            Flag = "FakeLagToggle",
-            Keybind = "L",
-            Callback = function(enabled)
-                fakeLagEnabled = enabled
-                if not enabled then
-                    HumanoidRootPart.Anchored = false
-                end
-            end,
-        })
-
-        PlayerSection:Slider({
-            Name = "Lag Interval",
-            Flag = "LagIntervalSlider",
-            Min = 0.1,
-            Max = 5,
-            Default = 1,
-            Decimals = 1,
-            Callback = function(value)
-                lagInterval = value
-            end,
-        })
-
-        task.spawn(function()
-            while task.wait(lagInterval) do
-                if fakeLagEnabled then
-                    HumanoidRootPart.Anchored = true
-                    task.wait(0.1)
-                    HumanoidRootPart.Anchored = false
-                end
-            end
-        end)
-
-        PlayerSection:Toggle({
-            Name = "Spin Player",
-            Flag = "SpinPlayerToggle",
-            Keybind = "S",
-            Callback = function(enabled)
-                spinning = enabled
-            end,
-        })
-
-        PlayerSection:Slider({
-            Name = "Spin Speed",
-            Flag = "SpinSpeedSlider",
-            Min = 1,
-            Max = 50,
-            Default = 10,
-            Decimals = 1,
-            Callback = function(value)
-                spinSpeed = value
-            end,
-        })
-
-        task.spawn(function()
-            while task.wait() do
-                if spinning then
-                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
-                end
-            end
-        end)
-
         local PlatformSection = ClientPage:Section({
             Name = "Platform",
             Side = "Left"
@@ -1006,8 +909,9 @@ end
             Callback = function()
                 if not platformPart then
                     platformPart = Instance.new("Part")
-                    platformPart.Size = Vector3.new(10, 1, 10)
+                    platformPart.Size = platformSize
                     platformPart.Position = HumanoidRootPart.Position - Vector3.new(0, 3, 0)
+                    platformPart.Transparency = platformTransparency
                     platformPart.Anchored = true
                     platformPart.Parent = workspace
                 end
@@ -1020,6 +924,133 @@ end
                 if platformPart and platformPart.Parent then
                     platformPart:Destroy()
                     platformPart = nil
+                end
+            end,
+        })
+
+        PlatformSection:Slider({
+            Name = "Platform Width",
+            Flag = "PlatformWidthSlider",
+            Min = 5,
+            Max = 50,
+            Default = 10,
+            Decimals = 1,
+            Callback = function(value)
+                platformSize = Vector3.new(value, platformSize.Y, platformSize.Z)
+                if platformPart then
+                    platformPart.Size = platformSize
+                end
+            end,
+        })
+
+        PlatformSection:Slider({
+            Name = "Platform Height",
+            Flag = "PlatformHeightSlider",
+            Min = 1,
+            Max = 10,
+            Default = 1,
+            Decimals = 1,
+            Callback = function(value)
+                platformSize = Vector3.new(platformSize.X, value, platformSize.Z)
+                if platformPart then
+                    platformPart.Size = platformSize
+                end
+            end,
+        })
+
+        PlatformSection:Slider({
+            Name = "Platform Depth",
+            Flag = "PlatformDepthSlider",
+            Min = 5,
+            Max = 50,
+            Default = 10,
+            Decimals = 1,
+            Callback = function(value)
+                platformSize = Vector3.new(platformSize.X, platformSize.Y, value)
+                if platformPart then
+                    platformPart.Size = platformSize
+                end
+            end,
+        })
+
+        PlatformSection:Slider({
+            Name = "Platform Transparency",
+            Flag = "PlatformTransparencySlider",
+            Min = 0,
+            Max = 1,
+            Default = 0,
+            Decimals = 0.1,
+            Callback = function(value)
+                platformTransparency = value
+                if platformPart then
+                    platformPart.Transparency = platformTransparency
+                end
+            end,
+        })
+
+        PlatformSection:Toggle({
+            Name = "Follow Client",
+            Flag = "PlatformFollowToggle",
+            Callback = function(enabled)
+                platformFollowEnabled = enabled
+                if not enabled and platformPart then
+                    platformPart.Anchored = true
+                end
+            end,
+        }):Keybind({
+            Name = "Follow Client Keybind",
+            Flag = "PlatformFollowKeybind",
+            Mode = "Toggle",
+        })
+
+        task.spawn(function()
+            while task.wait() do
+                if platformFollowEnabled and platformPart then
+                    platformPart.CFrame = HumanoidRootPart.CFrame - Vector3.new(0, 3, 0)
+                end
+            end
+        end)
+
+        local WaypointSection = ClientPage:Section({
+            Name = "Waypoints",
+            Side = "Right"
+        })
+
+        WaypointSection:Button({
+            Name = "Set Waypoint",
+            Callback = function()
+                local waypointName = "Waypoint" .. tostring(#waypoints + 1)
+                table.insert(waypoints, {Name = waypointName, Position = HumanoidRootPart.CFrame})
+                writefile("waypoints.json", game:GetService("HttpService"):JSONEncode(waypoints))
+            end,
+        })
+
+        WaypointSection:Dropdown({
+            Name = "Waypoints",
+            Flag = "WaypointDropdown",
+            Options = {},
+            Callback = function(selected)
+                for _, waypoint in ipairs(waypoints) do
+                    if waypoint.Name == selected then
+                        HumanoidRootPart.CFrame = waypoint.Position
+                    end
+                end
+            end,
+        })
+
+        if isfile("waypoints.json") then
+            waypoints = game:GetService("HttpService"):JSONDecode(readfile("waypoints.json"))
+        end
+
+        WaypointSection:Button({
+            Name = "Refresh Waypoints",
+            Callback = function()
+                local dropdown = ClientPage:FindElement("WaypointDropdown")
+                if dropdown then
+                    dropdown:ClearOptions()
+                    for _, waypoint in ipairs(waypoints) do
+                        dropdown:AddOption(waypoint.Name)
+                    end
                 end
             end,
         })
