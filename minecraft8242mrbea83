@@ -748,6 +748,27 @@ function Library:LoadClientTab(Window)
             end
         end
 
+        task.spawn(function()
+            while true do
+                RunService.RenderStepped:Wait()
+                if aspect_ratio.enabled then
+                    local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = Camera.CFrame:GetComponents()
+                    Camera.CFrame = CFrame.new(
+                        X, Y, Z,
+                        R00 * aspect_ratio.horizontal_stretch / 100,
+                        R01 * aspect_ratio.vertical_stretch / 100,
+                        R02,
+                        R10,
+                        R11 * aspect_ratio.vertical_stretch / 100,
+                        R12,
+                        R20 * aspect_ratio.horizontal_stretch / 100,
+                        R21 * aspect_ratio.vertical_stretch / 100,
+                        R22
+                    )
+                end
+            end
+        end)
+
         local PlayerSection = ClientPage:Section({
             Name = "Players",
             Side = "Left"
@@ -828,23 +849,23 @@ function Library:LoadClientTab(Window)
         })
 
         PlayerSection:Dropdown({
-	    Name = "Player Options",
-	    Flag = "PlayerOptionsDropdown",
-	    Options = {"None", "Loop Teleport", "Loop Tween", "Orbit Player"},
-	    Callback = function(option)
-	        loopTeleportEnabled = false
-	        loopTweenEnabled = false
-	        orbitEnabled = false
-	
-	        if option == "Loop Teleport" then
-	            loopTeleportEnabled = true
-	        elseif option == "Loop Tween" then
-	            loopTweenEnabled = true
-	        elseif option == "Orbit Player" then
-	            orbitEnabled = true
-	        end
-	    end,
-	})
+            Name = "Player Options",
+            Flag = "PlayerOptionsDropdown",
+            Options = {"None", "Loop Teleport", "Loop Tween", "Orbit Player"},
+            Callback = function(option)
+                loopTeleportEnabled = false
+                loopTweenEnabled = false
+                orbitEnabled = false
+
+                if option == "Loop Teleport" then
+                    loopTeleportEnabled = true
+                elseif option == "Loop Tween" then
+                    loopTweenEnabled = true
+                elseif option == "Orbit Player" then
+                    orbitEnabled = true
+                end
+            end,
+        })
 
         PlayerSection:Slider({
             Name = "Orbit Radius",
@@ -871,7 +892,8 @@ function Library:LoadClientTab(Window)
         })
 
         task.spawn(function()
-            while task.wait(0.1) do
+            while true do
+                task.wait()
                 if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
                 end
