@@ -827,9 +827,9 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        local playerOptions = PlayerSection:({
+        local playerOptions = PlayerSection:Dropdown({
             Name = "Player Options",
-            Flag = "PlayerOptions",
+            Flag = "PlayerOptionsDropdown",
             Options = {"Loop Teleport", "Loop Tween", "Orbit Player"},
             Callback = function(option)
                 if option == "Loop Teleport" then
@@ -1065,20 +1065,14 @@ function Library:LoadClientTab(Window)
         InteractionSection:Button({
             Name = "Force Shift Lock",
             Callback = function()
-                local player = game.Players.LocalPlayer
-		if player then
-		    player.DevEnableMouseLock = true
-		end
+                game.Players.LocalPlayer.DevEnableMouseLock = true
             end,
         })
 
         InteractionSection:Button({
             Name = "Force Death",
             Callback = function()
-	        local character = game.Players.LocalPlayer.Character
-		if character and character:FindFirstChild("Humanoid") then
-		    character.Humanoid.Health = 0
-		end
+                game.Players.LocalPlayer.Character.Humanoid.Health = 0
             end,
         })
 
@@ -1093,7 +1087,7 @@ function Library:LoadClientTab(Window)
             Callback = function(enabled)
                 fovEnabled = enabled
                 if not enabled then
-                   Camera.FieldOfView = 70
+                    Camera.FieldOfView = 70
                 end
             end,
         })
@@ -4364,10 +4358,9 @@ do
 					ZIndex = 8;
 				})
                 --
-				if #tbl ~= 0 then 
-				    local typeshit = #tbl * 15.5
-				    ContainerOutline.Size = UDim2.new(1, -30, 0, math.min(typeshit, 155))
-				    ContainerInline.CanvasSize = UDim2.new(0, 0, 0, typeshit)
+				if #tbl ~= 0 then
+					local typeshit = #tbl * 15.5
+					ContainerOutline.Size = UDim2.new(1,-30,0,math.clamp(typeshit,0,155))
 				end
 				Dropdown.OptionInsts[option].button = NewOption
 				Dropdown.OptionInsts[option].text = OptionName
