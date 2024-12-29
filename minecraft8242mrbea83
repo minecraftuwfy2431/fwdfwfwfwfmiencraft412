@@ -1003,6 +1003,79 @@ function Library:LoadClientTab(Window)
             end,
         })
 
+		
+        InteractionSection:Button({
+            Name = "Streamer Mode",
+            Callback = function()
+                local plr = game:GetService("Players").LocalPlayer
+                local name = plr.Name
+                local display = "discord.gg/gamingchairs"
+                
+                local function IsA(...)
+                    local Args = {...}
+                    if table.find(Args, Args[1].ClassName) then
+                        return true
+                    end
+                end
+                
+                local function e()
+                    for _, v in next, workspace:GetDescendants() do
+                        if v:IsA("Model") and game:GetService("Players"):GetPlayerFromCharacter(v) == plr then
+                            return v
+                        end
+                    end
+                end
+                
+                local cha = e()
+                
+                local function changeText(n)
+                    plr.Name, plr.DisplayName = name, display
+                    if n:IsA("TextLabel") or n:IsA("TextButton") or n:IsA("TextBox") then
+                        if n.Text:lower():find(name:lower()) and not n.Text:find("discord.gg/gamingchairs") then
+                            n.Text = n.Text:gsub(name:lower(), "discord.gg/gamingchairs")
+                        end
+                        if n.Text:lower():find(display:lower()) and not n.Text:find("discord.gg/gamingchairs") then
+                            n.Text = n.Text:lower():gsub(display:lower(), "discord.gg/gamingchairs")
+                        end
+                    end
+                end
+                
+                task.spawn(function()
+                    plr.Name, plr.DisplayName = name, display
+                    while task.wait(5) do
+                        for _, v in next, game:GetDescendants() do
+                            changeText(v)
+                        end
+                    end
+                end)
+                
+                game.DescendantAdded:Connect(changeText)
+                
+                for _, part in next, cha:GetDescendants() do
+                    if part:IsA("Part") then
+                        part.Color = Color3.fromRGB(math.random(1, 255), math.random(1, 255), math.random(1, 255))
+                    end
+                    if IsA(part, "Shirt", "Pants", "ShirtGraphic", "Accessory") then
+                        part:Destroy()
+                    end
+                end				
+            end
+        })
+
+        InteractionSection:Button({
+            Name = "Force Shift Lock",
+            Callback = function()
+                game.Players.LocalPlayer.DevEnableMouseLock = true
+            end,
+        })
+
+        InteractionSection:Button({
+            Name = "Force Death",
+            Callback = function()
+                game.LocalPlayer.Character.Humanoid.Health = 0
+            end,
+        })
+
         local CameraSection = ClientPage:Section({
             Name = "Camera",
             Side = "Left"
