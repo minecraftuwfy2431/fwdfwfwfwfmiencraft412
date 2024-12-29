@@ -701,6 +701,8 @@ function Library:LoadClientTab(Window)
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
         local deletedParts = {}
         local waypointFile = "waypoint.txt"
+        local spinning = false
+        local spinSpeed = 1
         local xrayEnabled = false
         local xrayDistance = 50
         local platformPart
@@ -786,6 +788,39 @@ function Library:LoadClientTab(Window)
             end,
         })
 
+        local SpinSection = ClientPage:Section({
+            Name = "Spin",
+            Side = "Right"
+        })
+
+        SpinSection:Toggle({
+            Name = "Enable Spin",
+            Flag = "SpinToggle",
+            Callback = function(enabled)
+                spinning = enabled
+            end,
+        })
+
+        SpinSection:Slider({
+            Name = "Spin Speed",
+            Flag = "SpinSpeedSlider",
+            Min = 1,
+            Max = 20,
+            Default = 1,
+            Decimals = 1,
+            Callback = function(value)
+                spinSpeed = value
+            end,
+        })
+
+        task.spawn(function()
+            while task.wait() do
+                if spinning and HumanoidRootPart then
+                    HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+                end
+            end
+        end)
+
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
             Side = "Right"
@@ -850,114 +885,9 @@ function Library:LoadClientTab(Window)
             end
         end)
 
-        local PlatformSection = ClientPage:Section({
-            Name = "Platform",
-            Side = "Left"
-        })
-
-        PlatformSection:Button({
-            Name = "Spawn Platform",
-            Callback = function()
-                if not platformPart then
-                    platformPart = Instance.new("Part")
-                    platformPart.Size = platformSize
-                    platformPart.Position = HumanoidRootPart.Position - Vector3.new(0, 3, 0)
-                    platformPart.Transparency = platformTransparency
-                    platformPart.Anchored = true
-                    platformPart.Parent = workspace
-                end
-            end,
-        })
-
-        PlatformSection:Button({
-            Name = "Remove Platform",
-            Callback = function()
-                if platformPart and platformPart.Parent then
-                    platformPart:Destroy()
-                    platformPart = nil
-                end
-            end,
-        })
-
-        PlatformSection:Slider({
-            Name = "Platform Width",
-            Flag = "PlatformWidthSlider",
-            Min = 5,
-            Max = 50,
-            Default = 10,
-            Decimals = 1,
-            Callback = function(value)
-                platformSize = Vector3.new(value, platformSize.Y, platformSize.Z)
-                if platformPart then
-                    platformPart.Size = platformSize
-                end
-            end,
-        })
-
-        PlatformSection:Slider({
-            Name = "Platform Height",
-            Flag = "PlatformHeightSlider",
-            Min = 1,
-            Max = 10,
-            Default = 1,
-            Decimals = 1,
-            Callback = function(value)
-                platformSize = Vector3.new(platformSize.X, value, platformSize.Z)
-                if platformPart then
-                    platformPart.Size = platformSize
-                end
-            end,
-        })
-
-        PlatformSection:Slider({
-            Name = "Platform Depth",
-            Flag = "PlatformDepthSlider",
-            Min = 5,
-            Max = 50,
-            Default = 10,
-            Decimals = 1,
-            Callback = function(value)
-                platformSize = Vector3.new(platformSize.X, platformSize.Y, value)
-                if platformPart then
-                    platformPart.Size = platformSize
-                end
-            end,
-        })
-
-        PlatformSection:Slider({
-            Name = "Platform Transparency",
-            Flag = "PlatformTransparencySlider",
-            Min = 0,
-            Max = 1,
-            Default = 0,
-            Decimals = 0.1,
-            Callback = function(value)
-                platformTransparency = value
-                if platformPart then
-                    platformPart.Transparency = platformTransparency
-                end
-            end,
-        })
-
-        PlatformSection:Toggle({
-            Name = "Follow Client",
-            Flag = "PlatformFollowToggle",
-            Callback = function(enabled)
-                platformFollowEnabled = enabled
-            end,
-        })
-
-        task.spawn(function()
-            while task.wait() do
-                if platformFollowEnabled and platformPart then
-                    platformPart.CFrame = HumanoidRootPart.CFrame - Vector3.new(0, 3, 0)
-                end
-            end
-        end)
-
         local WaypointSection = ClientPage:Section({
             Name = "Waypoints",
-            Side = "Right"
+            Side = "Left"
         })
 
         WaypointSection:Button({
