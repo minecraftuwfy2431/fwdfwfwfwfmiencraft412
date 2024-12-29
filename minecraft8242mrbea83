@@ -697,7 +697,8 @@ function Library:LoadWorldTab(Window)
 
     do
         local LightingSection = WorldPage:Section({
-            Name = "Lighting"
+            Name = "Lighting",
+            Side = "Left"
         })
 
         LightingSection:Toggle({
@@ -754,7 +755,7 @@ function Library:LoadWorldTab(Window)
             Flag = "BrightnessSlider",
             Min = 0,
             Max = 10,
-            Decimals = 1,
+            Decimals = 0.1,
             Callback = function(value)
                 if brightnessEnabled then
                     game.Lighting.Brightness = value
@@ -778,7 +779,7 @@ function Library:LoadWorldTab(Window)
             Flag = "ExposureSlider",
             Min = 0,
             Max = 5,
-            Decimals = 1,
+            Decimals = 0.1,
             Callback = function(value)
                 if exposureEnabled then
                     game.Lighting.ExposureCompensation = value
@@ -803,6 +804,14 @@ function Library:LoadWorldTab(Window)
                     game.Lighting.ShadowSoftness = 0
                 end
             end,
+        }):Colorpicker({
+            Default = Color3.fromRGB(255, 255, 255),
+            Flag = "ShadowSoftnessColorPicker",
+            Callback = function(color)
+                if shadowSoftnessEnabled then
+                    game.Lighting.ShadowColor = color
+                end
+            end,
         })
 
         LightingSection:Slider({
@@ -810,7 +819,7 @@ function Library:LoadWorldTab(Window)
             Flag = "ShadowSoftnessSlider",
             Min = 0,
             Max = 1,
-            Decimals = 2,
+            Decimals = 0.01,
             Callback = function(value)
                 if shadowSoftnessEnabled then
                     game.Lighting.ShadowSoftness = value
@@ -819,7 +828,8 @@ function Library:LoadWorldTab(Window)
         })
 
         local FogSection = WorldPage:Section({
-            Name = "Fog"
+            Name = "Fog",
+            Side = "Right"
         })
 
         FogSection:Toggle({
@@ -831,6 +841,14 @@ function Library:LoadWorldTab(Window)
                     game.Lighting.FogEnd = 100000
                 end
             end,
+        }):Colorpicker({
+            Default = Color3.fromRGB(200, 200, 255),
+            Flag = "FogColorPicker",
+            Callback = function(color)
+                if fogEnabled then
+                    game.Lighting.FogColor = color
+                end
+            end,
         })
 
         FogSection:Slider({
@@ -838,7 +856,7 @@ function Library:LoadWorldTab(Window)
             Flag = "FogStartSlider",
             Min = 0,
             Max = 1000,
-            Decimals = 0,
+            Decimals = 1,
             Callback = function(value)
                 if fogEnabled then
                     game.Lighting.FogStart = value
@@ -851,7 +869,7 @@ function Library:LoadWorldTab(Window)
             Flag = "FogEndSlider",
             Min = 100,
             Max = 100000,
-            Decimals = 0,
+            Decimals = 1,
             Callback = function(value)
                 if fogEnabled then
                     game.Lighting.FogEnd = value
@@ -859,18 +877,9 @@ function Library:LoadWorldTab(Window)
             end,
         })
 
-        FogSection:Colorpicker({
-            Default = Color3.fromRGB(200, 200, 255),
-            Flag = "FogColorPicker",
-            Callback = function(color)
-                if fogEnabled then
-                    game.Lighting.FogColor = color
-                end
-            end,
-        })
-
         local SkyboxSection = WorldPage:Section({
-            Name = "Skybox"
+            Name = "Skybox",
+            Side = "Left"
         })
 
         SkyboxSection:Dropdown({
@@ -918,7 +927,8 @@ function Library:LoadWorldTab(Window)
         end
 
         local AtmosphereSection = WorldPage:Section({
-            Name = "Atmosphere"
+            Name = "Atmosphere",
+            Side = "Right"
         })
 
         AtmosphereSection:Toggle({
@@ -935,25 +945,7 @@ function Library:LoadWorldTab(Window)
                     if atmosphere then atmosphere:Destroy() end
                 end
             end,
-        })
-
-        AtmosphereSection:Slider({
-            Name = "Density",
-            Flag = "AtmosphereDensity",
-            Min = 0,
-            Max = 1,
-            Decimals = 2,
-            Callback = function(value)
-                if atmosphereEnabled then
-                    local atmosphere = game.Lighting:FindFirstChildOfClass("Atmosphere")
-                    if atmosphere then
-                        atmosphere.Density = value
-                    end
-                end
-            end,
-        })
-
-        AtmosphereSection:Colorpicker({
+        }):Colorpicker({
             Default = Color3.fromRGB(200, 200, 255),
             Flag = "AtmosphereColorPicker",
             Callback = function(color)
@@ -966,8 +958,25 @@ function Library:LoadWorldTab(Window)
             end,
         })
 
+        AtmosphereSection:Slider({
+            Name = "Density",
+            Flag = "AtmosphereDensity",
+            Min = 0,
+            Max = 1,
+            Decimals = 0.01,
+            Callback = function(value)
+                if atmosphereEnabled then
+                    local atmosphere = game.Lighting:FindFirstChildOfClass("Atmosphere")
+                    if atmosphere then
+                        atmosphere.Density = value
+                    end
+                end
+            end,
+        })
+
         local TimeSection = WorldPage:Section({
-            Name = "Clock"
+            Name = "Clock",
+            Side = "Left"
         })
 
         TimeSection:Toggle({
@@ -986,7 +995,7 @@ function Library:LoadWorldTab(Window)
             Flag = "ClockTimeSlider",
             Min = 0,
             Max = 24,
-            Decimals = 1,
+            Decimals = 0.1,
             Callback = function(value)
                 if clockEnabled then
                     game.Lighting.ClockTime = value
