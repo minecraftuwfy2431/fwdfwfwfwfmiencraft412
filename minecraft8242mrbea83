@@ -686,7 +686,7 @@ function Library:KeybindList()
 	return KeyList
 end
 
-	function Library:LoadClientTab(Window)
+function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
     })
@@ -694,10 +694,11 @@ end
     do
         local Players = game:GetService("Players")
         local LocalPlayer = Players.LocalPlayer
+        local Camera = workspace.CurrentCamera
+        local RunService = game:GetService("RunService")
         local Mouse = LocalPlayer:GetMouse()
         local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-        local Humanoid = Character:WaitForChild("Humanoid")
         local deletedParts = {}
         local xrayEnabled = false
         local xrayDistance = 50
@@ -709,7 +710,36 @@ end
         local platformFollowEnabled = false
         local platformSize = Vector3.new(10, 1, 10)
         local platformTransparency = 0
-        local waypoints = {}
+        local waypointFile = "waypoint.json"
+        local aspect_ratio = {
+            enabled = false,
+            horizontal_stretch = 100,
+            vertical_stretch = 50,
+        }
+
+        local originalCameraCFrame = Camera.CFrame
+        RunService.RenderStepped:Connect(function()
+            if aspect_ratio.enabled then
+                local currentCFrame = Camera.CFrame
+                if currentCFrame ~= originalCameraCFrame then
+                    local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = currentCFrame:GetComponents()
+                    Camera.CFrame = CFrame.new(
+                        X,
+                        Y,
+                        Z,
+                        R00 * aspect_ratio.horizontal_stretch / 100,
+                        R01 * aspect_ratio.vertical_stretch / 100,
+                        R02,
+                        R10,
+                        R11 * aspect_ratio.vertical_stretch / 100,
+                        R12,
+                        R20 * aspect_ratio.horizontal_stretch / 100,
+                        R21 * aspect_ratio.vertical_stretch / 100,
+                        R22
+                    )
+                end
+            end
+        end)
 
         local CameraSection = ClientPage:Section({
             Name = "Camera",
@@ -746,162 +776,42 @@ end
         })
 
         CameraSection:Toggle({
-            Name = "Max Zoom Adjustment",
-            Flag = "MaxZoomToggle",
-            Callback = function(enabled)
-                getgenv().MaxZoomEnabled = enabled
-                if not enabled then
-                    LocalPlayer.CameraMaxZoomDistance = 400
-                end
+            Name = "Aspect Ratio",
+            Flag = "AspectRatioToggle",
+            Callback = function(state)
+                aspect_ratio.enabled = state
             end,
         }):Keybind({
-            Name = "Max Zoom Keybind",
-            Flag = "MaxZoomKeybind",
+            Name = "Aspect Ratio Keybind",
+            Flag = "AspectRatioKeybind",
             Mode = "Toggle",
         })
 
         CameraSection:Slider({
-            Name = "Max Zoom Distance",
-            Flag = "MaxZoomSlider",
+            Name = "Horizontal Stretch",
+            Flag = "HorizontalStretchSlider",
             Min = 0,
-            Max = 1000,
-            Default = LocalPlayer.CameraMaxZoomDistance,
-            Decimals = 1,
+            Max = 100,
+            Default = 100,
             Callback = function(value)
-                if getgenv().MaxZoomEnabled then
-                    LocalPlayer.CameraMaxZoomDistance = value
-                end
+                aspect_ratio.horizontal_stretch = value
             end,
-        })
-
-        CameraSection:Toggle({
-            Name = "Min Zoom Adjustment",
-            Flag = "MinZoomToggle",
-            Callback = function(enabled)
-                getgenv().MinZoomEnabled = enabled
-                if not enabled then
-                    LocalPlayer.CameraMinZoomDistance = 0.5
-                end
-            end,
-        }):Keybind({
-            Name = "Min Zoom Keybind",
-            Flag = "MinZoomKeybind",
-            Mode = "Toggle",
         })
 
         CameraSection:Slider({
-            Name = "Min Zoom Distance",
-            Flag = "MinZoomSlider",
+            Name = "Vertical Stretch",
+            Flag = "VerticalStretchSlider",
             Min = 0,
-            Max = 1000,
-            Default = LocalPlayer.CameraMinZoomDistance,
-            Decimals = 1,
+            Max = 100,
+            Default = 50,
             Callback = function(value)
-                if getgenv().MinZoomEnabled then
-                    LocalPlayer.CameraMinZoomDistance = value
-                end
+                aspect_ratio.vertical_stretch = value
             end,
         })
-
-        CameraSection:Toggle({
-            Name = "Camera Mode Adjustment",
-            Flag = "CameraModeToggle",
-            Callback = function(enabled)
-                getgenv().CameraModeEnabled = enabled
-                if not enabled then
-                    LocalPlayer.CameraMode = Enum.CameraMode.Classic
-                end
-            end,
-        }):Keybind({
-            Name = "Camera Mode Keybind",
-            Flag = "CameraModeKeybind",
-            Mode = "Toggle",
-        })
-
-        CameraSection:Dropdown({
-            Name = "Camera Mode",
-            Flag = "CameraModeDropdown",
-            Options = { "Classic", "LockFirstPerson" },
-            Callback = function(selected)
-                if getgenv().CameraModeEnabled then
-                    LocalPlayer.CameraMode = Enum.CameraMode[selected]
-                end
-            end,
-        })
-
-        local InteractionSection = ClientPage:Section({
-            Name = "Interactions",
-            Side = "Right"
-        })
-
-        InteractionSection:Toggle({
-            Name = "Click to Delete",
-            Flag = "ClickToDeleteToggle",
-            Callback = function(enabled)
-                getgenv().ClickToDeleteEnabled = enabled
-            end,
-        }):Keybind({
-            Name = "Click to Delete Keybind",
-            Flag = "ClickToDeleteKeybind",
-            Mode = "Toggle",
-        })
-
-        Mouse.Button1Down:Connect(function()
-            if getgenv().ClickToDeleteEnabled and Mouse.Target then
-                table.insert(deletedParts, {Instance = Mouse.Target, Parent = Mouse.Target.Parent, Position = Mouse.Target.Position})
-                Mouse.Target:Destroy()
-            end
-        end)
-
-        InteractionSection:Button({
-            Name = "Restore Deleted Parts",
-            Callback = function()
-                for _, partData in ipairs(deletedParts) do
-                    if partData.Instance and not partData.Instance.Parent then
-                        partData.Instance.Parent = partData.Parent
-                        partData.Instance.Position = partData.Position
-                    end
-                end
-                deletedParts = {}
-            end,
-        })
-
-        InteractionSection:Toggle({
-            Name = "Click to Teleport",
-            Flag = "ClickToTeleportToggle",
-            Callback = function(enabled)
-                getgenv().ClickToTeleportEnabled = enabled
-            end,
-        }):Keybind({
-            Name = "Click to Teleport Keybind",
-            Flag = "ClickToTeleportKeybind",
-            Mode = "Toggle",
-        })
-
-        InteractionSection:Slider({
-            Name = "Teleport Distance",
-            Flag = "TeleportDistanceSlider",
-            Min = 0,
-            Max = 500,
-            Default = 200,
-            Decimals = 1,
-            Callback = function(value)
-                getgenv().TeleportDistance = value
-            end,
-        })
-
-        Mouse.Button1Down:Connect(function()
-            if getgenv().ClickToTeleportEnabled and Mouse.Target then
-                local distance = (Mouse.Target.Position - HumanoidRootPart.Position).Magnitude
-                if distance <= getgenv().TeleportDistance then
-                    HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.Position)
-                end
-            end
-        end)
 
         local PlatformSection = ClientPage:Section({
             Name = "Platform",
-            Side = "Left"
+            Side = "Right"
         })
 
         PlatformSection:Button({
@@ -1013,43 +923,24 @@ end
 
         local WaypointSection = ClientPage:Section({
             Name = "Waypoints",
-            Side = "Right"
+            Side = "Left"
         })
 
         WaypointSection:Button({
             Name = "Set Waypoint",
             Callback = function()
-                local waypointName = "Waypoint" .. tostring(#waypoints + 1)
-                table.insert(waypoints, {Name = waypointName, Position = HumanoidRootPart.CFrame})
-                writefile("waypoints.json", game:GetService("HttpService"):JSONEncode(waypoints))
+                local waypointData = {CFrame = HumanoidRootPart.CFrame}
+                writefile(waypointFile, game:GetService("HttpService"):JSONEncode(waypointData))
             end,
         })
-
-        WaypointSection:Dropdown({
-            Name = "Waypoints",
-            Flag = "WaypointDropdown",
-            Options = {},
-            Callback = function(selected)
-                for _, waypoint in ipairs(waypoints) do
-                    if waypoint.Name == selected then
-                        HumanoidRootPart.CFrame = waypoint.Position
-                    end
-                end
-            end,
-        })
-
-        if isfile("waypoints.json") then
-            waypoints = game:GetService("HttpService"):JSONDecode(readfile("waypoints.json"))
-        end
 
         WaypointSection:Button({
-            Name = "Refresh Waypoints",
+            Name = "Load Waypoint",
             Callback = function()
-                local dropdown = ClientPage:FindElement("WaypointDropdown")
-                if dropdown then
-                    dropdown:ClearOptions()
-                    for _, waypoint in ipairs(waypoints) do
-                        dropdown:AddOption(waypoint.Name)
+                if isfile(waypointFile) then
+                    local waypointData = game:GetService("HttpService"):JSONDecode(readfile(waypointFile))
+                    if waypointData and waypointData.CFrame then
+                        HumanoidRootPart.CFrame = CFrame.new(waypointData.CFrame)
                     end
                 end
             end,
