@@ -915,12 +915,12 @@ function Library:LoadConfigTab(Window)
 		})
 
 		Info:Label({
-		    Name = "Developer: soulhub - 1114257240883482624",
+		    Name = "soulhub - 1114257240883482624",
 		    Centered = true,
 		})
 
 		Info:Label({
-		    Name = "Discord: https://discord.gg/gamingchairs",
+		    Name = "gg/gamingchairs",
 		    Centered = true,
 		})
 
