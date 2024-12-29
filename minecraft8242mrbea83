@@ -1315,7 +1315,7 @@ function Library:LoadWorldTab(Window)
 	    Min = 50,
 	    Max = 1000,
 	    Default = 200,
-	    Decimals = 0,
+	    Decimals = 1,
 	    Callback = function(distance)
 	        getgenv().RenderingDistance = distance
 	    end,
