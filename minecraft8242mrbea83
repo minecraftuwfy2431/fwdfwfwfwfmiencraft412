@@ -1184,7 +1184,7 @@ function Library:LoadClientTab(Window)
             Callback = function(value)
                 aspect_ratio.vertical_stretch = value
             end,
-        })
+        }) 
 
         local SpinSection = ClientPage:Section({
             Name = "Spin",
