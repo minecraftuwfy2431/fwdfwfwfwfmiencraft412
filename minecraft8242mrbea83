@@ -844,6 +844,15 @@ function Library:LoadClientTab(Window)
 	    end,
 	})
 
+	PlayerSection:Button({
+	    Name = "Stop Player Options",
+	    Callback = function()
+	        loopTeleportEnabled = false
+	        loopTweenEnabled = false
+	        orbitEnabled = false
+	    end,
+	})
+
         PlayerSection:Slider({
             Name = "Orbit Radius",
             Flag = "OrbitRadiusSlider",
@@ -898,15 +907,6 @@ function Library:LoadClientTab(Window)
 	        end
 	    end
 	end)
-
-	PlayerSection:Button({
-	    Name = "Stop Player Options",
-	    Callback = function()
-	        loopTeleportEnabled = false
-	        loopTweenEnabled = false
-	        orbitEnabled = false
-	    end,
-	})
 
         local InteractionSection = ClientPage:Section({
             Name = "Interactions",
