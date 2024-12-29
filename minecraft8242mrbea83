@@ -905,9 +905,9 @@ function Library:LoadConfigTab(Window)
 				Library:SetOpen()
 			end
 		})
-
-		local ProtectoGuio = protectgui or function() end
 	
+		local ProtectoGuio = protectgui or function() end
+
 		local clientMenuToggle = nil
 		local screenGui = nil
 		
@@ -923,7 +923,7 @@ function Library:LoadConfigTab(Window)
 		    frame.Position = UDim2.new(1, -160, 0.5, -100)
 		    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 		    frame.BorderSizePixel = 2
-		    frame.BorderColor3 = Library.Accent
+		    frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
 		    frame.Active = true
 		    frame.Draggable = true
 		    ProtectoGuio(frame)
@@ -980,7 +980,7 @@ function Library:LoadConfigTab(Window)
 		    ProtectoGuio(timerLabel)
 		    timerLabel.Parent = frame
 		
-		    local titleHoverText = function(hover)
+		    local function titleHoverText(hover)
 		        titleLabel.Text = hover and "Delete?" or "Client!"
 		        titleLabel.TextColor3 = hover and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
 		    end
@@ -1011,7 +1011,7 @@ function Library:LoadConfigTab(Window)
 		    end)
 		end
 		
-		clientMenuToggle = Menu:Toggle({
+		Menu:Toggle({
 		    Name = "Local Client Menu",
 		    Flag = "Kef3fc453g3st",
 		    State = false,
