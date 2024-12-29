@@ -1146,6 +1146,78 @@ function Library:LoadClientTab(Window)
             end,
         })
 
+	local PlatformSection = ClientPage:Section({
+	    Name = "Platform",
+	    Side = "Right"
+	})
+	
+	PlatformSection:Toggle({
+	    Name = "Enable Platform",
+	    Flag = "PlatformToggle",
+	    Callback = function(enabled)
+	        if enabled then
+	            if not platformPart then
+	                platformPart = Instance.new("Part")
+	                platformPart.Anchored = true
+	                platformPart.Size = platformSize
+	                platformPart.Transparency = platformTransparency
+	                platformPart.Parent = workspace
+	            end
+	        else
+	            if platformPart then
+	                platformPart:Destroy()
+	                platformPart = nil
+	            end
+	        end
+	    end,
+	})
+	
+	PlatformSection:Slider({
+	    Name = "Platform Size",
+	    Flag = "PlatformSizeSlider",
+	    Min = 5,
+	    Max = 50,
+	    Default = 10,
+	    Decimals = 1,
+	    Callback = function(value)
+	        platformSize = Vector3.new(value, 1, value)
+	        if platformPart then
+	            platformPart.Size = platformSize
+	        end
+	    end,
+	})
+	
+	PlatformSection:Slider({
+	    Name = "Platform Transparency",
+	    Flag = "PlatformTransparencySlider",
+	    Min = 0,
+	    Max = 1,
+	    Default = 0,
+	    Decimals = 0.1,
+	    Callback = function(value)
+	        platformTransparency = value
+	        if platformPart then
+	            platformPart.Transparency = platformTransparency
+	        end
+	    end,
+	})
+	
+	PlatformSection:Toggle({
+	    Name = "Follow Player",
+	    Flag = "PlatformFollowToggle",
+	    Callback = function(enabled)
+	        platformFollowEnabled = enabled
+	    end,
+	})
+	
+	task.spawn(function()
+	    while task.wait() do
+	        if platformFollowEnabled and platformPart and HumanoidRootPart then
+	            platformPart.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, -3, 0)
+	        end
+	    end
+	end)
+
         task.spawn(function()
             while task.wait() do
                 if spinning and HumanoidRootPart then
