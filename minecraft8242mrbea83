@@ -1256,12 +1256,12 @@ function Library:LoadClientTab(Window)
             end,
         }) 
 
-        local SpinSection = ClientPage:Section({
-            Name = "Spin",
+        local MiscSection = ClientPage:Section({
+            Name = "Miscallenous",
             Side = "Right"
         })
 
-        SpinSection:Toggle({
+        MiscSection:Toggle({
             Name = "Enable Spin",
             Flag = "SpinToggle",
             Callback = function(enabled)
@@ -1269,7 +1269,7 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        SpinSection:Slider({
+        MiscSection:Slider({
             Name = "Spin Speed",
             Flag = "SpinSpeedSlider",
             Min = 1,
@@ -1280,6 +1280,92 @@ function Library:LoadClientTab(Window)
                 spinSpeed = value
             end,
         })
+	
+	MiscSection:Toggle({
+	    Name = "No Proximity Prompt Delay",
+	    Flag = "NoProximityDelayToggle",
+	    Callback = function(enabled)
+	        if not _G.OriginalHoldDurations then
+	            _G.OriginalHoldDurations = {}
+	        end
+	        if not _G.OriginalActivationDistances then
+	            _G.OriginalActivationDistances = {}
+	        end
+	
+	        local function restorePrompts()
+	            for prompt, data in pairs(_G.OriginalHoldDurations) do
+	                if prompt and prompt:IsA("ProximityPrompt") then
+	                    prompt.HoldDuration = data
+	                end
+	            end
+	            for prompt, data in pairs(_G.OriginalActivationDistances) do
+	                if prompt and prompt:IsA("ProximityPrompt") then
+	                    prompt.MaxActivationDistance = data
+	                end
+	            end
+	        end
+	
+	        if enabled then
+	            for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+	                if v:IsA("ProximityPrompt") then
+	                    if not _G.OriginalHoldDurations[v] then
+	                        _G.OriginalHoldDurations[v] = v.HoldDuration
+	                    end
+	                    if not _G.OriginalActivationDistances[v] then
+	                        _G.OriginalActivationDistances[v] = v.MaxActivationDistance
+	                    end
+	                    v.HoldDuration = 0
+	                    v.MaxActivationDistance = 50
+	                end
+	            end
+	
+	            game:GetService("ProximityPromptService").PromptButtonHoldBegan:Connect(function(prompt)
+	                if prompt and prompt:IsA("ProximityPrompt") then
+	                    prompt.HoldDuration = 0
+	                end
+	            end)
+	        else
+	            restorePrompts()
+	        end
+	    end,
+	})
+	
+	MiscSection:Slider({
+	    Name = "Custom Hold Duration",
+	    Flag = "CustomHoldDurationSlider",
+	    Default = 0.5
+	    Min = 0,
+	    Max = 15,
+	    Decimals = 0.1,
+	    Callback = function(value)
+	        for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+	            if v:IsA("ProximityPrompt") then
+	                if not _G.OriginalHoldDurations[v] then
+	                    _G.OriginalHoldDurations[v] = v.HoldDuration
+	                end
+	                v.HoldDuration = value
+	            end
+	        end
+	    end,
+	})
+	
+	MiscSection:Slider({
+	    Name = "Custom Activation Distance",
+	    Flag = "CustomActivationDistanceSlider",
+	    Min = 1,
+	    Max = 100,
+	    Decimals = 1,
+	    Callback = function(value)
+	        for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+	            if v:IsA("ProximityPrompt") then
+	                if not _G.OriginalActivationDistances[v] then
+	                    _G.OriginalActivationDistances[v] = v.MaxActivationDistance
+	                end
+	                v.MaxActivationDistance = value
+	            end
+	        end
+	    end,
+	})
 
         task.spawn(function()
             while task.wait() do
