@@ -1065,14 +1065,20 @@ function Library:LoadClientTab(Window)
         InteractionSection:Button({
             Name = "Force Shift Lock",
             Callback = function()
-                game.Players.LocalPlayer.DevEnableMouseLock = true
+                local player = game.Players.LocalPlayer
+		if player then
+		    player.DevEnableMouseLock = true
+		end
             end,
         })
 
         InteractionSection:Button({
             Name = "Force Death",
             Callback = function()
-                game.Players.LocalPlayer.Character.Humanoid.Health = 0
+	        local character = game.Players.LocalPlayer.Character
+		if character and character:FindFirstChild("Humanoid") then
+		    character.Humanoid.Health = 0
+		end
             end,
         })
 
