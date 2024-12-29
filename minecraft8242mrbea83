@@ -809,9 +809,83 @@ function Library:LoadClientTab(Window)
             end,
         })
 
+        local InteractionSection = ClientPage:Section({
+            Name = "Interactions",
+            Side = "Right"
+        })
+
+        InteractionSection:Toggle({
+            Name = "Click to Delete",
+            Flag = "ClickToDeleteToggle",
+            Callback = function(enabled)
+                getgenv().ClickToDeleteEnabled = enabled
+            end,
+        }):Keybind({
+            Name = "Click to Delete Keybind",
+            Flag = "ClickToDeleteKeybind",
+            Mode = "Toggle",
+        })
+
+        Mouse.Button1Down:Connect(function()
+            if getgenv().ClickToDeleteEnabled and Mouse.Target then
+                local clone = Mouse.Target:Clone()
+                table.insert(deletedParts, {Clone = clone, Parent = Mouse.Target.Parent, Position = Mouse.Target.Position})
+                Mouse.Target:Destroy()
+            end
+        end)
+
+        InteractionSection:Button({
+            Name = "Restore Deleted Parts",
+            Callback = function()
+                for _, partData in ipairs(deletedParts) do
+                    if partData.Clone and not partData.Clone.Parent then
+                        partData.Clone.Parent = partData.Parent
+                        partData.Clone.Position = partData.Position
+                    end
+                end
+                deletedParts = {}
+            end,
+        })
+
+        InteractionSection:Toggle({
+            Name = "X-Ray",
+            Flag = "XRayToggle",
+            Callback = function(enabled)
+                xrayEnabled = enabled
+                for _, part in ipairs(workspace:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.LocalTransparencyModifier = enabled and 0.5 or 0
+                    end
+                end
+            end,
+        }):Keybind({
+            Name = "X-Ray Keybind",
+            Flag = "XRayKeybind",
+            Mode = "Toggle",
+        })
+
+        InteractionSection:Slider({
+            Name = "X-Ray Distance",
+            Flag = "XRayDistanceSlider",
+            Min = 10,
+            Max = 500,
+            Default = 50,
+            Decimals = 1,
+            Callback = function(value)
+                xrayDistance = value
+            end,
+        })
+
+        workspace.DescendantAdded:Connect(function(part)
+            if xrayEnabled and part:IsA("BasePart") then
+                local distance = (part.Position - HumanoidRootPart.Position).Magnitude
+                part.LocalTransparencyModifier = distance <= xrayDistance and 0.5 or 0
+            end
+        end)
+
         local PlatformSection = ClientPage:Section({
             Name = "Platform",
-            Side = "Right"
+            Side = "Left"
         })
 
         PlatformSection:Button({
@@ -923,7 +997,7 @@ function Library:LoadClientTab(Window)
 
         local WaypointSection = ClientPage:Section({
             Name = "Waypoints",
-            Side = "Left"
+            Side = "Right"
         })
 
         WaypointSection:Button({
@@ -940,16 +1014,18 @@ function Library:LoadClientTab(Window)
                 if isfile(waypointFile) then
                     local waypointData = game:GetService("HttpService"):JSONDecode(readfile(waypointFile))
                     if waypointData and waypointData.CFrame then
-                        HumanoidRootPart.CFrame = CFrame.new(waypointData.CFrame)
+                        HumanoidRootPart.CFrame = CFrame.new(waypointData.CFrame.Position)
                     end
                 end
             end,
         })
 
-	 WaypointSection:Button({
+        WaypointSection:Button({
             Name = "Delete Waypoint",
             Callback = function()
-              	delfile(waypointFile)
+                if isfile(waypointFile) then
+                    delfile(waypointFile)
+                end
             end,
         })
     end
