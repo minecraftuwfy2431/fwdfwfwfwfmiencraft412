@@ -1018,7 +1018,7 @@ function Library:LoadConfigTab(Window)
 		    end)
 		end
 		
-		clientMenuToggle = Menu:Toggle({
+		Menu:Toggle({
 		    Name = "Local Client Menu",
 		    Flag = "Kef3fc453g3st",
 		    State = false,
