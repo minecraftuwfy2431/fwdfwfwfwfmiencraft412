@@ -1290,7 +1290,7 @@ function Library:LoadClientTab(Window)
                 spinSpeed = value
             end,
         })
-
+	
 	local player = game.Players.LocalPlayer
 	local platform
 	local followEnabled = false
@@ -1339,6 +1339,15 @@ function Library:LoadClientTab(Window)
 	            end)
 	        end
 	    end,
+	}):Colorpicker({
+	    Name = "Platform Color",
+	    Default = platformColor,
+	    Callback = function(color)
+	        platformColor = color
+	        if platform then
+	            platform.Color = platformColor
+	        end
+	    end,
 	})
 	
 	MiscSection:Slider({
@@ -1364,20 +1373,9 @@ function Library:LoadClientTab(Window)
 	    end,
 	})
 	
-	MiscSection:Colorpicker({
-	    Name = "Platform Color",
-	    Default = platformColor,
-	    Callback = function(color)
-	        platformColor = color
-	        if platform then
-	            platform.Color = platformColor
-	        end
-	    end,
-	})
-	
 	MiscSection:Dropdown({
 	    Name = "Platform Material",
-	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon", "ForceField"},
+	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon" },
 	    Callback = function(material)
 	        platformMaterial = Enum.Material[material]
 	        if platform then
