@@ -1747,7 +1747,6 @@ function Library:LoadWorldTab(Window)
 	            spawn(function()
 	                while boostFPS do
 	                    task.wait()
-	                    warn("")
 	                end
 	            end)
 	        else
