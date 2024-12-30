@@ -1375,7 +1375,7 @@ function Library:LoadClientTab(Window)
 	
 	MiscSection:Dropdown({
 	    Name = "Platform Material",
-	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon" },
+	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon", "ForceField" },
 	    Callback = function(material)
 	        if Enum.Material[material] then
 	            platformMaterial = Enum.Material[material]
