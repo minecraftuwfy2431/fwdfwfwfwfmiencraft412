@@ -1233,7 +1233,7 @@ function Library:LoadClientTab(Window)
         }) 
 
         local MiscSection = ClientPage:Section({
-            Name = "Spin",
+            Name = "Miscallenous",
             Side = "Right"
         })
 
@@ -1256,7 +1256,119 @@ function Library:LoadClientTab(Window)
                 spinSpeed = value
             end,
         })
+
+	local originalHoldDurations = {}
+	local originalActivationDistances = {}
+	local setHoldDurationEnabled = false
+	local setActivationDistanceEnabled = false
+	local customHoldDuration = 0
+	local customActivationDistance = 50
 	
+	MiscSection:Toggle({
+	    Name = "Proximity Prompt Hold",
+	    Flag = "SetHoldDurationToggle",
+	    Callback = function(enabled)
+	        setHoldDurationEnabled = enabled
+	        if not enabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") and originalHoldDurations[prompt] then
+	                    prompt.HoldDuration = originalHoldDurations[prompt]
+	                end
+	            end
+	            originalHoldDurations = {}
+	        end
+	    end,
+	}):Keybind({
+	    Name = "Hold Duration Keybind",
+	    Flag = "HoldDurationKeybind",
+	    Mode = "Toggle",
+	})
+	
+	MiscSection:Slider({
+	    Name = "Hold Duration",
+	    Flag = "HoldDurationSlider",
+	    Min = 0,
+	    Max = 10,
+	    Default = 0,
+	    Decimals = 1,
+	    Callback = function(value)
+	        customHoldDuration = value
+	        if setHoldDurationEnabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") then
+	                    if not originalHoldDurations[prompt] then
+	                        originalHoldDurations[prompt] = prompt.HoldDuration
+	                    end
+	                    prompt.HoldDuration = customHoldDuration
+	                end
+	            end
+	        end
+	    end,
+	})
+	
+	MiscSection:Toggle({
+	    Name = "Set Max Activation Distance",
+	    Flag = "SetActivationDistanceToggle",
+	    Callback = function(enabled)
+	        setActivationDistanceEnabled = enabled
+	        if not enabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") and originalActivationDistances[prompt] then
+	                    prompt.MaxActivationDistance = originalActivationDistances[prompt]
+	                end
+	            end
+	            originalActivationDistances = {}
+	        end
+	    end,
+	}):Keybind({
+	    Name = "Activation Distance Keybind",
+	    Flag = "ActivationDistanceKeybind",
+	    Mode = "Toggle",
+	})
+	
+	MiscSection:Slider({
+	    Name = "Activation Distance",
+	    Flag = "ActivationDistanceSlider",
+	    Min = 10,
+	    Max = 100,
+	    Default = 50,
+	    Decimals = 1,
+	    Callback = function(value)
+	        customActivationDistance = value
+	        if setActivationDistanceEnabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") then
+	                    if not originalActivationDistances[prompt] then
+	                        originalActivationDistances[prompt] = prompt.MaxActivationDistance
+	                    end
+	                    prompt.MaxActivationDistance = customActivationDistance
+	                end
+	            end
+	        end
+	    end,
+	})
+	
+	task.spawn(function()
+	    while task.wait(1) do
+	        if setHoldDurationEnabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") and not originalHoldDurations[prompt] then
+	                    originalHoldDurations[prompt] = prompt.HoldDuration
+	                    prompt.HoldDuration = customHoldDuration
+	                end
+	            end
+	        end
+	        if setActivationDistanceEnabled then
+	            for _, prompt in pairs(workspace:GetDescendants()) do
+	                if prompt:IsA("ProximityPrompt") and not originalActivationDistances[prompt] then
+	                    originalActivationDistances[prompt] = prompt.MaxActivationDistance
+	                    prompt.MaxActivationDistance = customActivationDistance
+	                end
+	            end
+	        end
+	    end
+	end)
+
 	local player = game.Players.LocalPlayer
 	local platform
 	local followEnabled = false
