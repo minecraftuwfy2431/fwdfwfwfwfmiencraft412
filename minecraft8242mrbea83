@@ -692,67 +692,108 @@ function Library:LoadClientTab(Window)
     })
 
     do
-		local Players = game:GetService("Players")
+	local Players = game:GetService("Players")
 	local LocalPlayer = Players.LocalPlayer
 	local Camera = workspace.CurrentCamera
 	local RunService = game:GetService("RunService")
-	local HumanoidRootPart = LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+	local selectedPlayer
+	local tweenSpeed = 100
+	local loopTeleportEnabled = false
+	local loopTweenEnabled = false
+	local orbitEnabled = false
+	local orbitRadius = 10
+	local orbitSpeed = 5
 	local attachClosestEnabled = false
 	local attachToBackEnabled = false
 	local backOffsetX = 0
 	local backOffsetY = 0
 	local backOffsetZ = -5
-	local selectedPlayer
-	local orbitEnabled = false
-	local orbitRadius = 10
-	local orbitSpeed = 5
-	local loopTeleportEnabled = false
-	local loopTweenEnabled = false
-	local tweenSpeed = 100
 	
 	local function updatePlayerList()
 	    local playerNames = {}
 	    for _, player in ipairs(Players:GetPlayers()) do
-	        if player ~= LocalPlayer then
-	            table.insert(playerNames, player.Name)
-	        end
+		if player ~= LocalPlayer then
+		    table.insert(playerNames, player.Name)
+		end
 	    end
 	    return playerNames
 	end
 	
-	PlayerSection:Dropdown({
+	local PlayerSection = ClientPage:Section({
+	    Name = "Players",
+	    Side = "Left"
+	})
+	
+	local playerDropdown = PlayerSection:Dropdown({
 	    Name = "Select Player",
 	    Flag = "PlayerDropdown",
 	    Options = updatePlayerList(),
 	    Callback = function(playerName)
-	        selectedPlayer = Players:FindFirstChild(playerName)
+		selectedPlayer = Players:FindFirstChild(playerName)
 	    end,
 	})
 	
 	PlayerSection:Button({
 	    Name = "Update Dropdown",
 	    Callback = function()
-	        PlayerSection:Dropdown({
-	            Name = "Select Player",
-	            Flag = "PlayerDropdown",
-	            Options = updatePlayerList(),
-	        })
+		playerDropdown:SetOptions(updatePlayerList())
 	    end,
 	})
 	
 	PlayerSection:Button({
 	    Name = "Spectate Player",
 	    Callback = function()
-	        if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	            Camera.CameraSubject = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
-	        end
+		if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    Camera.CameraSubject = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+		end
 	    end,
 	})
 	
 	PlayerSection:Button({
 	    Name = "Stop Spectating",
 	    Callback = function()
-	        Camera.CameraSubject = LocalPlayer.Character
+		Camera.CameraSubject = LocalPlayer.Character
+	    end,
+	})
+	
+	PlayerSection:Slider({
+	    Name = "Tween Speed",
+	    Flag = "TweenSpeedSlider",
+	    Min = 10,
+	    Max = 300,
+	    Default = 100,
+	    Decimals = 1,
+	    Callback = function(value)
+		tweenSpeed = value
+	    end,
+	})
+	
+	PlayerSection:Button({
+	    Name = "Tween To Player",
+	    Callback = function()
+		if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+		    local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
+		    local duration = distance / tweenSpeed
+	
+		    local tweenService = game:GetService("TweenService")
+		    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+		    local goal = {CFrame = CFrame.new(targetPosition)}
+	
+		    local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
+		    tween:Play()
+		end
+	    end,
+	})
+	
+	PlayerSection:Button({
+	    Name = "Teleport To Player",
+	    Callback = function()
+		if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
+		end
 	    end,
 	})
 	
@@ -760,7 +801,7 @@ function Library:LoadClientTab(Window)
 	    Name = "Attach To Back (Closest)",
 	    Flag = "AttachClosestToggle",
 	    Callback = function(enabled)
-	        attachClosestEnabled = enabled
+		attachClosestEnabled = enabled
 	    end,
 	}):Keybind({
 	    Name = "Attach Closest Keybind",
@@ -772,7 +813,7 @@ function Library:LoadClientTab(Window)
 	    Name = "Attach To Back",
 	    Flag = "AttachToBackToggle",
 	    Callback = function(enabled)
-	        attachToBackEnabled = enabled
+		attachToBackEnabled = enabled
 	    end,
 	}):Keybind({
 	    Name = "Attach To Back Keybind",
@@ -788,7 +829,7 @@ function Library:LoadClientTab(Window)
 	    Default = 0,
 	    Decimals = 1,
 	    Callback = function(value)
-	        backOffsetX = value
+		backOffsetX = value
 	    end,
 	})
 	
@@ -800,7 +841,7 @@ function Library:LoadClientTab(Window)
 	    Default = 0,
 	    Decimals = 1,
 	    Callback = function(value)
-	        backOffsetY = value
+		backOffsetY = value
 	    end,
 	})
 	
@@ -812,20 +853,8 @@ function Library:LoadClientTab(Window)
 	    Default = -5,
 	    Decimals = 1,
 	    Callback = function(value)
-	        backOffsetZ = value
+		backOffsetZ = value
 	    end,
-	})
-	
-	PlayerSection:Toggle({
-	    Name = "Orbit Player",
-	    Flag = "OrbitToggle",
-	    Callback = function(enabled)
-	        orbitEnabled = enabled
-	    end,
-	}):Keybind({
-	    Name = "Orbit Keybind",
-	    Flag = "OrbitKey",
-	    Mode = "Toggle",
 	})
 	
 	PlayerSection:Slider({
@@ -836,7 +865,7 @@ function Library:LoadClientTab(Window)
 	    Default = 10,
 	    Decimals = 1,
 	    Callback = function(value)
-	        orbitRadius = value
+		orbitRadius = value
 	    end,
 	})
 	
@@ -848,105 +877,69 @@ function Library:LoadClientTab(Window)
 	    Default = 5,
 	    Decimals = 1,
 	    Callback = function(value)
-	        orbitSpeed = value
-	    end,
-	})
-	
-	PlayerSection:Toggle({
-	    Name = "Loop Teleport",
-	    Flag = "LoopTeleportToggle",
-	    Callback = function(enabled)
-	        loopTeleportEnabled = enabled
-	    end,
-	}):Keybind({
-	    Name = "Loop Teleport Keybind",
-	    Flag = "LoopTeleportKey",
-	    Mode = "Toggle",
-	})
-	
-	PlayerSection:Toggle({
-	    Name = "Loop Tween",
-	    Flag = "LoopTweenToggle",
-	    Callback = function(enabled)
-	        loopTweenEnabled = enabled
-	    end,
-	}):Keybind({
-	    Name = "Loop Tween Keybind",
-	    Flag = "LoopTweenKey",
-	    Mode = "Toggle",
-	})
-	
-	PlayerSection:Slider({
-	    Name = "Tween Speed",
-	    Flag = "TweenSpeedSlider",
-	    Min = 10,
-	    Max = 300,
-	    Default = 100,
-	    Decimals = 1,
-	    Callback = function(value)
-	        tweenSpeed = value
+		orbitSpeed = value
 	    end,
 	})
 	
 	task.spawn(function()
 	    while task.wait(0.1) do
-	        if attachToBackEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	            local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
-	            HumanoidRootPart.CFrame = CFrame.new(
-	                targetPosition + Vector3.new(backOffsetX, backOffsetY, backOffsetZ),
-	                targetPosition
-	            )
-	        end
+		if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
+		end
 	
-	        if attachClosestEnabled then
-	            local closestPlayer = nil
-	            local shortestDistance = math.huge
+		if loopTweenEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+		    local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
+		    local duration = distance / tweenSpeed
 	
-	            for _, player in ipairs(Players:GetPlayers()) do
-	                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-	                    local distance = (HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-	                    if distance < shortestDistance then
-	                        shortestDistance = distance
-	                        closestPlayer = player
-	                    end
-	                end
-	            end
+		    local tweenService = game:GetService("TweenService")
+		    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+		    local goal = {CFrame = CFrame.new(targetPosition)}
 	
-	            if closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	                local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-	                HumanoidRootPart.CFrame = CFrame.new(
-	                    targetPosition + Vector3.new(backOffsetX, backOffsetY, backOffsetZ),
-	                    targetPosition
-	                )
-	            end
-	        end
+		    local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
+		    tween:Play()
+		end
 	
-	        if orbitEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	            local angle = tick() * orbitSpeed
-	            local xOffset = math.cos(angle) * orbitRadius
-	            local zOffset = math.sin(angle) * orbitRadius
-	            HumanoidRootPart.CFrame = CFrame.new(
-	                selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(xOffset, 0, zOffset),
-	                selectedPlayer.Character.HumanoidRootPart.Position
-	            )
-	        end
+		if orbitEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    local angle = tick() * orbitSpeed
+		    local xOffset = math.cos(angle) * orbitRadius
+		    local zOffset = math.sin(angle) * orbitRadius
+		    HumanoidRootPart.CFrame = CFrame.new(
+			selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(xOffset, 0, zOffset),
+			selectedPlayer.Character.HumanoidRootPart.Position
+		    )
+		end
 	
-	        if loopTeleportEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	            HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame
-	        end
+		if attachToBackEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
+		    HumanoidRootPart.CFrame = CFrame.new(
+			targetPosition + Vector3.new(backOffsetX, backOffsetY, backOffsetZ),
+			targetPosition
+		    )
+		end
 	
-	        if loopTweenEnabled and selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-	            local targetPosition = selectedPlayer.Character.HumanoidRootPart.Position
-	            local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
-	            local duration = distance / tweenSpeed
+		if attachClosestEnabled then
+		    local closestPlayer = nil
+		    local shortestDistance = math.huge
 	
-	            local tweenService = game:GetService("TweenService")
-	            local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
-	            local goal = {CFrame = CFrame.new(targetPosition)}
+		    for _, player in ipairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+			    local distance = (HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+			    if distance < shortestDistance then
+				shortestDistance = distance
+				closestPlayer = player
+			    end
+			end
+		    end
 	
-	            local tween = tweenService:Create(HumanoidRootPart, tweenInfo, goal)
-	            tween:Play()
-	        end
+		    if closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
+			HumanoidRootPart.CFrame = CFrame.new(
+			    targetPosition + Vector3.new(backOffsetX, backOffsetY, backOffsetZ),
+			    targetPosition
+			)
+		    end
+		end
 	    end
 	end)
 
@@ -1348,13 +1341,11 @@ function Library:LoadClientTab(Window)
 	
 	MiscSection:Dropdown({
 	    Name = "Platform Material",
-	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon", "ForceField" },
+	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon" },
 	    Callback = function(material)
-	        if Enum.Material[material] then
-	            platformMaterial = Enum.Material[material]
-	            if platform then
-	                platform.Material = platformMaterial
-	            end
+	        platformMaterial = Enum.Material[material]
+	        if platform then
+	            platform.Material = platformMaterial
 	        end
 	    end,
 	})
