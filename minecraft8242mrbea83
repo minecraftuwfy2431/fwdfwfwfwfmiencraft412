@@ -1266,12 +1266,12 @@ function Library:LoadClientTab(Window)
             end,
         }) 
 
-        local SpinSection = ClientPage:Section({
+        local MiscSection = ClientPage:Section({
             Name = "Spin",
             Side = "Right"
         })
 
-        SpinSection:Toggle({
+        MiscSection:Toggle({
             Name = "Enable Spin",
             Flag = "SpinToggle",
             Callback = function(enabled)
@@ -1279,7 +1279,7 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        SpinSection:Slider({
+        MiscSection:Slider({
             Name = "Spin Speed",
             Flag = "SpinSpeedSlider",
             Min = 1,
@@ -1290,6 +1290,101 @@ function Library:LoadClientTab(Window)
                 spinSpeed = value
             end,
         })
+
+	local player = game.Players.LocalPlayer
+	local platform
+	local followEnabled = false
+	local distanceFromPlayer = 5
+	local platformSize = Vector3.new(10, 1, 10)
+	local platformMaterial = Enum.Material.Plastic
+	local platformColor = Color3.fromRGB(255, 255, 255)
+	
+	MiscSection:Button({
+	    Name = "Spawn Platform",
+	    Callback = function()
+	        if not platform then
+	            platform = Instance.new("Part")
+	            platform.Size = platformSize
+	            platform.Anchored = true
+	            platform.Material = platformMaterial
+	            platform.Color = platformColor
+	            platform.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -distanceFromPlayer, 0)
+	            platform.Parent = workspace
+	        end
+	    end,
+	})
+	
+	MiscSection:Button({
+	    Name = "Delete Platform",
+	    Callback = function()
+	        if platform then
+	            platform:Destroy()
+	            platform = nil
+	        end
+	    end,
+	})
+	
+	MiscSection:Toggle({
+	    Name = "Follow Client",
+	    Callback = function(enabled)
+	        followEnabled = enabled
+	        if followEnabled then
+	            spawn(function()
+	                while followEnabled do
+	                    if platform and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+	                        platform.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -distanceFromPlayer, 0)
+	                    end
+	                    wait()
+	                end
+	            end)
+	        end
+	    end,
+	})
+	
+	MiscSection:Slider({
+	    Name = "Distance from Player",
+	    Min = 1,
+	    Max = 20,
+	    Decimals = 1,
+	    Callback = function(value)
+	        distanceFromPlayer = value
+	    end,
+	})
+	
+	MiscSection:Slider({
+	    Name = "Platform Size",
+	    Min = 1,
+	    Max = 20,
+	    Decimals = 1,
+	    Callback = function(value)
+	        platformSize = Vector3.new(value, 1, value)
+	        if platform then
+	            platform.Size = platformSize
+	        end
+	    end,
+	})
+	
+	MiscSection:Colorpicker({
+	    Name = "Platform Color",
+	    Default = platformColor,
+	    Callback = function(color)
+	        platformColor = color
+	        if platform then
+	            platform.Color = platformColor
+	        end
+	    end,
+	})
+	
+	MiscSection:Dropdown({
+	    Name = "Platform Material",
+	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon", "ForceField"},
+	    Callback = function(material)
+	        platformMaterial = Enum.Material[material]
+	        if platform then
+	            platform.Material = platformMaterial
+	        end
+	    end,
+	})
 
         task.spawn(function()
             while task.wait() do
