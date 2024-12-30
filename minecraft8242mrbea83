@@ -827,7 +827,7 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-        		 PlayerSection:Dropdown({
+         PlayerSection:Dropdown({
 	    Name = "Player Options",
 	    Flag = "PlayerOptionsDropdown",
 	    Options = {"Loop Teleport", "Loop Tween", "Orbit Player", "Attach To Back"},
