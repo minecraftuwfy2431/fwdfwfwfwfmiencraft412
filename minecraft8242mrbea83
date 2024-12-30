@@ -1464,6 +1464,254 @@ function Library:LoadClientTab(Window)
 	    end,
 	})
 
+	local ScreenGui = Instance.new("ScreenGui")
+	local ChatLoggerFrame = Instance.new("Frame")
+	local ChatLoggerUiCorner = Instance.new("UICorner")
+	local CloseChatLogger = Instance.new("TextButton")
+	local ChatLogsFrame = Instance.new("Frame")
+	local LogsUIcorner = Instance.new("UICorner")
+	local UIListLayout = Instance.new("UIListLayout")
+	local DamageLoggerFrame = Instance.new("Frame")
+	local DamageLoggerUiCorner = Instance.new("UICorner")
+	local CloseDamageLogger = Instance.new("TextButton")
+	local DamageLogsFrame = Instance.new("Frame")
+	local DamageLogsUIcorner = Instance.new("UICorner")
+	local DamageUIListLayout = Instance.new("UIListLayout")
+	ScreenGui.Parent = CoreGui
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	ScreenGui.ResetOnSpawn = false
+	local frameSize = 440
+	local deleteChatAfterSeconds = 4.5
+	local deleteDamageAfterSeconds = 4.5
+	local minDamageLogDistance = 100
+	ChatLoggerFrame.Name = "ChatLoggerFrame"
+	ChatLoggerFrame.Parent = ScreenGui
+	ChatLoggerFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	ChatLoggerFrame.BorderSizePixel = 0
+	ChatLoggerFrame.Position = UDim2.new(0.051, 0, 0.117, 0)
+	ChatLoggerFrame.Visible = false
+	ChatLoggerFrame.Size = UDim2.new(0, frameSize, 0, frameSize)
+	ChatLoggerFrame.Active = true
+	ChatLoggerFrame.Draggable = true
+	ChatLoggerUiCorner.Parent = ChatLoggerFrame
+	CloseChatLogger.Name = "CloseChatLogger"
+	CloseChatLogger.Parent = ChatLoggerFrame
+	CloseChatLogger.BackgroundTransparency = 1.0
+	CloseChatLogger.Position = UDim2.new(0.932, 0, 0, 0)
+	CloseChatLogger.Size = UDim2.new(0, 30, 0, 30)
+	CloseChatLogger.Font = Enum.Font.SourceSans
+	CloseChatLogger.Text = "X"
+	CloseChatLogger.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseChatLogger.TextSize = 22
+	CloseChatLogger.MouseButton1Click:Connect(function()
+		ChatLoggerFrame.Visible = false
+	end)
+	ChatLogsFrame.Name = "ChatLogsFrame"
+	ChatLogsFrame.Parent = ChatLoggerFrame
+	ChatLogsFrame.BackgroundTransparency = 1.0
+	ChatLogsFrame.Position = UDim2.new(0, 0, 0.083, 0)
+	ChatLogsFrame.Size = UDim2.new(0, frameSize, 0, frameSize - 40)
+	LogsUIcorner.Parent = ChatLogsFrame
+	UIListLayout.Parent = ChatLogsFrame
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	DamageLoggerFrame.Name = "DamageLoggerFrame"
+	DamageLoggerFrame.Parent = ScreenGui
+	DamageLoggerFrame.BackgroundColor3 = Color3.fromRGB(43, 43, 43)
+	DamageLoggerFrame.BorderSizePixel = 0
+	DamageLoggerFrame.Position = UDim2.new(0.35, 0, 0.117, 0)
+	DamageLoggerFrame.Visible = false
+	DamageLoggerFrame.Size = UDim2.new(0, frameSize, 0, frameSize)
+	DamageLoggerFrame.Active = true
+	DamageLoggerFrame.Draggable = true
+	DamageLoggerUiCorner.Parent = DamageLoggerFrame
+	CloseDamageLogger.Name = "CloseDamageLogger"
+	CloseDamageLogger.Parent = DamageLoggerFrame
+	CloseDamageLogger.BackgroundTransparency = 1.0
+	CloseDamageLogger.Position = UDim2.new(0.932, 0, 0, 0)
+	CloseDamageLogger.Size = UDim2.new(0, 30, 0, 30)
+	CloseDamageLogger.Font = Enum.Font.SourceSans
+	CloseDamageLogger.Text = "X"
+	CloseDamageLogger.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseDamageLogger.TextSize = 22
+	CloseDamageLogger.MouseButton1Click:Connect(function()
+		DamageLoggerFrame.Visible = false
+	end)
+	DamageLogsFrame.Name = "DamageLogsFrame"
+	DamageLogsFrame.Parent = DamageLoggerFrame
+	DamageLogsFrame.BackgroundTransparency = 1.0
+	DamageLogsFrame.Position = UDim2.new(0, 0, 0.083, 0)
+	DamageLogsFrame.Size = UDim2.new(0, frameSize, 0, frameSize - 40)
+	DamageLogsUIcorner.Parent = DamageLogsFrame
+	DamageUIListLayout.Parent = DamageLogsFrame
+	DamageUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	local function createLog(parentFrame, text)
+		local logsLabel = Instance.new("TextLabel")
+		logsLabel.Parent = parentFrame
+		logsLabel.Text = text
+		logsLabel.BackgroundTransparency = 1.0
+		logsLabel.Size = UDim2.new(0, frameSize, 0, 17)
+		logsLabel.Font = Enum.Font.SourceSans
+		logsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		logsLabel.TextSize = 18
+		logsLabel.TextXAlignment = Enum.TextXAlignment.Left
+		delay(deleteChatAfterSeconds, function()
+			logsLabel:Destroy()
+		end)
+	end
+	local function createDamageLog(parentFrame, text)
+		local logsLabel = Instance.new("TextLabel")
+		logsLabel.Parent = parentFrame
+		logsLabel.Text = text
+		logsLabel.BackgroundTransparency = 1.0
+		logsLabel.Size = UDim2.new(0, frameSize, 0, 17)
+		logsLabel.Font = Enum.Font.SourceSans
+		logsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		logsLabel.TextSize = 18
+		logsLabel.TextXAlignment = Enum.TextXAlignment.Left
+		delay(deleteDamageAfterSeconds, function()
+			logsLabel:Destroy()
+		end)
+	end
+	local function getDistanceFromPlayer(player)
+		local character = player.Character
+		if
+		character
+		and character:FindFirstChild("HumanoidRootPart")
+		and localPlayer
+		and localPlayer.Character
+		and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+	then
+			local playerPos = character.HumanoidRootPart.Position
+			local localPlayerPos = localPlayer.Character.HumanoidRootPart.Position
+			return (playerPos - localPlayerPos).magnitude
+		end
+		return 0
+	end
+	for _, player in pairs(Players:GetPlayers()) do
+		player.Chatted:Connect(function(chat)
+			createLog(ChatLogsFrame, "[" .. player.Name .. "] - " .. chat)
+		end)
+	end
+	Players.PlayerAdded:Connect(function(player)
+		player.Chatted:Connect(function(chat)
+			createLog(ChatLogsFrame, "[" .. player.Name .. "] - " .. chat)
+		end)
+	end)
+	local previousHealth = {}
+	local function logDamage()
+		for _, player in pairs(Players:GetPlayers()) do
+			if player.Character and player.Character:FindFirstChild("Humanoid") then
+				local distance = getDistanceFromPlayer(player)
+				if distance <= minDamageLogDistance then
+					local humanoid = player.Character.Humanoid
+					local currentHealth = math.floor(humanoid.Health)
+					if previousHealth[player] and previousHealth[player] > currentHealth then
+						local damage = previousHealth[player] - currentHealth
+						if damage > 5 then
+							createDamageLog(
+							DamageLogsFrame,
+							"["
+								.. player.Name
+								.. "]["
+								.. tostring(math.floor(distance))
+								.. "m]: "
+								.. previousHealth[player]
+								.. " > "
+								.. currentHealth
+								.. " ("
+								.. damage
+								.. " Damage)"
+						)
+						end
+					end
+					previousHealth[player] = currentHealth
+				end
+			end
+		end
+	end
+	RunService.Heartbeat:Connect(logDamage)
+	MiscSection:Toggle({
+		Name = "Chat Logger",
+		Flag = "AUTOESsCHATLOGfwfwggwggwgCAPE",
+		Callback = function(visible)
+			ChatLoggerFrame.Visible = visible
+		end,
+	}):Keybind({
+		Name = "p11arryxRaFWFWFWFWFWgwegegFWF",
+		Flag = "FlCWCPIC3242414141414EAM3333CSyKey",
+		Mode = "Toggle",
+	})
+	MiscSection:Slider({
+		Name = "Chat Logger Resize",
+		Flag = "aREeziLowgwzxwxwcvwgfwg322",
+		Min = 100,
+		Max = 800,
+		Default = 350,
+		
+		Callback = function(value)
+			frameSize = value
+			ChatLoggerFrame.Size = UDim2.new(0, frameSize, 0, frameSize)
+			ChatLogsFrame.Size = UDim2.new(0, frameSize, 0, frameSize - 40)
+		end,
+	})
+	MiscSection:Slider({
+		Name = "Delete Chats After",
+		Flag = "aDELETCHAYkidfwzwz23113321sWWHH322",
+		Min = 1,
+		Max = 300,
+		Default = deleteChatAfterSeconds,
+		
+		Callback = function(value)
+			deleteChatAfterSeconds = value
+		end,
+	})
+	MiscSection:Toggle({
+		Name = "Damage Logger",
+		Flag = "AUTOESdmgsCHATLOGfwfwggwggwgCAPE",
+		Callback = function(visible)
+			DamageLoggerFrame.Visible = visible
+		end,
+	}):Keybind({
+		Name = "p11arryxRgegevcxxcWFWF",
+		Flag = "FlCWCPICXFWF2PIECREcxer343AM3333CSyKey",
+		Mode = "Toggle",
+	})
+	MiscSection:Slider({
+		Name = "Damage Logger Resize",
+		Flag = "aREeziLowgwzxwxwcwfwfvwgfwg322",
+		Min = 100,
+		Max = 800,
+		Default = 350,
+		
+		Callback = function(value)
+			frameSize = value
+			DamageLoggerFrame.Size = UDim2.new(0, frameSize, 0, frameSize)
+			DamageLogsFrame.Size = UDim2.new(0, frameSize, 0, frameSize - 40)
+		end,
+	})
+	MiscSection:Slider({
+		Name = "Min Log Distance",
+		Flag = "aDminlogdfwzwz23113321sWgwgxwxWHH322",
+		Min = 1,
+		Max = 2500,
+		Default = 100,
+		
+		Callback = function(value)
+			minDamageLogDistance = value
+		end,
+	})
+	MiscSection:Slider({
+		Name = "Delete Damage Logs After",
+		Flag = "aDELETCHAYkidfwzwz23113321sWgwgxwxWHH322",
+		Min = 1,
+		Max = 300,
+		Default = deleteDamageAfterSeconds,
+		
+		Callback = function(value)
+			deleteDamageAfterSeconds = value
+		end,
+	})
+
         task.spawn(function()
             while task.wait() do
                 if spinning and HumanoidRootPart then
