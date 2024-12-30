@@ -1377,9 +1377,11 @@ function Library:LoadClientTab(Window)
 	    Name = "Platform Material",
 	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon" },
 	    Callback = function(material)
-	        platformMaterial = Enum.Material[material]
-	        if platform then
-	            platform.Material = platformMaterial
+	        if Enum.Material[material] then
+	            platformMaterial = Enum.Material[material]
+	            if platform then
+	                platform.Material = platformMaterial
+	            end
 	        end
 	    end,
 	})
