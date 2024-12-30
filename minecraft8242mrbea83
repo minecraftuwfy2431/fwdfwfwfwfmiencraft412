@@ -1,4 +1,3 @@
-
 local Library = {
 	Open = true;
 	Accent = Color3.fromHex("6759b3");
