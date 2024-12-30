@@ -1202,63 +1202,6 @@ function Library:LoadClientTab(Window)
             end,
         })
 
-	local originalCameraCFrame = camera.CFrame
-	RunService.RenderStepped:Connect(function()
-		if aspect_ratio.enabled then
-			local currentCFrame = camera.CFrame
-			if currentCFrame ~= originalCameraCFrame then
-				local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = currentCFrame:GetComponents()
-				camera.CFrame = CFrame.new(
-				X,
-				Y,
-				Z,
-				R00 * aspect_ratio.horizontal_stretch / 100,
-				R01 * aspect_ratio.vertical_stretch / 100,
-				R02,
-				R10,
-				R11 * aspect_ratio.vertical_stretch / 100,
-				R12,
-				R20 * aspect_ratio.horizontal_stretch / 100,
-				R21 * aspect_ratio.vertical_stretch / 100,
-				R22
-			)
-			end
-		end
-	end)
-	CameraSection:Toggle({
-		Name = "Aspect Ratio",
-		Flag = "31s",
-		Callback = function(state)
-			aspect_ratio.enabled = state
-		end,
-	}):Keybind({
-		Name = "p11arry4trtjtjWFWFWF",
-		Flag = "FlCWCPICXFWF2PIECjtjtgvccxREAM3333CSyKey",
-		Mode = "Toggle",
-	})
-	CameraSection:Slider({
-		Name = "Horizontal Stretch",
-		Flag = "G432232",
-		Min = 0,
-		Max = 100,
-		Default = 100,
-		
-		Callback = function(value)
-			aspect_ratio.horizontal_stretch = value
-		end,
-	})
-	CameraSection:Slider({
-		Name = "Vertical Stretch",
-		Flag = "vv3DWDX",
-		Min = 0,
-		Max = 100,
-		Default = 50,
-		
-		Callback = function(value)
-			aspect_ratio.vertical_stretch = value
-		end,
-	})
-
         local MiscSection = ClientPage:Section({
             Name = "Miscallenous",
             Side = "Right"
