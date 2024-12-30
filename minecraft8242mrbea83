@@ -1432,6 +1432,7 @@ function Library:LoadClientTab(Window)
 	    Name = "Distance from Player",
 	    Min = 1,
 	    Max = 20,
+ 	    Default = 4,
 	    Decimals = 1,
 	    Callback = function(value)
 	        distanceFromPlayer = value
@@ -1441,6 +1442,7 @@ function Library:LoadClientTab(Window)
 	MiscSection:Slider({
 	    Name = "Platform Size",
 	    Min = 1,
+            Default = 4,
 	    Max = 20,
 	    Decimals = 1,
 	    Callback = function(value)
@@ -1453,7 +1455,7 @@ function Library:LoadClientTab(Window)
 	
 	MiscSection:Dropdown({
 	    Name = "Platform Material",
-	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon" },
+	    Options = { "Plastic", "Wood", "Metal", "Glass", "Neon", "ForceField" },
 	    Callback = function(material)
 	        platformMaterial = Enum.Material[material]
 	        if platform then
