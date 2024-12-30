@@ -860,7 +860,7 @@ function Library:LoadClientTab(Window)
 	        loopTeleportEnabled = false
 	        loopTweenEnabled = false
 	        orbitEnabled = false
-		    attachToBackEnabled = false
+	        attachToBackEnabled = false
 	    end,
 	})
 
