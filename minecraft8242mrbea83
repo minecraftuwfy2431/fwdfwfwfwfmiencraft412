@@ -690,276 +690,7 @@ function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
     })
-
-	local MovementSection = ClientPage:Section({
-	    Name = "Universal Movement",
-	    Side = "Left"
-	})
-
-	local character = player.Character or player.CharacterAdded:Wait()
-		local humanoid = character:WaitForChild("Humanoid")
-		local originalHipHeight = humanoid.HipHeight
-		local floatEnabled = false
-		local floatHeight = 2
-		local movementKeysPressed = false
-		local movementKeys = {
-			[Enum.KeyCode.W] = false,
-			[Enum.KeyCode.A] = false,
-			[Enum.KeyCode.S] = false,
-			[Enum.KeyCode.D] = false,
-		}
-		UserInputService.InputBegan:Connect(function(input)
-			if movementKeys[input.KeyCode] ~= nil then
-				movementKeys[input.KeyCode] = true
-				movementKeysPressed = true
-			end
-		end)
-		UserInputService.InputEnded:Connect(function(input)
-			if movementKeys[input.KeyCode] ~= nil then
-				movementKeys[input.KeyCode] = false
-				movementKeysPressed = movementKeys[Enum.KeyCode.W]
-			or movementKeys[Enum.KeyCode.A]
-			or movementKeys[Enum.KeyCode.S]
-			or movementKeys[Enum.KeyCode.D]
-			end
-		end)
-		MovementSection:Toggle({
-			Name = "Float",
-			Flag = "31sz2",
-			Callback = function(state)
-				floatEnabled = state
-				if state then
-					humanoid.HipHeight = floatHeight
-				else
-					humanoid.HipHeight = originalHipHeight
-				end
-			end,
-		}):Keybind({
-			Name = "Float Keybind",
-			Flag = "FloatKey",
-			Mode = "Toggle",
-		})
-		MovementSection:Slider({
-			Name = "Float Height",
-			Flag = "G1xw432232z",
-			Min = 1,
-			Max = 500,
-			Default = 2,
-			
-			Callback = function(value)
-				floatHeight = value
-				if floatEnabled then
-					humanoid.HipHeight = value
-				end
-			end,
-		})
-		walkSpeedEnabled = false
-		speed = 1
-		MovementSection:Toggle({
-			Name = "Walk Speed",
-			Flag = "31sz2ccc22111Sw",
-			Callback = function(enabled)
-				walkSpeedEnabled = enabled
-			end,
-		}):Keybind({
-			Name = "p11arryxRaFWFWFWFWFWFWF",
-			Flag = "FlCWCPICXFWF2PIECREAM3333CSyKey",
-			Mode = "Toggle",
-		})
-		MovementSection:Slider({
-			Name = "Current Speed",
-			Flag = "GBOOISBOIDJ299",
-			Min = 0.00,
-			Max = 10,
-			
-			Decimals = 0.01,
-			Callback = function(s)
-				speed = s
-			end,
-		})
-		RunService.RenderStepped:Connect(function()
-			if walkSpeedEnabled and movementKeysPressed then
-				local moveDirection = humanoid.MoveDirection
-				if moveDirection.Magnitude > 0 then
-					character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame
-				+ moveDirection.Unit * speed
-				end
-			end
-		end)
-		
-		UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-			if not gameProcessedEvent then
-				if input.KeyCode == Enum.KeyCode.W then
-					Settings.Control.forward = -1
-				elseif input.KeyCode == Enum.KeyCode.S then
-					Settings.Control.back = 1
-				elseif input.KeyCode == Enum.KeyCode.A then
-					Settings.Control.left = -1
-				elseif input.KeyCode == Enum.KeyCode.D then
-					Settings.Control.right = 1
-				end
-			end
-		end)
-		UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
-			if not gameProcessedEvent then
-				if input.KeyCode == Enum.KeyCode.W then
-					Settings.Control.forward = 0
-				elseif input.KeyCode == Enum.KeyCode.S then
-					Settings.Control.back = 0
-				elseif input.KeyCode == Enum.KeyCode.A then
-					Settings.Control.left = 0
-				elseif input.KeyCode == Enum.KeyCode.D then
-					Settings.Control.right = 0
-				end
-			end
-		end)
-		function getVector()
-			return Vector3.new(
-		Settings.Control.left + Settings.Control.right,
-		0,
-		Settings.Control.forward + Settings.Control.back
-	)
-		end
-		bdv = nil
-		function fly()
-			while Settings.Fly.Toggle do
-				RunService.Heartbeat:Wait()
-				if
-			not bdv
-			or not bdv.Parent
-			or not plr.Character
-			or not plr.Character:FindFirstChild("HumanoidRootPart")
-		then
-					bdv = Instance.new("BodyVelocity")
-					bdv.Name = "FlyVelocity"
-					bdv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-					bdv.Parent = plr.Character:FindFirstChild("HumanoidRootPart")
-				or plr.Character:WaitForChild("HumanoidRootPart")
-				end
-				if
-			Settings.Control.left ~= 0
-			or Settings.Control.right ~= 0
-			or Settings.Control.back ~= 0
-			or Settings.Control.forward ~= 0
-		then
-					bdv.Velocity = camera.CFrame:VectorToWorldSpace(getVector() * Settings.Fly.Speed)
-				else
-					bdv.Velocity = Vector3.new(0, 0, 0)
-				end
-			end
-			if bdv then
-				bdv:Destroy()
-				bdv = nil
-			end
-		end
-		RunService.Heartbeat:Connect(function()
-			if Settings.Fly.Toggle and not bdv then
-				coroutine.wrap(fly)()
-			end
-		end)
-		MovementSection:Toggle({
-			Name = "Fly",
-			
-			Flag = "FlyToggle",
-			Callback = function(v)
-				Settings.Fly.Toggle = v
-				if not v and bdv then
-					bdv:Destroy()
-					bdv = nil
-				elseif v and not bdv then
-					coroutine.wrap(fly)()
-				end
-			end,
-		}):Keybind({
-			Name = "Fly Keybind",
-			Flag = "FlyKeybind",
-			Mode = "Toggle",
-		})
-		MovementSection:Slider({
-			Name = "Fly Speed",
-			Flag = "FlySpeedSlider",
-			Min = 0,
-			Max = 350,
-			Default = 16,
-			
-			Callback = function(v)
-				Settings.Fly.Speed = v
-			end,
-		})
-		InfiniteJumpEnabled = false
-		canJump = true
-		jDelay = 0.1
-		local toggleConnection
-		MovementSection:Toggle({
-			Name = "Infinite Jump",
-			Callback = function(v)
-				InfiniteJumpEnabled = v
-				if v then
-					toggleConnection = UserInputService.JumpRequest:Connect(function()
-						if canJump then
-							canJump = false
-							plr.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-							wait(jDelay)
-							canJump = true
-						end
-					end)
-				else
-					if toggleConnection then
-						toggleConnection:Disconnect()
-						toggleConnection = nil
-					end
-				end
-			end,
-		}):Keybind({
-			Name = "Show3131414hrjyokyjhgrfybind",
-			Flag = "show421412412ey131tfredbind",
-			Mode = "Toggle",
-		})
-		Noclip = nil
-		Clip = nil
-		function noclip()
-			Clip = false
-			local function Nocl()
-				if Clip == false and plr.Character ~= nil then
-					for _, v in pairs(plr.Character:GetDescendants()) do
-						if v:IsA("BasePart") and v.CanCollide then
-							v.CanCollide = false
-						end
-					end
-				end
-				task.wait(0.2)
-			end
-			Noclip = RunService.Stepped:Connect(Nocl)
-		end
-		function clip()
-			if Noclip then
-				Noclip:Disconnect()
-			end
-			Clip = true
-			if plr.Character ~= nil then
-				for _, v in pairs(plr.Character:GetDescendants()) do
-					if v:IsA("BasePart") then
-						v.CanCollide = true
-					end
-				end
-			end
-		end
-		MovementSection:Toggle({
-			Name = "Noclip",
-			Flag = "fGGOOR3X3X239492FF",
-			Callback = function(v)
-				if v then
-					noclip()
-				else
-					clip()
-				end
-			end,
-		}):Keybind({
-			Name = "FO3232edwqCFC34554ewnd",
-			Flag = "f434342ccedhCSCWhhh",
-			Mode = "Toggle",
-		})
-
+	
     do
 	local Players = game:GetService("Players")
 	local LocalPlayer = Players.LocalPlayer
@@ -993,6 +724,270 @@ function Library:LoadClientTab(Window)
 	local PlayerSection = ClientPage:Section({
 	    Name = "Players",
 	    Side = "Left"
+	})
+
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+	local originalHipHeight = humanoid.HipHeight
+	local floatEnabled = false
+	local floatHeight = 2
+	local movementKeysPressed = false
+	local movementKeys = {
+		[Enum.KeyCode.W] = false,
+		[Enum.KeyCode.A] = false,
+		[Enum.KeyCode.S] = false,
+		[Enum.KeyCode.D] = false,
+	}
+	UserInputService.InputBegan:Connect(function(input)
+		if movementKeys[input.KeyCode] ~= nil then
+			movementKeys[input.KeyCode] = true
+			movementKeysPressed = true
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if movementKeys[input.KeyCode] ~= nil then
+			movementKeys[input.KeyCode] = false
+			movementKeysPressed = movementKeys[Enum.KeyCode.W]
+		or movementKeys[Enum.KeyCode.A]
+		or movementKeys[Enum.KeyCode.S]
+		or movementKeys[Enum.KeyCode.D]
+		end
+	end)
+	PlayerSection:Toggle({
+		Name = "Float",
+		Flag = "31sz2",
+		Callback = function(state)
+			floatEnabled = state
+			if state then
+				humanoid.HipHeight = floatHeight
+			else
+				humanoid.HipHeight = originalHipHeight
+			end
+		end,
+	}):Keybind({
+		Name = "Float Keybind",
+		Flag = "FloatKey",
+		Mode = "Toggle",
+	})
+	PlayerSection:Slider({
+		Name = "Float Height",
+		Flag = "G1xw432232z",
+		Min = 1,
+		Max = 500,
+		Default = 2,
+		
+		Callback = function(value)
+			floatHeight = value
+			if floatEnabled then
+				humanoid.HipHeight = value
+			end
+		end,
+	})
+	walkSpeedEnabled = false
+	speed = 1
+	PlayerSection:Toggle({
+		Name = "Walk Speed",
+		Flag = "31sz2ccc22111Sw",
+		Callback = function(enabled)
+			walkSpeedEnabled = enabled
+		end,
+	}):Keybind({
+		Name = "p11arryxRaFWFWFWFWFWFWF",
+		Flag = "FlCWCPICXFWF2PIECREAM3333CSyKey",
+		Mode = "Toggle",
+	})
+	PlayerSection:Slider({
+		Name = "Current Speed",
+		Flag = "GBOOISBOIDJ299",
+		Min = 0.00,
+		Max = 10,
+		
+		Decimals = 0.01,
+		Callback = function(s)
+			speed = s
+		end,
+	})
+	RunService.RenderStepped:Connect(function()
+		if walkSpeedEnabled and movementKeysPressed then
+			local moveDirection = humanoid.MoveDirection
+			if moveDirection.Magnitude > 0 then
+				character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame
+			+ moveDirection.Unit * speed
+			end
+		end
+	end)
+	
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if not gameProcessedEvent then
+			if input.KeyCode == Enum.KeyCode.W then
+				Settings.Control.forward = -1
+			elseif input.KeyCode == Enum.KeyCode.S then
+				Settings.Control.back = 1
+			elseif input.KeyCode == Enum.KeyCode.A then
+				Settings.Control.left = -1
+			elseif input.KeyCode == Enum.KeyCode.D then
+				Settings.Control.right = 1
+			end
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+		if not gameProcessedEvent then
+			if input.KeyCode == Enum.KeyCode.W then
+				Settings.Control.forward = 0
+			elseif input.KeyCode == Enum.KeyCode.S then
+				Settings.Control.back = 0
+			elseif input.KeyCode == Enum.KeyCode.A then
+				Settings.Control.left = 0
+			elseif input.KeyCode == Enum.KeyCode.D then
+				Settings.Control.right = 0
+			end
+		end
+	end)
+	function getVector()
+		return Vector3.new(
+	Settings.Control.left + Settings.Control.right,
+	0,
+	Settings.Control.forward + Settings.Control.back
+)
+	end
+	bdv = nil
+	function fly()
+		while Settings.Fly.Toggle do
+			RunService.Heartbeat:Wait()
+			if
+		not bdv
+		or not bdv.Parent
+		or not plr.Character
+		or not plr.Character:FindFirstChild("HumanoidRootPart")
+	then
+				bdv = Instance.new("BodyVelocity")
+				bdv.Name = "FlyVelocity"
+				bdv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+				bdv.Parent = plr.Character:FindFirstChild("HumanoidRootPart")
+			or plr.Character:WaitForChild("HumanoidRootPart")
+			end
+			if
+		Settings.Control.left ~= 0
+		or Settings.Control.right ~= 0
+		or Settings.Control.back ~= 0
+		or Settings.Control.forward ~= 0
+	then
+				bdv.Velocity = camera.CFrame:VectorToWorldSpace(getVector() * Settings.Fly.Speed)
+			else
+				bdv.Velocity = Vector3.new(0, 0, 0)
+			end
+		end
+		if bdv then
+			bdv:Destroy()
+			bdv = nil
+		end
+	end
+	RunService.Heartbeat:Connect(function()
+		if Settings.Fly.Toggle and not bdv then
+			coroutine.wrap(fly)()
+		end
+	end)
+	PlayerSection:Toggle({
+		Name = "Fly",
+		
+		Flag = "FlyToggle",
+		Callback = function(v)
+			Settings.Fly.Toggle = v
+			if not v and bdv then
+				bdv:Destroy()
+				bdv = nil
+			elseif v and not bdv then
+				coroutine.wrap(fly)()
+			end
+		end,
+	}):Keybind({
+		Name = "Fly Keybind",
+		Flag = "FlyKeybind",
+		Mode = "Toggle",
+	})
+	PlayerSection:Slider({
+		Name = "Fly Speed",
+		Flag = "FlySpeedSlider",
+		Min = 0,
+		Max = 350,
+		Default = 16,
+		
+		Callback = function(v)
+			Settings.Fly.Speed = v
+		end,
+	})
+	InfiniteJumpEnabled = false
+	canJump = true
+	jDelay = 0.1
+	local toggleConnection
+	PlayerSection:Toggle({
+		Name = "Infinite Jump",
+		Callback = function(v)
+			InfiniteJumpEnabled = v
+			if v then
+				toggleConnection = UserInputService.JumpRequest:Connect(function()
+					if canJump then
+						canJump = false
+						plr.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+						wait(jDelay)
+						canJump = true
+					end
+				end)
+			else
+				if toggleConnection then
+					toggleConnection:Disconnect()
+					toggleConnection = nil
+				end
+			end
+		end,
+	}):Keybind({
+		Name = "Show3131414hrjyokyjhgrfybind",
+		Flag = "show421412412ey131tfredbind",
+		Mode = "Toggle",
+	})
+	Noclip = nil
+	Clip = nil
+	function noclip()
+		Clip = false
+		local function Nocl()
+			if Clip == false and plr.Character ~= nil then
+				for _, v in pairs(plr.Character:GetDescendants()) do
+					if v:IsA("BasePart") and v.CanCollide then
+						v.CanCollide = false
+					end
+				end
+			end
+			task.wait(0.2)
+		end
+		Noclip = RunService.Stepped:Connect(Nocl)
+	end
+	function clip()
+		if Noclip then
+			Noclip:Disconnect()
+		end
+		Clip = true
+		if plr.Character ~= nil then
+			for _, v in pairs(plr.Character:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = true
+				end
+			end
+		end
+	end
+	PlayerSection:Toggle({
+		Name = "Noclip",
+		Flag = "fGGOOR3X3X239492FF",
+		Callback = function(v)
+			if v then
+				noclip()
+			else
+				clip()
+			end
+		end,
+	}):Keybind({
+		Name = "FO3232edwqCFC34554ewnd",
+		Flag = "f434342ccedhCSCWhhh",
+		Mode = "Toggle",
 	})
 	
 	local playerDropdown = PlayerSection:Dropdown({
