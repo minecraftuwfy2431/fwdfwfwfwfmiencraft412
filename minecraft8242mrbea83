@@ -726,6 +726,7 @@ function Library:LoadClientTab(Window)
 	    Side = "Left"
 	})
 
+	local player = game.Players.LocalPlayer
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 	local originalHipHeight = humanoid.HipHeight
