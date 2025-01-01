@@ -706,6 +706,33 @@ function Library:KeybindList()
 	return KeyList
 end
 
+local Settings = {
+	Autofarm = {
+		Toggle = false,
+		Mob = "Fishbone",
+		Position = -5,
+	},
+	TweenSpeed = 75,
+	Fly = {
+		Toggle = false,
+		Speed = 16,
+	},
+	Control = {
+		left = 0,
+		right = 0,
+		back = 0,
+		forward = 0,
+	},
+	Speed = {
+		Toggle = false,
+		Speed = 16,
+	},
+	InfJump = false,
+	JumpHeight = 50,
+	Noclip = false,
+	Autoquest = false,
+}
+
 function Library:LoadClientTab(Window)
     local ClientPage = Window:Page({
         Name = "Client"
