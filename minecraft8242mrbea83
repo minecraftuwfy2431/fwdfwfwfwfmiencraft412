@@ -734,6 +734,7 @@ local Settings = {
 }
 
 function Library:LoadClientTab(Window)
+    if game.PlaceId == 13621938427 then return end 
     local ClientPage = Window:Page({
         Name = "Client"
     })
