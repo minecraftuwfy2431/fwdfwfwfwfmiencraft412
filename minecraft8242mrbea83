@@ -3198,7 +3198,7 @@ function Library:LoadConfigTab(Window)
 		end
 		
 		Menu:Toggle({
-		    Name = "Local Client Menu",
+		    Name = "Local Client Menu V1",
 		    Flag = "Kef3fc453g3st",
 		    State = false,
 		    Callback = function(state)
@@ -3207,6 +3207,169 @@ function Library:LoadConfigTab(Window)
 		        elseif screenGui then
 		            screenGui:Destroy()
 		            screenGui = nil
+		        end
+		    end
+		})
+
+		local ScreenGui = Instance.new("ScreenGui")
+		local Frame = Instance.new("Frame")
+		local UIS = game:GetService("UserInputService")
+		local Players = game:GetService("Players")
+		local RunService = game:GetService("RunService")
+		local Stats = game:GetService("Stats")
+		local HttpService = game:GetService("HttpService")
+		
+		local executor = identifyexecutor and identifyexecutor() or "Shit Executor :)"
+		local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+		local placeId = game.PlaceId
+		
+		ScreenGui.Name = "DarkUI"
+		ScreenGui.Parent = nil
+		
+		Frame.Name = "MainFrame"
+		Frame.Parent = ScreenGui
+		Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		Frame.BackgroundTransparency = 0.3
+		Frame.BorderSizePixel = 0
+		Frame.Position = UDim2.new(1, -300, 0, 10)
+		Frame.Size = UDim2.new(0, 250, 0, 300)
+		Frame.AnchorPoint = Vector2.new(1, 0)
+		
+		local function createLabelWithEmoji(parent, emoji, text, position)
+		    local emojiLabel = Instance.new("TextLabel")
+		    local textLabel = Instance.new("TextLabel")
+		
+		    emojiLabel.Name = "EmojiLabel"
+		    emojiLabel.Parent = parent
+		    emojiLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		    emojiLabel.BackgroundTransparency = 1
+		    emojiLabel.Position = UDim2.new(0, 0, position, 0)
+		    emojiLabel.Size = UDim2.new(0, 40, 0.1, 0)
+		    emojiLabel.Font = Enum.Font.SourceSans
+		    emojiLabel.Text = emoji
+		    emojiLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    emojiLabel.TextSize = 24
+		    emojiLabel.TextWrapped = true
+		
+		    textLabel.Name = "TextLabel"
+		    textLabel.Parent = parent
+		    textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		    textLabel.BackgroundTransparency = 1
+		    textLabel.Position = UDim2.new(0, 40, position, 0)
+		    textLabel.Size = UDim2.new(1, -40, 0.1, 0)
+		    textLabel.Font = Enum.Font.SourceSans
+		    textLabel.Text = text
+		    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    textLabel.TextSize = 18
+		    textLabel.TextXAlignment = Enum.TextXAlignment.Left
+		
+		    return textLabel
+		end
+		
+		local gameLabel = createLabelWithEmoji(Frame, "🎮", "Game: " .. gameName, 0)
+		local placeLabel = createLabelWithEmoji(Frame, "🆔", "Place ID: " .. placeId, 0.1)
+		local playerLabel = createLabelWithEmoji(Frame, "🚶", "Players: 0", 0.2)
+		local fpsLabel = createLabelWithEmoji(Frame, "⚡", "FPS: 0", 0.3)
+		local pingLabel = createLabelWithEmoji(Frame, "📡", "Ping: 0 ms", 0.4)
+		local timerLabel = createLabelWithEmoji(Frame, "⏱️", "Timer: 0s", 0.5)
+		local executorLabel = createLabelWithEmoji(Frame, "🔧", "Executor: " .. executor, 0.6)
+		local regionLabel = createLabelWithEmoji(Frame, "🌐", "Region: Unknown", 0.7)
+		local memoryLabel = createLabelWithEmoji(Frame, "💾", "Memory: 0 MB", 0.8)
+		
+		local function updatePlayerCount()
+		    local playerCount = #Players:GetPlayers() - 1
+		    playerLabel.Text = "Players: " .. playerCount
+		end
+		
+		Players.PlayerAdded:Connect(updatePlayerCount)
+		Players.PlayerRemoving:Connect(updatePlayerCount)
+		updatePlayerCount()
+		
+		local lastTime = os.clock()
+		local frameCount = 0
+		
+		RunService.RenderStepped:Connect(function()
+		    frameCount = frameCount + 1
+		    local currentTime = os.clock()
+		    if currentTime - lastTime >= 1 then
+		        fpsLabel.Text = "FPS: " .. frameCount
+		        frameCount = 0
+		        lastTime = currentTime
+		    end
+		end)
+		
+		RunService.Heartbeat:Connect(function()
+		    local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+		    pingLabel.Text = "Ping: " .. ping .. " ms"
+		
+		    local memory = math.floor(Stats:GetTotalMemoryUsageMb())
+		    memoryLabel.Text = "Memory: " .. memory .. " MB"
+		end)
+		
+		local startTime = os.time()
+		
+		RunService.RenderStepped:Connect(function()
+		    local elapsed = os.time() - startTime
+		    timerLabel.Text = string.format("Timer: %ds", elapsed)
+		end)
+		
+		local function fetchServerRegion()
+		    local success, result = pcall(function()
+		        return HttpService:JSONDecode(game.HttpService:GetAsync("https://ipinfo.io/"))
+		    end)
+		    if success and result.region then
+		        regionLabel.Text = "Region: " .. result.region
+		    else
+		        regionLabel.Text = "Region: Unknown"
+		    end
+		end
+		
+		fetchServerRegion()
+		
+		local dragging
+		local dragInput
+		local dragStart
+		local startPos
+		
+		local function update(input)
+		    local delta = input.Position - dragStart
+		    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end
+		
+		Frame.InputBegan:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		        dragging = true
+		        dragStart = input.Position
+		        startPos = Frame.Position
+		        input.Changed:Connect(function()
+		            if input.UserInputState == Enum.UserInputState.End then
+		                dragging = false
+		            end
+		        end)
+		    end
+		end)
+		
+		Frame.InputChanged:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseMovement then
+		        dragInput = input
+		    end
+		end)
+		
+		UIS.InputChanged:Connect(function(input)
+		    if input == dragInput and dragging then
+		        update(input)
+		    end
+		end)
+		
+		Menu:Toggle({
+		    Name = "Local Client Menu V2",
+		    Flag = "Kef3fc453g3st",
+		    State = false,
+		    Callback = function(state)
+		        if state then
+		            ScreenGui.Parent = game.CoreGui
+		        else
+		            ScreenGui.Parent = nil
 		        end
 		    end
 		})
