@@ -3938,7 +3938,7 @@ do
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 40, 1, 40),
             Position = UDim2.new(0,-20,0,-20),
-            ImageTransparency = 0.6,
+            ImageTransparency = 0.4,
 			SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79)),
             ZIndex = -1
 		})
