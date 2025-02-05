@@ -706,6 +706,659 @@ function Library:KeybindList()
 	return KeyList
 end
 
+if game.PlaceId == 15800299024 then 
+local de = miscsec:Section({
+    Name = "ESP",
+})
+
+local players = game:GetService("Players")
+local workspace = game:GetService("Workspace")
+local runService = game:GetService("RunService")
+local camera = workspace.CurrentCamera
+local coreGui = game:GetService("CoreGui")
+
+local localPlayer = players.LocalPlayer
+
+local ballTagEnabled = false
+local ballDistanceEnabled = false
+local ballTracerEnabled = false
+local badgeESPEnabled = false
+local ballESPDistance = 100
+
+local tagSize = 20
+local tagColor = Color3.new(1, 1, 1)
+local distanceSize = 18
+local distanceColor = Color3.new(1, 1, 1)
+local tracerThickness = 2
+local tracerColor = Color3.new(1, 1, 1)
+
+local badgePosX = 0
+local badgePosY = 0.95
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "ProtectedBadgeESP"
+gui.ResetOnSpawn = false
+gui.Parent = gethui and gethui() or coreGui
+
+local badgeFrame = Instance.new("Frame")
+badgeFrame.Size = UDim2.new(1, 0, 0, 50)
+badgeFrame.Position = UDim2.new(badgePosX, 0, badgePosY, 0)
+badgeFrame.BackgroundTransparency = 1
+badgeFrame.Parent = gui
+
+local layout = Instance.new("UIListLayout")
+layout.FillDirection = Enum.FillDirection.Horizontal
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.VerticalAlignment = Enum.VerticalAlignment.Center
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 20)
+layout.Parent = badgeFrame
+
+local function createDrawing(type, properties)
+    local drawingObject = Drawing.new(type)
+    for property, value in pairs(properties) do
+        drawingObject[property] = value
+    end
+    return drawingObject
+end
+
+local espElements = {
+    Tag = createDrawing("Text", {
+        Visible = false,
+        Size = tagSize,
+        Color = tagColor,
+        Outline = true,
+        Center = true
+    }),
+    Distance = createDrawing("Text", {
+        Visible = false,
+        Size = distanceSize,
+        Color = distanceColor,
+        Outline = true,
+        Center = true
+    }),
+    Tracer = createDrawing("Line", {
+        Visible = false,
+        Thickness = tracerThickness,
+        Color = tracerColor
+    }),
+    Badges = {}
+}
+
+local badgeColors = {
+    [1] = Color3.fromRGB(205, 127, 50),
+    [2] = Color3.fromRGB(192, 192, 192),
+    [3] = Color3.fromRGB(255, 215, 0),
+    [4] = Color3.fromRGB(185, 242, 255)
+}
+
+local function updateESP(character)
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    local closestBall, closestBallDistance = nil, math.huge
+    local closestPlayer, closestPlayerDistance = nil, 30
+
+    for _, ball in ipairs(workspace:GetDescendants()) do
+        if ball:IsA("BasePart") and ball.Name == "Basketball" and not ball:IsDescendantOf(character) then
+            local ballPosition = ball.Position
+            local distance = (hrp.Position - ballPosition).Magnitude
+            if distance < closestBallDistance then
+                closestBall = ball
+                closestBallDistance = distance
+            end
+        end
+    end
+
+    if closestBall and closestBallDistance <= ballESPDistance then
+        local ballPosition = closestBall.Position
+        local screenPosition, onScreen = camera:WorldToViewportPoint(ballPosition)
+
+        espElements.Tag.Visible = ballTagEnabled and onScreen
+        espElements.Tag.Position = Vector2.new(screenPosition.X, screenPosition.Y - 30)
+        espElements.Tag.Size = tagSize
+        espElements.Tag.Color = tagColor
+        espElements.Tag.Text = "Basketball"
+
+        espElements.Distance.Visible = ballDistanceEnabled and onScreen
+        espElements.Distance.Position = Vector2.new(screenPosition.X, screenPosition.Y - 5)
+        espElements.Distance.Size = distanceSize
+        espElements.Distance.Color = distanceColor
+        espElements.Distance.Text = string.format("%.2f m", closestBallDistance)
+
+        espElements.Tracer.Visible = ballTracerEnabled and onScreen
+        espElements.Tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
+        espElements.Tracer.To = Vector2.new(screenPosition.X, screenPosition.Y)
+        espElements.Tracer.Thickness = tracerThickness
+        espElements.Tracer.Color = tracerColor
+    else
+        espElements.Tag.Visible = false
+        espElements.Distance.Visible = false
+        espElements.Tracer.Visible = false
+    end
+
+    if badgeESPEnabled then
+        badgeFrame.Position = UDim2.new(badgePosX, 0, badgePosY, 0)
+
+        for _, player in ipairs(players:GetPlayers()) do
+            if player ~= localPlayer and player.Team ~= localPlayer.Team and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local distance = (hrp.Position - player.Character.HumanoidRootPart.Position).Magnitude
+                if distance < closestPlayerDistance then
+                    closestPlayer = player
+                    closestPlayerDistance = distance
+                end
+            end
+        end
+
+        local targetPlayer = closestPlayer or localPlayer
+        local traits = workspace[targetPlayer.Name].Properties:FindFirstChild("Traits")
+
+        if traits then
+            for _, element in pairs(espElements.Badges) do
+                element.Visible = false
+            end
+
+            local badgeNames = {}
+            for _, badge in ipairs(traits:GetChildren()) do
+                if badge:IsA("IntValue") then
+                    table.insert(badgeNames, badge)
+                end
+            end
+
+            table.sort(badgeNames, function(a, b)
+                return a.Value < b.Value
+            end)
+
+            for _, badge in ipairs(badgeNames) do
+                if not espElements.Badges[badge.Name] then
+                    local badgeLabel = Instance.new("TextLabel")
+                    badgeLabel.Size = UDim2.new(0, 150, 1, 0)
+                    badgeLabel.BackgroundTransparency = 1
+                    badgeLabel.TextStrokeTransparency = 0
+                    badgeLabel.TextScaled = true
+                    badgeLabel.TextWrapped = true
+                    badgeLabel.Font = Enum.Font.SourceSansBold
+                    badgeLabel.Text = badge.Name
+                    badgeLabel.Parent = badgeFrame
+                    espElements.Badges[badge.Name] = badgeLabel
+                end
+                espElements.Badges[badge.Name].Visible = true
+                espElements.Badges[badge.Name].Text = badge.Name
+                espElements.Badges[badge.Name].TextColor3 = badgeColors[badge.Value] or Color3.new(1, 1, 1)
+            end
+        end
+    else
+        for _, element in pairs(espElements.Badges) do
+            element.Visible = false
+        end
+    end
+end
+        
+local function setupCharacterTracking()
+    local player = players.LocalPlayer
+    local name = player.Name
+
+    if workspace:FindFirstChild(name) and workspace[name]:FindFirstChild("HumanoidRootPart") then
+        runService.RenderStepped:Connect(function()
+            updateESP(workspace[name])
+        end)
+    else
+        player.CharacterAdded:Connect(function(character)
+            runService.RenderStepped:Connect(function()
+                updateESP(character)
+            end)
+        end)
+    end
+end
+
+setupCharacterTracking()
+
+de:Toggle({
+    Name = "Badge(s)",
+    Callback = function(v)
+        badgeESPEnabled = v
+    end
+})
+
+de:Toggle({
+    Name = "Basketball Tag",
+    Callback = function(v)
+        ballTagEnabled = v
+    end
+})
+
+de:Toggle({
+    Name = "Basketball Distance",
+    Callback = function(v)
+        ballDistanceEnabled = v
+    end
+})
+
+de:Toggle({
+    Name = "Basketball Tracer",
+    Callback = function(v)
+        ballTracerEnabled = v
+    end
+})
+
+de:Slider({
+    Name = "Ball Tag Size",
+    Min = 10,
+    Max = 50,
+    Default = 20,
+    Callback = function(v)
+        tagSize = v
+    end
+})
+
+de:Slider({
+    Name = "Ball Distance Size",
+    Min = 10,
+    Default = 20,
+    Max = 50,
+    Callback = function(v)
+        distanceSize = v
+    end
+})
+
+de:Slider({
+    Name = "Ball Tracer Thickness",
+    Min = 1,
+    Default = 2,
+    Max = 10,
+    Callback = function(v)
+        tracerThickness = v
+    end
+})
+
+de:Slider({
+    Name = "Badge(s) X Position",
+    Min = 0,
+    Max = 1,
+    Decimals = 0.01,
+    Callback = function(v)
+        badgePosX = v
+    end
+})
+
+de:Slider({
+    Name = "Badge(s) Y Position",
+    Min = 0,
+    Default = 0.95,
+    Max = 1,
+    Decimals = 0.01,
+    Callback = function(v)
+        badgePosY = v
+    end
+})
+
+local DistFromCenter = 20
+local TriangleHeight = 16
+local TriangleWidth = 16
+local TextSize = 14
+
+local connection
+
+local function startArrow()
+    local runService = game:GetService("RunService")
+    local players = game:GetService("Players")
+    local workspace = game:GetService("Workspace")
+    local camera = workspace.CurrentCamera
+
+    local lp = players.LocalPlayer
+    local name = lp.Name
+
+    local TriangleFilled = true
+    local TriangleTransparency = 0
+    local TriangleThickness = 1
+    local TriangleColor = Color3.fromRGB(255, 255, 255)
+    local TextColor = Color3.fromRGB(255, 255, 255)
+    local AntiAliasing = false
+
+    local V2 = Vector2.new
+    local V3 = Vector3.new
+    local CF = CFrame.new
+    local COS = math.cos
+    local SIN = math.sin
+    local RAD = math.rad
+    local DRAWING = Drawing.new
+    local ROUND = math.round
+
+    local function getCharacter()
+        return workspace:FindFirstChild(name) or lp.CharacterAdded:Wait()
+    end
+
+    local function getPrimaryPart()
+        local char = getCharacter()
+        return char:WaitForChild("HumanoidRootPart", 5)
+    end
+
+    local function AntiA(v)
+        if not AntiAliasing then return v end
+        return V2(ROUND(v.x), ROUND(v.y))
+    end
+
+    local function GetRelative(pos)
+        local primaryPart = getPrimaryPart()
+        if not primaryPart then return V2(0, 0) end
+
+        local camP = camera.CFrame.Position
+        local relative = CF(V3(primaryPart.Position.X, camP.Y, primaryPart.Position.Z), camP):PointToObjectSpace(pos)
+
+        return V2(relative.X, relative.Z)
+    end
+
+    local function RelativeToCenter(v)
+        return (camera.ViewportSize / 2) + v
+    end
+
+    local function RotateVect(v, a)
+        a = RAD(a)
+        local x = v.x * COS(a) - v.y * SIN(a)
+        local y = v.x * SIN(a) + v.y * COS(a)
+        return V2(x, y)
+    end
+
+    local function DrawTriangle(color)
+        local triangle = DRAWING("Triangle")
+        triangle.Visible = false
+        triangle.Color = color
+        triangle.Filled = TriangleFilled
+        triangle.Thickness = TriangleThickness
+        triangle.Transparency = 1 - TriangleTransparency
+        return triangle
+    end
+
+    local function DrawText()
+        local text = DRAWING("Text")
+        text.Visible = false
+        text.Color = TextColor
+        text.Size = TextSize
+        text.Center = true
+        text.Outline = true
+        return text
+    end
+
+    local function GetClosestBasketball()
+        local closest, minDist = nil, math.huge
+        local primaryPart = getPrimaryPart()
+
+        if not primaryPart then return nil end
+
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and obj.Name == "Basketball" and not getCharacter():IsAncestorOf(obj) then
+                local dist = (primaryPart.Position - obj.Position).Magnitude
+                if dist < minDist then
+                    closest = obj
+                    minDist = dist
+                end
+            end
+        end
+        return closest
+    end
+
+    local Arrow = DrawTriangle(TriangleColor)
+    local Text = DrawText()
+
+    connection = runService.RenderStepped:Connect(function()
+        local basketball = GetClosestBasketball()
+        if basketball then
+            local screenPos, onScreen = camera:WorldToViewportPoint(basketball.Position)
+
+            if not onScreen then
+                local rel = GetRelative(basketball.Position)
+                local direction = -rel.Unit
+                local base = direction * DistFromCenter
+                local sideLength = TriangleWidth / 2
+                local baseL = base + RotateVect(direction, 90) * sideLength
+                local baseR = base + RotateVect(direction, -90) * sideLength
+                local tip = direction * (DistFromCenter + TriangleHeight)
+
+                local distance = (getPrimaryPart().Position - basketball.Position).Magnitude
+                local roundedDistance = ROUND(distance)
+
+                Arrow.PointA = AntiA(RelativeToCenter(tip))
+                Arrow.PointB = AntiA(RelativeToCenter(baseL))
+                Arrow.PointC = AntiA(RelativeToCenter(baseR))
+                Arrow.Visible = true
+
+                Text.Position = AntiA(RelativeToCenter(tip) - V2(0, 35))
+                Text.Text = "BALL [" .. roundedDistance .. "m]"
+                Text.Size = TextSize
+                Text.Visible = true
+            else
+                Arrow.Visible = false
+                Text.Visible = false
+            end
+        else
+            Arrow.Visible = false
+            Text.Visible = false
+        end
+    end)
+end
+
+de:Toggle({
+    Name = "Basketball Arrow",
+    Callback = function(enabled)
+        if enabled then
+            startArrow()
+        else
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+        end
+    end
+})
+
+de:Slider({
+    Name = "Dist From Center",
+    Min = 10,
+    Max = 400,
+    Default = 70,
+    Callback = function(v)
+        DistFromCenter = v
+    end
+})
+
+de:Slider({
+    Name = "Triangle Height",
+    Min = 5,
+    Max = 30,
+    Default = 16,
+    Callback = function(v)
+        TriangleHeight = v
+    end
+})
+
+de:Slider({
+    Name = "Triangle Width",
+    Min = 5,
+    Max = 30,
+    Default = 16,
+    Callback = function(v)
+        TriangleWidth = v
+    end
+})
+
+de:Slider({
+    Name = "Text Size",
+    Min = 10,
+    Max = 30,
+    Default = 14,
+    Callback = function(v)
+        TextSize = v
+    end
+})
+
+local V2 = Vector2.new
+local V3 = Vector3.new
+local DRAWING = Drawing.new
+
+local RadarInfo = {
+    Position = V2(200, 200),
+    Radius = 100,
+    Scale = 1,
+    RadarBack = Color3.fromRGB(10, 10, 10),
+    RadarBorder = Color3.fromRGB(75, 75, 75),
+    BasketballDot = Color3.fromRGB(255, 165, 0),
+    LocalPlayerDot = Color3.fromRGB(255, 255, 255)
+}
+
+local function NewCircle(Transparency, Color, Radius, Filled, Thickness)
+    local c = DRAWING("Circle")
+    c.Transparency = Transparency
+    c.Color = Color
+    c.Visible = false
+    c.Thickness = Thickness
+    c.Position = V2(0, 0)
+    c.Radius = Radius
+    c.NumSides = math.clamp(Radius * 55 / 100, 10, 75)
+    c.Filled = Filled
+    return c
+end
+
+local RadarBackground = NewCircle(0.9, RadarInfo.RadarBack, RadarInfo.Radius, true, 1)
+local RadarBorder = NewCircle(0.75, RadarInfo.RadarBorder, RadarInfo.Radius, false, 3)
+
+local function getCharacter()
+    return workspace:FindFirstChild(name) or lp.CharacterAdded:Wait()
+end
+
+local function getPrimaryPart()
+    local char = getCharacter()
+    return char:WaitForChild("HumanoidRootPart", 5)
+end
+
+local function GetRelative(pos)
+    local primaryPart = getPrimaryPart()
+    if not primaryPart then return 0, 0 end
+
+    local camPos = V3(camera.CFrame.Position.X, primaryPart.Position.Y, camera.CFrame.Position.Z)
+    local newcf = CFrame.new(primaryPart.Position, camPos)
+    local r = newcf:PointToObjectSpace(pos)
+    return r.X, r.Z
+end
+
+local function PlaceDot(basketball)
+    local dot = NewCircle(1, RadarInfo.BasketballDot, 3, true, 1)
+
+    return runService.RenderStepped:Connect(function()
+        if basketball and basketball:IsDescendantOf(workspace) and not basketball:IsDescendantOf(lp.Character) then
+            local scale = RadarInfo.Scale
+            local relx, rely = GetRelative(basketball.Position)
+            local newPos = RadarInfo.Position - V2(relx * scale, rely * scale)
+
+            if (newPos - RadarInfo.Position).Magnitude < RadarInfo.Radius - 2 then
+                dot.Radius = 3
+                dot.Position = newPos
+                dot.Visible = true
+            else
+                local dist = (RadarInfo.Position - newPos).Magnitude
+                local calc = (RadarInfo.Position - newPos).Unit * (dist - RadarInfo.Radius)
+                dot.Radius = 2
+                dot.Position = newPos + calc
+                dot.Visible = true
+            end
+        else
+            dot.Visible = false
+        end
+    end)
+end
+
+local function NewLocalDot()
+    local d = DRAWING("Triangle")
+    d.Visible = true
+    d.Thickness = 1
+    d.Filled = true
+    d.Color = RadarInfo.LocalPlayerDot
+    d.PointA = RadarInfo.Position + V2(0, -6)
+    d.PointB = RadarInfo.Position + V2(-3, 6)
+    d.PointC = RadarInfo.Position + V2(3, 6)
+    return d
+end
+
+local LocalPlayerDot = NewLocalDot()
+
+local connections = {}
+
+local function EnableRadar()
+    RadarBackground.Visible = true
+    RadarBorder.Visible = true
+    LocalPlayerDot.Visible = true
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Name == "Basketball" and not obj:IsDescendantOf(lp.Character) then
+            table.insert(connections, PlaceDot(obj))
+        end
+    end
+
+    table.insert(connections, runService.RenderStepped:Connect(function()
+        LocalPlayerDot.Color = RadarInfo.LocalPlayerDot
+        LocalPlayerDot.PointA = RadarInfo.Position + V2(0, -6)
+        LocalPlayerDot.PointB = RadarInfo.Position + V2(-3, 6)
+        LocalPlayerDot.PointC = RadarInfo.Position + V2(3, 6)
+
+        RadarBackground.Position = RadarInfo.Position
+        RadarBackground.Radius = RadarInfo.Radius
+        RadarBackground.Color = RadarInfo.RadarBack
+
+        RadarBorder.Position = RadarInfo.Position
+        RadarBorder.Radius = RadarInfo.Radius
+        RadarBorder.Color = RadarInfo.RadarBorder
+    end))
+end
+
+local function DisableRadar()
+    RadarBackground.Visible = false
+    RadarBorder.Visible = false
+    LocalPlayerDot.Visible = false
+
+    for _, conn in ipairs(connections) do
+        conn:Disconnect()
+    end
+    connections = {}
+end
+
+local dragging = false
+local dragOffset
+
+runService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if (input.Position - RadarInfo.Position).Magnitude <= RadarInfo.Radius then
+            dragging = true
+            dragOffset = RadarInfo.Position - input.Position
+        end
+    end
+end)
+
+runService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+runService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        RadarInfo.Position = input.Position + dragOffset
+    end
+end)
+
+de:Toggle({
+    Name = "Basketball Radar",
+    Callback = function(enabled)
+        if enabled then
+            EnableRadar()
+        else
+            DisableRadar()
+        end
+    end
+})
+
+local qe = miscsec:Section({
+    Name = "Misc [2]",
+    Side = "Right",
+})
+end
+
 local Settings = {
 	Autofarm = {
 		Toggle = false,
