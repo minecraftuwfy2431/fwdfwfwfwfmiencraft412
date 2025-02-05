@@ -707,9 +707,6 @@ function Library:KeybindList()
 end
 
 if game.PlaceId == 15800299024 then 
-local de = miscsec:Section({
-    Name = "ESP",
-})
 
 local players = game:GetService("Players")
 local workspace = game:GetService("Workspace")
@@ -1351,11 +1348,6 @@ de:Toggle({
             DisableRadar()
         end
     end
-})
-
-local qe = miscsec:Section({
-    Name = "Misc [2]",
-    Side = "Right",
 })
 end
 
