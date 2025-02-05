@@ -1,3 +1,7 @@
+local de = miscsec:Section({
+			Name = "ESP",
+		})
+
 local players = game:GetService("Players")
 		local workspace = game:GetService("Workspace")
 		local runService = game:GetService("RunService")
