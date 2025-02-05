@@ -706,9 +706,9 @@ function Library:KeybindList()
 	return KeyList
 end
 
+function Library:LoadRBW5MiscTab(Window)
 -- RBW5 MISC TAB
 
-if game.PlaceId == 15800299024 then 
 local miscsec = Window:Page({
 Name = "Misc",
 })
@@ -1363,7 +1363,7 @@ de:Toggle({
         end
     end
 })
-end
+end 
 
 local Settings = {
 	Autofarm = {
