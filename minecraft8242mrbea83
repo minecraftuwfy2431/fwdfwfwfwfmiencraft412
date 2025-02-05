@@ -707,7 +707,6 @@ function Library:KeybindList()
 end
 
 if game.PlaceId == 15800299024 then 
-
 local players = game:GetService("Players")
 local workspace = game:GetService("Workspace")
 local runService = game:GetService("RunService")
