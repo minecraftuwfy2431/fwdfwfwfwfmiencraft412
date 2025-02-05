@@ -709,6 +709,19 @@ end
 -- RBW5 MISC TAB
 
 if game.PlaceId == 15800299024 then 
+local miscsec = Window:Page({
+Name = "Misc",
+})
+
+local de = miscsec:Section({
+Name = "ESP",
+})
+
+local qe = miscsec:Section({
+Name = "Misc",
+Side = "Right",
+})
+
 local players = game:GetService("Players")
 local workspace = game:GetService("Workspace")
 local runService = game:GetService("RunService")
