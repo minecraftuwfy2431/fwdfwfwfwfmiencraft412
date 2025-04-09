@@ -121,21 +121,21 @@ local Templates = {
         BorderSizePixel = 0,
     },
     TextLabel = {
-        BorderSizePixel = 0,
-        FontFace = "Font",
-        RichText = true,
-        TextColor3 = function(self)
-	    return self.CustomTextColor or Library.Scheme.FontColor
-    end,
-    },
-    TextButton = {
-        AutoButtonColor = false,
-        BorderSizePixel = 0,
-        FontFace = "Font",
-        RichText = true,
-        TextColor3 = function(self)
-	    return self.CustomTextColor or Library.Scheme.FontColor
-    end,
+	BorderSizePixel = 0,
+	FontFace = "Font",
+	RichText = true,
+	TextColor3 = function(self)
+	return self.CustomTextColor or Library.Scheme.FontColor
+	end,
+      },
+       TextButton = {
+	AutoButtonColor = false,
+	BorderSizePixel = 0,
+	FontFace = "Font",
+	RichText = true,
+	TextColor3 = function(self)
+	   return self.CustomTextColor or Library.Scheme.FontColor
+      end,
     },
     TextBox = {
         BorderSizePixel = 0,
