@@ -120,23 +120,24 @@ local Templates = {
     ScrollingFrame = {
         BorderSizePixel = 0,
     },
-    TextLabel = {
-	BorderSizePixel = 0,
-	FontFace = "Font",
-	RichText = true,
-	TextColor3 = function(self)
-	return self.CustomTextColor or Library.Scheme.FontColor
-	end,
-      },
-       TextButton = {
-	AutoButtonColor = false,
-	BorderSizePixel = 0,
-	FontFace = "Font",
-	RichText = true,
-	TextColor3 = function(self)
-	   return self.CustomTextColor or Library.Scheme.FontColor
-      end,
-    },
+    	TextLabel = {
+	    BorderSizePixel = 0,
+	    FontFace = "Font",
+	    RichText = true,
+	    GetTextColor3 = function(obj)
+	        return obj.CustomTextColor or Library.Scheme.FontColor
+	    end,
+	},
+	TextButton = {
+	    AutoButtonColor = false,
+	    BorderSizePixel = 0,
+	    FontFace = "Font",
+	    RichText = true,
+	    GetTextColor3 = function(obj)
+	        return obj.CustomTextColor or Library.Scheme.FontColor
+	    end,
+	},
+
     TextBox = {
         BorderSizePixel = 0,
         FontFace = "Font",
