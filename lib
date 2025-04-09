@@ -124,14 +124,18 @@ local Templates = {
         BorderSizePixel = 0,
         FontFace = "Font",
         RichText = true,
-        TextColor3 = "FontColor",
+        TextColor3 = function(self)
+	    return self.CustomTextColor or Library.Scheme.FontColor
+    end,
     },
     TextButton = {
         AutoButtonColor = false,
         BorderSizePixel = 0,
         FontFace = "Font",
         RichText = true,
-        TextColor3 = "FontColor",
+        TextColor3 = function(self)
+	    return self.CustomTextColor or Library.Scheme.FontColor
+    end,
     },
     TextBox = {
         BorderSizePixel = 0,
@@ -150,106 +154,101 @@ local Templates = {
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
     },
 
-   --// Library \\--
-
+    --// Library \\--
     Window = {
-    Title = "No Title",
-    Footer = "No Footer",
-    Position = UDim2.fromOffset(6, 6),
-    Size = UDim2.fromOffset(720, 600),
-    IconSize = UDim2.fromOffset(30, 30),
-    AutoShow = true,
-    Center = true,
-    Resizable = true,
-    CornerRadius = 4,
-    NotifySide = "Right",
-    ShowCustomCursor = true,
-    Font = Enum.Font.Code,
-    ToggleKeybind = Enum.KeyCode.RightControl,
-    MobileButtonsSide = "Left",
-},
+        Title = "No Title",
+        Footer = "No Footer",
+        Position = UDim2.fromOffset(6, 6),
+        Size = UDim2.fromOffset(720, 600),
+        IconSize = UDim2.fromOffset(30, 30),
+        AutoShow = true,
+        Center = true,
+        Resizable = true,
+        CornerRadius = 4,
+        NotifySide = "Right",
+        ShowCustomCursor = true,
+        Font = Enum.Font.Code,
+        ToggleKeybind = Enum.KeyCode.RightControl,
+        MobileButtonsSide = "Left",
+    },
+    Toggle = {
+        Text = "Toggle",
+        Default = false,
+        CustomTextColor = Color3.fromRGB(255, 255, 0),
 
-Toggle = {
-    Text = "Toggle",
-    Default = false,
-    CustomTextColor = Color3.fromRGB(255, 255, 0),
+        Callback = function() end,
+        Changed = function() end,
 
-    Callback = function() end,
-    Changed = function() end,
+        Risky = false,
+        Disabled = false,
+        Visible = true,
+    },
+    Input = {
+        Text = "Input",
+        Default = "",
+        Finished = false,
+        Numeric = false,
+        ClearTextOnFocus = true,
+        Placeholder = "",
+        AllowEmpty = true,
+        EmptyReset = "---",
 
-    Risky = false,
-    Disabled = false,
-    Visible = true,
-},
+        Callback = function() end,
+        Changed = function() end,
 
-Input = {
-    Text = "Input",
-    Default = "",
-    Finished = false,
-    Numeric = false,
-    ClearTextOnFocus = true,
-    Placeholder = "",
-    AllowEmpty = true,
-    EmptyReset = "---",
+        Disabled = false,
+        Visible = true,
+    },
+    Slider = {
+        Text = "Slider",
+        Default = 0,
+        Min = 0,
+        Max = 100,
+        Rounding = 0,
 
-    Callback = function() end,
-    Changed = function() end,
+        Prefix = "",
+        Suffix = "",
 
-    Disabled = false,
-    Visible = true,
-},
+        Callback = function() end,
+        Changed = function() end,
 
-Slider = {
-    Text = "Slider",
-    Default = 0,
-    Min = 0,
-    Max = 100,
-    Rounding = 0,
+        Disabled = false,
+        Visible = true,
+    },
+    Dropdown = {
+        Values = {},
+        DisabledValues = {},
+        Multi = false,
+        MaxVisibleDropdownItems = 8,
 
-    Prefix = "",
-    Suffix = "",
+        Callback = function() end,
+        Changed = function() end,
 
-    Callback = function() end,
-    Changed = function() end,
+        Disabled = false,
+        Visible = true,
+    },
 
-    Disabled = false,
-    Visible = true,
-},
+    --// Addons \\-
+    KeyPicker = {
+        Text = "KeyPicker",
+        Default = "None",
+        Mode = "Toggle",
+        Modes = { "Always", "Toggle", "Hold" },
+        SyncToggleState = false,
 
-Dropdown = {
-    Values = {},
-    DisabledValues = {},
-    Multi = false,
-    MaxVisibleDropdownItems = 8,
+        Callback = function() end,
+        ChangedCallback = function() end,
+        Changed = function() end,
+        Clicked = function() end,
+    },
+    ColorPicker = {
+        Default = Color3.new(1, 1, 1),
 
-    Callback = function() end,
-    Changed = function() end,
+        Callback = function() end,
+        Changed = function() end,
+    },
+}
 
-    Disabled = false,
-    Visible = true,
-},
-
---// Addons \\--
-KeyPicker = {
-    Text = "KeyPicker",
-    Default = "None",
-    Mode = "Toggle",
-    Modes = { "Always", "Toggle", "Hold" },
-    SyncToggleState = false,
-
-    Callback = function() end,
-    ChangedCallback = function() end,
-    Changed = function() end,
-    Clicked = function() end,
-},
-
-ColorPicker = {
-    Default = Color3.new(1, 1, 1),
-
-    Callback = function() end,
-    Changed = function() end,
-},
-  
 local Places = {
     Bottom = { 0, 1 },
     Right = { 1, 0 },
