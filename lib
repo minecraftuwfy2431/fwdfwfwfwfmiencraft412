@@ -930,6 +930,9 @@ function Library:AddDraggableMenu(Name: string)
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = Holder,
     })
+
+    Label.TextColor3 = (Options and Options.CustomTextColor) or Library.Scheme.FontColor
+
     New("UIPadding", {
         PaddingLeft = UDim.new(0, 12),
         PaddingRight = UDim.new(0, 12),
