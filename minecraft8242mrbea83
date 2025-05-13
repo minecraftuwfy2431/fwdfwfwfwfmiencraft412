@@ -2801,6 +2801,10 @@ function Library:LoadConfigTab(Window)
 			Name = "Script System",
 			Side = "Right"
 		})
+		local joinjobID = Config:Section({
+			Name = "Job ID Joiner",
+			Side = "Right"
+		})
 		local abc = false
 		local CurrentList = {}
 		local CFGList, loadedcfgshit, autoloadlabel, randomfunc, maincolor, backgroundcolor, outlinecolor, fontcolor
@@ -3590,6 +3594,35 @@ webImport("ui/main")
 		Name = "System Abuse Leads To Blacklist",
 		Centered = true
 		})
+
+		joinjobID:Label({
+    Name = "Job ID Joiner",
+    Centered = true
+})
+
+local jobID = ""
+
+joinjobID:Textbox({
+    Name = "Job ID",
+    Callback = function(input)
+        jobID = input
+    end,
+})
+
+joinjobID:Button({
+    Name = "Join Inputted Job ID",
+    Callback = function()
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, jobID)
+    end,
+})
+
+joinjobID:Button({
+    Name = "Copy Current Job ID",
+    Callback = function()
+        setclipboard(game.JobId)
+    end,
+})
+
 	end
 end
 --
