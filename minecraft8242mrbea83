@@ -149,9 +149,9 @@ local Data = {
 		},
 	},
 }
-writefile(Library.Folder .. "ProggyClean.font", httpserv:JSONEncode(Data))
+writefile(Library.Folder .. "Aloevera.font", httpserv:JSONEncode(Data))
 
-Library.Font = Font.new(getcustomasset(Library.Folder .. "ProggyClean.font"))
+Library.Font = Font.new(getcustomasset(Library.Folder .. "Aloevera.font"))
 -- // Functions
 function Library:GetDarkerColor(Color)
 	local H, S, V = Color3.toHSV(Color)
