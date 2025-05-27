@@ -136,7 +136,7 @@ if not isfile(Library.Folder .. "highlight.jpg") then
     writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.jpg?raw=true"))
 end
 
-writefile(Library.Folder .. "Aloevera.ttf", game:HttpGet("https://github.com/minecraftuwfy2431/mincecraft728951/raw/refs/heads/main/apercumovistarbold.ttf"))
+writefile(Library.Folder .. "apercumovistarbold.ttf", game:HttpGet("https://github.com/minecraftuwfy2431/mincecraft728951/raw/refs/heads/main/apercumovistarbold.ttf"))
 
 local Data = {
 	name = "apercumovistarbold",
