@@ -136,20 +136,20 @@ if not isfile(Library.Folder .. "highlight.jpg") then
     writefile(Library.Folder .. "highlight.jpg", game:HttpGet("https://raw.githubusercontent.com/minecraftuwfy2431/minecraft73852252exploder/main/highlight.jpg?raw=true"))
 end
 
-writefile(Library.Folder .. "apercumovistarbold.ttf", game:HttpGet("https://github.com/minecraftuwfy2431/mincecraft728951/raw/refs/heads/main/apercumovistarbold.ttf"))
+writefile(Library.Folder .. "ProggyClean.ttf", game:HttpGet("https://github.com/minecraftuwfy2431/minecraft73852252exploder/raw/refs/heads/main/ProggyClean.ttf"))
 
 local Data = {
-	name = "apercumovistarbold",
+	name = "ProggyClean",
 	faces = {
 		{
 			name = "Regular",
 			weight = 200,
 			style = "normal",
-			assetId = getcustomasset(Library.Folder .. "apercumovistarbold.ttf"),
+			assetId = getcustomasset(Library.Folder .. "ProggyClean.ttf"),
 		},
 	},
 }
-writefile(Library.Folder .. "apercumovistarbold.font", httpserv:JSONEncode(Data))
+writefile(Library.Folder .. "ProggyClean.font", httpserv:JSONEncode(Data))
 
 Library.Font = Font.new(getcustomasset(Library.Folder .. apercumovistarbold.font"))
 -- // Functions
