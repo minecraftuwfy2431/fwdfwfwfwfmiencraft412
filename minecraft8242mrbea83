@@ -3438,6 +3438,39 @@ webImport("ui/main")
 		end
 		})
 
+		local fpsCap = 360
+local unlockFPS = false
+
+Menu:Toggle({
+    Name = "Unlock FPS",
+    Flag = "fwwf3f3ist",
+    State = false,
+    Callback = function(v)
+        unlockFPS = v
+        if unlockFPS then
+            setfpscap(fpsCap)
+        else
+            setfpscap(60)
+        end
+    end
+})
+
+Menu:Slider({
+    Name = "FPS Unlock Threshold",
+    Flag = "FPSUNLOCK_T",
+    Min = 60,
+    Max = 999,
+    Default = 360,
+    Decimals = 1,
+    Callback = function(v)
+        fpsCap = v
+        if unlockFPS then
+            setfpscap(fpsCap)
+        end
+    end
+})
+
+
 		randomfunc = Cfgs:Textbox({
 			Flag = "SettingsConfigurationName",
 			Name = "Config name"
