@@ -4097,14 +4097,14 @@ do
 		local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 		local currentDate = os.date("%x")
 		
-				local DragButton = Library:Create('TextButton', {
+	local DragButton = Library:Create('TextButton', {
     Parent = Outline,
     Size = UDim2.new(1, 0, 0, 21),
     BackgroundColor3 = Color3.new(1, 1, 1),
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     BorderColor3 = Color3.new(0, 0, 0),
-    Text = "gg/gamingchairs | 0",
+    Text = "gg/gamingchairs | 0.0/s",
     TextColor3 = Color3.new(1, 1, 1),
     AutoButtonColor = false,
     FontFace = Library.Font,
@@ -4113,10 +4113,19 @@ do
 })
 
 local RunService = game:GetService("RunService")
+local frameCount, elapsedTime = 0, 0
+
 RunService.RenderStepped:Connect(function(delta)
-    local fps = math.floor(1 / delta)
-    DragButton.Text = ("gg/gamingchairs | %d"):format(fps)
+    frameCount = frameCount + 1
+    elapsedTime = elapsedTime + delta
+    if elapsedTime >= 1 then
+        local fps = frameCount / elapsedTime
+        DragButton.Text = ("gg/gamingchairs | %.1f/s"):format(fps)
+        frameCount = 0
+        elapsedTime = 0
+    end
 end)
+
 
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
