@@ -4078,7 +4078,7 @@ do
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     BorderColor3 = Color3.new(0, 0, 0),
-    Text = "soulhub | 0",
+    Text = "gg/gamingchairs | 0",
     TextColor3 = Color3.new(1, 1, 1),
     AutoButtonColor = false,
     FontFace = Library.Font,
@@ -4089,7 +4089,7 @@ do
 local RunService = game:GetService("RunService")
 RunService.RenderStepped:Connect(function(delta)
     local fps = math.floor(1 / delta)
-    DragButton.Text = ("soulhub | %d"):format(fps)
+    DragButton.Text = ("gg/gamingchairs | %d"):format(fps)
 end)
 
 		local cursor = Library:Create("ImageLabel", {
