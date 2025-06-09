@@ -4071,20 +4071,27 @@ do
 		local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 		local currentDate = os.date("%x")
 		
-		local DragButton = Library:Create('TextButton', {
-		    Parent = Outline,
-		    Size = UDim2.new(1, 0, 0, 21),
-		    BackgroundColor3 = Color3.new(1, 1, 1),
-		    BackgroundTransparency = 1,
-		    BorderSizePixel = 0,
-		    BorderColor3 = Color3.new(0, 0, 0),
-		    Text = "soulhub",
-		    TextColor3 = Color3.new(1, 1, 1),
-		    AutoButtonColor = false,
-		    FontFace = Library.Font,
-		    TextSize = Library.FontSize,
-		    TextStrokeTransparency = 0
-		})
+				local DragButton = Library:Create('TextButton', {
+    Parent = Outline,
+    Size = UDim2.new(1, 0, 0, 21),
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    BorderColor3 = Color3.new(0, 0, 0),
+    Text = "soulhub | 0",
+    TextColor3 = Color3.new(1, 1, 1),
+    AutoButtonColor = false,
+    FontFace = Library.Font,
+    TextSize = Library.FontSize,
+    TextStrokeTransparency = 0
+})
+
+local RunService = game:GetService("RunService")
+RunService.RenderStepped:Connect(function(delta)
+    local fps = math.floor(1 / delta)
+    DragButton.Text = ("soulhub | %d"):format(fps)
+end)
+
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
 			BackgroundTransparency = 1,
