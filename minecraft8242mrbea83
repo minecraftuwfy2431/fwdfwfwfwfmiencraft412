@@ -3470,6 +3470,32 @@ Menu:Slider({
     end
 })
 
+		Menu:Label({
+    Name = "UI Sizing",
+    Centered = true
+})
+Menu:Slider({
+    Name = "UI Width",
+    Min = 200,
+    Max = 1200,
+    Default = 660,
+    Callback = function(v)
+        Outline.Size = UDim2.new(0, v, Outline.Size.Y.Scale, Outline.Size.Y.Offset)
+        Window.Size  = UDim2.new(0, v, Window.Size.Y.Scale,  Window.Size.Y.Offset)
+    end
+})
+Menu:Slider({
+    Name = "UI Height",
+    Min = 200,
+    Max = 1000,
+    Default = 600,
+    Callback = function(v)
+        Outline.Size = UDim2.new(Outline.Size.X.Scale, Outline.Size.X.Offset, 0, v)
+        Window.Size  = UDim2.new(Window.Size.X.Scale,  Window.Size.X.Offset,  0, v)
+    end
+})
+
+
 
 		randomfunc = Cfgs:Textbox({
 			Flag = "SettingsConfigurationName",
