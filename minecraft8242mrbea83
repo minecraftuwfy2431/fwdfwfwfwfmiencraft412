@@ -3470,28 +3470,35 @@ Menu:Slider({
     end
 })
 
-		Menu:Label({
+			getgenv().uiWidth  = Outline.Size.X.Offset
+getgenv().uiHeight = Outline.Size.Y.Offset
+
+Menu:Label({
     Name = "UI Sizing",
     Centered = true
 })
+
 Menu:Slider({
     Name = "UI Width",
     Min = 200,
     Max = 1200,
-    Default = 660,
+    Default = getgenv().uiWidth,
     Callback = function(v)
-        Outline.Size = UDim2.new(0, v, Outline.Size.Y.Scale, Outline.Size.Y.Offset)
-        Window.Size  = UDim2.new(0, v, Window.Size.Y.Scale,  Window.Size.Y.Offset)
+        getgenv().uiWidth = v
+        Outline.Size = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight)
+        Window.Size  = Outline.Size
     end
 })
+
 Menu:Slider({
     Name = "UI Height",
     Min = 200,
     Max = 1000,
-    Default = 600,
+    Default = getgenv().uiHeight,
     Callback = function(v)
-        Outline.Size = UDim2.new(Outline.Size.X.Scale, Outline.Size.X.Offset, 0, v)
-        Window.Size  = UDim2.new(Window.Size.X.Scale,  Window.Size.X.Offset,  0, v)
+        getgenv().uiHeight = v
+        Outline.Size = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight)
+        Window.Size  = Outline.Size
     end
 })
 
@@ -4011,21 +4018,23 @@ function Library:NewPicker(default, parent, count, flag, callback)
 	end
 	return colorpickertypes, ColorWindow
 end
+
+getgenv().uiWidth  = getgenv().uiWidth  or 660
+getgenv().uiHeight = getgenv().uiHeight or 600
+
+
 -- // Doc Functions
 do
 	local Pages = Library.Pages;
 	local Sections = Library.Sections;
 	function Library:Window(Options)
 		local Window = {
-			Pages = {};
-			Sections = {};
-			Elements = {};
-			Dragging = {
-				false,
-				UDim2.new(0, 0, 0, 0)
-			};
-			Size = UDim2.new(0, 660, 0, 600)
-		};
+		    Pages    = {};
+		    Sections = {};
+		    Elements = {};
+		    Dragging = { false, UDim2.new(0,0,0,0) };
+		    Size     = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight);
+		}
 		Library.ScreenGui = Library:Create("ScreenGui", {
 			Parent = gethui(),
 			DisplayOrder = 2
