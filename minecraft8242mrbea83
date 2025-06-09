@@ -1,4 +1,5 @@
 
+
 local Library = {
 	Open = true;
 	Accent = Color3.fromHex("6759b3");
@@ -3470,39 +3471,6 @@ Menu:Slider({
     end
 })
 
-			getgenv().uiWidth  = Outline.Size.X.Offset
-getgenv().uiHeight = Outline.Size.Y.Offset
-
-Menu:Label({
-    Name = "UI Sizing",
-    Centered = true
-})
-
-Menu:Slider({
-    Name = "UI Width",
-    Min = 200,
-    Max = 1200,
-    Default = getgenv().uiWidth,
-    Callback = function(v)
-        getgenv().uiWidth = v
-        Outline.Size = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight)
-        Window.Size  = Outline.Size
-    end
-})
-
-Menu:Slider({
-    Name = "UI Height",
-    Min = 200,
-    Max = 1000,
-    Default = getgenv().uiHeight,
-    Callback = function(v)
-        getgenv().uiHeight = v
-        Outline.Size = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight)
-        Window.Size  = Outline.Size
-    end
-})
-
-
 
 		randomfunc = Cfgs:Textbox({
 			Flag = "SettingsConfigurationName",
@@ -4018,23 +3986,21 @@ function Library:NewPicker(default, parent, count, flag, callback)
 	end
 	return colorpickertypes, ColorWindow
 end
-
-getgenv().uiWidth  = getgenv().uiWidth  or 660
-getgenv().uiHeight = getgenv().uiHeight or 600
-
-
 -- // Doc Functions
 do
 	local Pages = Library.Pages;
 	local Sections = Library.Sections;
 	function Library:Window(Options)
 		local Window = {
-		    Pages    = {};
-		    Sections = {};
-		    Elements = {};
-		    Dragging = { false, UDim2.new(0,0,0,0) };
-		    Size     = UDim2.new(0, getgenv().uiWidth, 0, getgenv().uiHeight);
-		}
+			Pages = {};
+			Sections = {};
+			Elements = {};
+			Dragging = {
+				false,
+				UDim2.new(0, 0, 0, 0)
+			};
+			Size = UDim2.new(0, 660, 0, 600)
+		};
 		Library.ScreenGui = Library:Create("ScreenGui", {
 			Parent = gethui(),
 			DisplayOrder = 2
@@ -4106,14 +4072,14 @@ do
 		local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 		local currentDate = os.date("%x")
 		
-	local DragButton = Library:Create('TextButton', {
+				local DragButton = Library:Create('TextButton', {
     Parent = Outline,
     Size = UDim2.new(1, 0, 0, 21),
     BackgroundColor3 = Color3.new(1, 1, 1),
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     BorderColor3 = Color3.new(0, 0, 0),
-    Text = "gg/gamingchairs | 0.0/s",
+    Text = "gg/gamingchairs | 0",
     TextColor3 = Color3.new(1, 1, 1),
     AutoButtonColor = false,
     FontFace = Library.Font,
@@ -4122,19 +4088,10 @@ do
 })
 
 local RunService = game:GetService("RunService")
-local frameCount, elapsedTime = 0, 0
-
 RunService.RenderStepped:Connect(function(delta)
-    frameCount = frameCount + 1
-    elapsedTime = elapsedTime + delta
-    if elapsedTime >= 1 then
-        local fps = frameCount / elapsedTime
-        DragButton.Text = ("gg/gamingchairs | %.1f/s"):format(fps)
-        frameCount = 0
-        elapsedTime = 0
-    end
+    local fps = math.floor(1 / delta)
+    DragButton.Text = ("gg/gamingchairs | fps: %d"):format(fps)
 end)
-
 
 		local cursor = Library:Create("ImageLabel", {
 			Size = UDim2.new(0, 18, 0, 18),
