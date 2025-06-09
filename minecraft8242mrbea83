@@ -3998,7 +3998,7 @@ do
 				false,
 				UDim2.new(0, 0, 0, 0)
 			};
-			Size = UDim2.new(0, 550, 0, 600)
+			Size = UDim2.new(0, 660, 0, 600)
 		};
 		Library.ScreenGui = Library:Create("ScreenGui", {
 			Parent = gethui(),
