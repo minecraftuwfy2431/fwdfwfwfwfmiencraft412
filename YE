@@ -1,8 +1,5 @@
-local LoadingTick = os.clock()
 
-if getgenv().Library then
-    getgenv().Library:Unload()
-end
+-- beware of somewhat horrible code
 
 local Library do
     -- Services
