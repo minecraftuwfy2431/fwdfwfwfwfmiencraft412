@@ -646,6 +646,149 @@ local Library do
             ["Accent"] = FromRGB(237, 170, 0),
             ["Border"] = FromRGB(0, 0, 0)
         },
+
+        ["Midnight"] = {
+            ["Background"] = FromRGB(10, 12, 18),
+            ["Inline"] = FromRGB(18, 20, 28),
+            ["Shadow"] = FromRGB(5, 6, 10),
+            ["Text"] = FromRGB(230, 235, 245),
+            ["Image"] = FromRGB(255, 255, 255),
+            ["Dark Gradient"] = FromRGB(40, 45, 60),
+            ["Inactive Text"] = FromRGB(150, 155, 170),
+            ["Element"] = FromRGB(25, 28, 38),
+            ["Accent"] = FromRGB(100, 150, 255),
+            ["Border"] = FromRGB(30, 35, 48)
+        },
+
+        ["Cherry Blossom"] = {
+            ["Background"] = FromRGB(18, 14, 16),
+            ["Inline"] = FromRGB(28, 22, 26),
+            ["Shadow"] = FromRGB(255, 105, 180),
+            ["Text"] = FromRGB(240, 220, 230),
+            ["Image"] = FromRGB(255, 200, 220),
+            ["Dark Gradient"] = FromRGB(200, 150, 180),
+            ["Inactive Text"] = FromRGB(180, 160, 170),
+            ["Element"] = FromRGB(35, 28, 32),
+            ["Accent"] = FromRGB(255, 105, 180),
+            ["Border"] = FromRGB(45, 35, 42)
+        },
+
+        ["Forest"] = {
+            ["Background"] = FromRGB(12, 16, 12),
+            ["Inline"] = FromRGB(20, 26, 20),
+            ["Shadow"] = FromRGB(5, 10, 5),
+            ["Text"] = FromRGB(220, 235, 220),
+            ["Image"] = FromRGB(200, 255, 200),
+            ["Dark Gradient"] = FromRGB(80, 120, 80),
+            ["Inactive Text"] = FromRGB(160, 180, 160),
+            ["Element"] = FromRGB(28, 35, 28),
+            ["Accent"] = FromRGB(80, 200, 120),
+            ["Border"] = FromRGB(35, 45, 35)
+        },
+
+        ["Ocean"] = {
+            ["Background"] = FromRGB(12, 18, 22),
+            ["Inline"] = FromRGB(20, 28, 35),
+            ["Shadow"] = FromRGB(0, 50, 80),
+            ["Text"] = FromRGB(220, 235, 245),
+            ["Image"] = FromRGB(200, 230, 255),
+            ["Dark Gradient"] = FromRGB(70, 130, 180),
+            ["Inactive Text"] = FromRGB(160, 180, 200),
+            ["Element"] = FromRGB(25, 38, 48),
+            ["Accent"] = FromRGB(0, 191, 255),
+            ["Border"] = FromRGB(30, 50, 65)
+        },
+
+        ["Crimson"] = {
+            ["Background"] = FromRGB(18, 10, 10),
+            ["Inline"] = FromRGB(28, 16, 16),
+            ["Shadow"] = FromRGB(139, 0, 0),
+            ["Text"] = FromRGB(240, 220, 220),
+            ["Image"] = FromRGB(255, 200, 200),
+            ["Dark Gradient"] = FromRGB(180, 80, 80),
+            ["Inactive Text"] = FromRGB(180, 160, 160),
+            ["Element"] = FromRGB(38, 22, 22),
+            ["Accent"] = FromRGB(220, 20, 60),
+            ["Border"] = FromRGB(48, 28, 28)
+        },
+
+        ["Royal Purple"] = {
+            ["Background"] = FromRGB(15, 10, 20),
+            ["Inline"] = FromRGB(25, 18, 32),
+            ["Shadow"] = FromRGB(75, 0, 130),
+            ["Text"] = FromRGB(230, 220, 240),
+            ["Image"] = FromRGB(220, 200, 255),
+            ["Dark Gradient"] = FromRGB(120, 80, 160),
+            ["Inactive Text"] = FromRGB(170, 160, 190),
+            ["Element"] = FromRGB(32, 24, 42),
+            ["Accent"] = FromRGB(138, 43, 226),
+            ["Border"] = FromRGB(42, 32, 55)
+        },
+
+        ["Sunset"] = {
+            ["Background"] = FromRGB(18, 12, 10),
+            ["Inline"] = FromRGB(28, 20, 16),
+            ["Shadow"] = FromRGB(255, 100, 50),
+            ["Text"] = FromRGB(240, 230, 220),
+            ["Image"] = FromRGB(255, 220, 200),
+            ["Dark Gradient"] = FromRGB(200, 120, 80),
+            ["Inactive Text"] = FromRGB(190, 170, 160),
+            ["Element"] = FromRGB(38, 28, 22),
+            ["Accent"] = FromRGB(255, 140, 0),
+            ["Border"] = FromRGB(48, 38, 28)
+        },
+
+        ["Arctic"] = {
+            ["Background"] = FromRGB(16, 18, 20),
+            ["Inline"] = FromRGB(24, 28, 32),
+            ["Shadow"] = FromRGB(100, 150, 180),
+            ["Text"] = FromRGB(235, 245, 255),
+            ["Image"] = FromRGB(220, 240, 255),
+            ["Dark Gradient"] = FromRGB(150, 180, 200),
+            ["Inactive Text"] = FromRGB(180, 200, 220),
+            ["Element"] = FromRGB(32, 38, 45),
+            ["Accent"] = FromRGB(135, 206, 250),
+            ["Border"] = FromRGB(42, 50, 60)
+        },
+
+        ["Neon"] = {
+            ["Background"] = FromRGB(8, 8, 12),
+            ["Inline"] = FromRGB(15, 15, 20),
+            ["Shadow"] = FromRGB(0, 255, 255),
+            ["Text"] = FromRGB(240, 250, 255),
+            ["Image"] = FromRGB(200, 255, 255),
+            ["Dark Gradient"] = FromRGB(100, 200, 255),
+            ["Inactive Text"] = FromRGB(150, 180, 200),
+            ["Element"] = FromRGB(20, 20, 28),
+            ["Accent"] = FromRGB(0, 255, 255),
+            ["Border"] = FromRGB(25, 100, 120)
+        },
+
+        ["Emerald"] = {
+            ["Background"] = FromRGB(10, 15, 12),
+            ["Inline"] = FromRGB(18, 25, 20),
+            ["Shadow"] = FromRGB(0, 100, 50),
+            ["Text"] = FromRGB(220, 240, 230),
+            ["Image"] = FromRGB(200, 255, 220),
+            ["Dark Gradient"] = FromRGB(80, 150, 100),
+            ["Inactive Text"] = FromRGB(160, 190, 170),
+            ["Element"] = FromRGB(25, 35, 28),
+            ["Accent"] = FromRGB(80, 200, 120),
+            ["Border"] = FromRGB(32, 48, 38)
+        },
+
+        ["Gold Rush"] = {
+            ["Background"] = FromRGB(15, 13, 8),
+            ["Inline"] = FromRGB(25, 22, 15),
+            ["Shadow"] = FromRGB(218, 165, 32),
+            ["Text"] = FromRGB(245, 240, 225),
+            ["Image"] = FromRGB(255, 245, 200),
+            ["Dark Gradient"] = FromRGB(200, 170, 100),
+            ["Inactive Text"] = FromRGB(190, 180, 150),
+            ["Element"] = FromRGB(35, 30, 20),
+            ["Accent"] = FromRGB(255, 215, 0),
+            ["Border"] = FromRGB(45, 40, 25)
+        },
     }
 
     Library.Theme = TableClone(Themes["Preset"])
